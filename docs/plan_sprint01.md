@@ -2,35 +2,38 @@
 
 ## 1. Sprint Goal
 
-TODO
+The main objective of Sprint 01 is to build the initial structure and skeleton of the Travel Planner app by setting up an Android Studio project, initializing a GitHub repository, designing the core screens with mocked data and navigation, documenting the project, implementing initial customization, and publishing the final submission as a GitHub Release.
 
 ---
 
 ## 2. Sprint Backlog
 
-| ID | Tarea | Responsable | Estimación (h) | Prioridad |
-|----|-------|-------------|----------------|-----------|
-| T1.1 | Create a Product Name | Guillem and Nil | 0.5 | High |
-| T1.2 | Generate a logo for your app using AI | Guillem | 1 | Medium |
-| T1.3 | Initialize the project using Android Studio defining API and Kotlin Versions | Nil | 2 | High |
-| T2.1 | Create a GitHub repository for the project | Nil | 2 | High |
-| T2.2 | Initialize a Git repository | Nil | 2 | High |
-| T2.3 | Add a LICENSE file | Nil | 2 | High |
-| T2.4 | Include a CONTRIBUTING.md file | Nil | 2 | High |
-| T2.5 | Create a README.md file | Nil | 2 | High |
-| T2.6 | Add a documentation folder | Nil | 2 | High |
-| T2.7 | Include a design.md file | Nil | 2 | High |
-| T2.8 | Set up required remote and local branches | Nil | 2 | High |
-| T2.9 | Push the initial code to GitHub (v0.1.0) | Nil | 2 | High |
-| T2.10 | Create the first release | Nil | 2 | High |
-| T3.1 | Develop the core screen layouts | Nil | 2 | High |
-| T3.2 | Implement navigation | Nil | 2 | High |
-| T3.3 | Document the data model diagram in design.md | Nil | 2 | High |
-| T3.4 | Implement data model classes and their functions | Nil | 2 | High |
-| T4.1 | Create a Splash Screen with the app logo | Nil | 2 | High |
-| T4.2 | Implement an About Page | Nil | 2 | High |
-| T4.3 | Add a Terms & Conditions screen | Nil | 2 | High |
-| T4.4 | Add a Preferences Screen | Nil | 2 | High |
+| ID | Task | Person in charge | Estimation (h) | Priority |
+|:----:|-------|:-------------:|:----------------:|:-----------:|
+| T1.1 | Create a Product Name | Guillem & Nil | 0.5 | High |
+| T1.2 | Generate a logo for your app using AI | Guillem | 0.5 | High |
+| T1.3 | Initialize the project using Android Studio defining API and Kotlin Versions | Nil | 0 | High |
+| T2.1 | Finish data model diagram | TO ASSIGN | 2 | High |
+| T2.2 | Document the data model diagram in [design.md](design.md) | TO ASSIGN | 1 | Medium |
+| T3.1 | Develop the core screen layouts | TO ASSIGN | 10 | High |
+| T3.1.1 | Develop the Home screen | TO ASSIGN | 2 | High |
+| T3.1.2 | Develop the Trip screen | TO ASSIGN | 2 | High |
+| T3.1.3 | Develop the Itinerary screen | TO ASSIGN | 2 | High |
+| T3.1.4 | Develop the User Preference screen | TO ASSIGN | 1.5 | High |
+| T3.1.5 | Develop the About page | TO ASSIGN | 1 | High |
+| T3.1.6 | Develop the Terms & Conditions screen | TO ASSIGN | 1 | High |
+| T3.1.7 | Develop the Splash screen with the app logo | TO ASSIGN | 0.5 | Low |
+| T3.1.8 | Develop the Log in screen with the app logo | TO ASSIGN | 0.5 | High |
+| T3.2 | Implement navigation | TO ASSIGN | 1 | High |
+| T3.4 | Implement data model classes and their functions | TO ASSIGN | 14 | Medium |
+| T3.4.1 | Implement User data class | TO ASSIGN | 2 | Medium |
+| T3.4.2 | Implement Preferences data class | TO ASSIGN | 2 | Medium |
+| T3.4.3 | Implement Authentication data class | TO ASSIGN | 2 | Medium |
+| T3.4.4 | Implement Trip data class | TO ASSIGN | 2 | Medium |
+| T3.4.5 | Implement ItineraryItem data class | TO ASSIGN | 1 | Medium |
+| T3.4.6 | Implement Image data class | TO ASSIGN | 1 | Medium |
+| T3.4.7 | Implement AIRecomendations data class | TO ASSIGN | 2 | Medium |
+| T3.4.8 | Implement Map data class | TO ASSIGN | 2 | Medium |
 
 ---
 
@@ -40,7 +43,7 @@ TODO
 
 ---
 
-## 4. Riesgos identificados
+## 4. Identified risks
 
 - TODO
 
