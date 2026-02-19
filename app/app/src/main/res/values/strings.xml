@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Monarca Smart Travel</string>
+    <string name="bottom_menu_home">Inici</string>
+    <string name="bottom_menu_trips">Viatges</string>
+    <string name="bottom_menu_create">Crear</string>
+    <string name="bottom_menu_profile">Perfil</string>
 </resources>
