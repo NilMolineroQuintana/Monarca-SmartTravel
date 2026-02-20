@@ -15,11 +15,22 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FormatPaint
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,13 +44,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.MyBottomBar
+import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.WideOption
 
 @Composable
 fun ProfileScreen(navController: NavController) {
+    var showLogOutPopUp by remember { mutableStateOf(false) }
     Scaffold(
+        topBar = { MyTopBar("Perfil") },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
+        PopUp(show = showLogOutPopUp, title = stringResource(R.string.logOut_text), text = stringResource(R.string.logOut_popUp_text), acceptText = stringResource(R.string.popUp_accept), cancelText = stringResource(R.string.popUp_cancel), onAccept = {},onDismiss = { showLogOutPopUp = false })
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -48,9 +64,10 @@ fun ProfileScreen(navController: NavController) {
         ) {
             ProfileInfo(name = "Dummy", email = "hola@gmail.com")
             Column() {
-                WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button), onClick = {})
-                WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_button), onClick = { navController.navigate("preferences") })
-                WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.sign_out_button), onClick = {})
+                WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button))
+                WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_text), onClick = { navController.navigate("preferences") })
+                WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { /* TODO */ })
+                WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), onClick = { showLogOutPopUp = true })
             }
         }
     }
@@ -58,23 +75,17 @@ fun ProfileScreen(navController: NavController) {
 @Composable
 fun PreferencesScreen(navController: NavController) {
     Scaffold(
-        bottomBar = { MyBottomBar(navController) }
+        topBar = { MyTopBar(stringResource(R.string.preferences_text)) }
+        ,bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            WideOption(
-                ico = Icons.Filled.Flag,
-                text = stringResource(R.string.preferences_language_button),
-                secondaryText = stringResource(R.string.language_catalan),
-                onClick = {})
-            WideOption(
-                ico = Icons.Filled.FormatPaint,
-                text = stringResource(R.string.preferences_theme_button),
-                secondaryText = stringResource(R.string.theme_light),
-                onClick = {})
+            WideOption(ico = Icons.Filled.Notifications, text = "Notificacions")
+            WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = stringResource(R.string.language_catalan))
+            WideOption(ico = Icons.Filled.FormatPaint,text = stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.theme_light))
         }
     }
 }
@@ -112,10 +123,18 @@ fun ProfileInfo(name: String, email: String) {
     }
 }
 
+/*
 @Preview()
 @Composable
 fun PreviewProfileInfo() {
     ProfileInfo("Nil", "hola@gmail.com")
+}
+ */
+
+@Preview
+@Composable
+fun PreviewLogOutPopUp() {
+    PopUp (show = true, title = "Title", text = "Text", acceptText = "Accept", cancelText = "Cancel", onAccept = {}, onDismiss = {})
 }
 
 @Preview(showBackground = true)

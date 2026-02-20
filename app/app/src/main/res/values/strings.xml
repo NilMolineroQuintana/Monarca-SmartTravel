@@ -7,8 +7,9 @@
     <string name="profile_page_name_field">Nom:</string>
     <string name="profile_page_email_field">Correu:</string>
     <string name="travel_historic_button">Historial de viatges</string>
-    <string name="preferences_button">Preferències</string>
-    <string name="sign_out_button">Tancar sessió</string>
+    <string name="preferences_text">Preferències</string>
+    <string name="aboutUs_button">Sobre nosaltres</string>
+    <string name="logOut_text">Tancar sessió</string>
     <string name="preferences_language_button">Idioma</string>
     <string name="preferences_theme_button">Tema</string>
     <string name="language_catalan">Català</string>
@@ -16,4 +17,7 @@
     <string name="language_english">Anglès</string>
     <string name="theme_light">Clar</string>
     <string name="theme_dark">Fosc</string>
+    <string name="logOut_popUp_text">Estàs segur que vols tancar la sessió?</string>
+    <string name="popUp_accept">Aceptar</string>
+    <string name="popUp_cancel">Cancelar</string>
 </resources>
