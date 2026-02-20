@@ -11,21 +11,22 @@ The main objective of Sprint 01 is to build the initial structure and skeleton o
 | ID | Task | Person in charge | Estimation (h) | Priority |
 |:----:|-------|:-------------:|:----------------:|:-----------:|
 | T1.1 | Create a Product Name | Guillem & Nil | 0.5 | High |
-| T1.2 | Generate a logo for your app using AI | Guillem | 0.5 | High |
+| T1.2 | Generate a logo for your app using AI | Guillem | 2 | High |
 | T1.3 | Initialize the project using Android Studio defining API and Kotlin Versions | Nil | 0 | High |
 | T2.1 | Finish data model diagram | TO ASSIGN | 2 | High |
 | T2.2 | Document the data model diagram in [design.md](design.md) | TO ASSIGN | 1 | Medium |
-| T3.1 | Develop the core screen layouts | TO ASSIGN | 10 | High |
+| T3.1 | Develop the core screen layouts | Guillem & Nil | 10 | High |
 | T3.1.1 | Develop the Home screen | TO ASSIGN | 2 | High |
 | T3.1.2 | Develop the Trip screen | TO ASSIGN | 2 | High |
-| T3.1.3 | Develop the Itinerary screen | TO ASSIGN | 2 | High |
-| T3.1.4 | Develop the User Preference screen | TO ASSIGN | 1.5 | High |
-| T3.1.5 | Develop the About page | TO ASSIGN | 1 | High |
-| T3.1.6 | Develop the Terms & Conditions screen | TO ASSIGN | 1 | High |
-| T3.1.7 | Develop the Splash screen with the app logo | TO ASSIGN | 0.5 | Low |
-| T3.1.8 | Develop the Log in screen with the app logo | TO ASSIGN | 0.5 | High |
-| T3.2 | Implement navigation | TO ASSIGN | 1 | High |
-| T3.4 | Implement data model classes and their functions | TO ASSIGN | 14 | Medium |
+| T3.1.3 | Develop the Itinerary screen | Nil | 6 | High |
+| T3.1.4 | Develop the User Preference screen | Nil | 2 | High |
+| T3.1.5 | Develop the User Profile screen | Nil | 2 | High |
+| T3.1.6 | Develop the About page | TO ASSIGN | 1 | High |
+| T3.1.7 | Develop the Terms & Conditions screen | Nil | 1 | High |
+| T3.1.8 | Develop the Splash screen with the app logo | Nil | 0.5 | Low |
+| T3.1.9 | Develop the Log in screen with the app logo | TO ASSIGN | 0.5 | High |
+| T3.2 | Implement navigation | Nil | 1 | High |
+| T3.4 | Implement data model classes and their functions | Guillem & Nil | 14 | Medium |
 | T3.4.1 | Implement User data class | TO ASSIGN | 2 | Medium |
 | T3.4.2 | Implement Preferences data class | TO ASSIGN | 2 | Medium |
 | T3.4.3 | Implement Authentication data class | TO ASSIGN | 2 | Medium |
@@ -39,7 +40,11 @@ The main objective of Sprint 01 is to build the initial structure and skeleton o
 
 ## 3. Definition of Done (DoD)
 
-- [ ] TODO
+- [ ] Have implemented domain model 
+- [ ] Have implemented all needed screens
+- [ ] Theme applied to all screens
+- [ ] README updated
+- [ ] Release published
 
 ---
 
