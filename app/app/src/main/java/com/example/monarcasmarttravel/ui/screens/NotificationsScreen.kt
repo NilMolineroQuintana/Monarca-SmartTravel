@@ -7,11 +7,10 @@ import androidx.navigation.NavController
 import com.example.monarcasmarttravel.ui.MyBottomBar
 
 @Composable
-fun CreateScreen(navController: NavController) {
+fun NotificationsScreen(navController: NavController) {
     Scaffold(
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
-        // Aquí va el contenido específico de la Home
-        Text("Create Screen", modifier = Modifier.padding(innerPadding))
+        Text("Create Notifications", modifier = Modifier.padding(innerPadding))
     }
 }
