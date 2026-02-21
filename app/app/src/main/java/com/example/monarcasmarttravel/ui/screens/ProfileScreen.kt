@@ -69,6 +69,7 @@ fun ProfileScreen(navController: NavController) {
                 WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button))
                 WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_text), onClick = { navController.navigate("preferences") })
                 WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { navController.navigate("aboutUs") })
+                WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), onClick = { navController.navigate("termsAndConditions") })
                 WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), onClick = { showLogOutPopUp = true })
             }
         }
@@ -77,7 +78,7 @@ fun ProfileScreen(navController: NavController) {
 @Composable
 fun PreferencesScreen(navController: NavController) {
     Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.preferences_text)) }
+        topBar = { MyTopBar(stringResource(R.string.preferences_text), onBackClick = { navController.popBackStack() }) }
         ,bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
@@ -91,44 +92,11 @@ fun PreferencesScreen(navController: NavController) {
         }
     }
 }
-@Composable
-fun ProfileInfo(name: String, email: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.pfp_sample),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .weight(0.25f)
-                .aspectRatio(1f)
-                .clip(CircleShape)
-        )
-
-        Column(
-            modifier = Modifier
-                .weight(0.75f)
-                .padding(start = 16.dp)
-        ) {
-            Text(stringResource(R.string.profile_page_name_field), style = MaterialTheme.typography.labelSmall)
-            Text(text = name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(stringResource(R.string.profile_page_email_field), style = MaterialTheme.typography.labelSmall)
-            Text(text = email, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-        }
-    }
-}
 
 @Composable
 fun AboutUsScreen(navController: NavController) {
     Scaffold(
-        topBar = { MyTopBar(stringResource(id = R.string.aboutUs_button)) },
+        topBar = { MyTopBar(stringResource(id = R.string.aboutUs_button), onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
@@ -197,14 +165,61 @@ fun AboutUsScreen(navController: NavController) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            WideOption(
-                ico = Icons.AutoMirrored.Filled.Assignment,
-                text = "Termes i Condicions",
-                onClick = { /* TODO */ }
+@Composable
+fun TermsAndConditionsScreen(navController: NavController) {
+    Scaffold(
+        topBar = { MyTopBar(stringResource(R.string.termsAndConditions_button), onBackClick = { navController.popBackStack() }) },
+        bottomBar = { MyBottomBar(navController) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 24.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = stringResource(R.string.termsAndConditions_text),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+    }
+}
+@Composable
+fun ProfileInfo(name: String, email: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.pfp_sample),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .weight(0.25f)
+                .aspectRatio(1f)
+                .clip(CircleShape)
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(0.75f)
+                .padding(start = 16.dp)
+        ) {
+            Text(stringResource(R.string.profile_page_name_field), style = MaterialTheme.typography.labelSmall)
+            Text(text = name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(stringResource(R.string.profile_page_email_field), style = MaterialTheme.typography.labelSmall)
+            Text(text = email, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -235,13 +250,11 @@ fun AboutUsPreview() {
     AboutUsScreen(rememberNavController())
 }
 
-/*
 @Preview(showBackground = true)
 @Composable
 fun TermsAndConditionsPreview() {
     TermsAndConditionsScreen(rememberNavController())
 }
-*/
 
 @Preview
 @Composable

@@ -61,7 +61,7 @@ fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (()
         Column() {
             if (onBackClick != null) {
                 IconButton(
-                    onClick = {},
+                    onClick = onBackClick,
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,

@@ -5,6 +5,7 @@ import HomeScreen
 import NotificationsScreen
 import PreferencesScreen
 import ProfileScreen
+import TermsAndConditionsScreen
 import TripsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -60,6 +61,9 @@ fun AppNavigation() {
             }
             composable("aboutUs") {
                 AboutUsScreen(navController)
+            }
+            composable("termsAndConditions") {
+                TermsAndConditionsScreen(navController)
             }
         }
     }
