@@ -1,4 +1,5 @@
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FormatPaint
@@ -62,11 +64,11 @@ fun ProfileScreen(navController: NavController) {
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            ProfileInfo(name = "Dummy", email = "hola@gmail.com")
+            ProfileInfo(name = "Dummy", email = "dummy@gmail.com")
             Column() {
                 WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button))
                 WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_text), onClick = { navController.navigate("preferences") })
-                WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { /* TODO */ })
+                WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { navController.navigate("aboutUs") })
                 WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), onClick = { showLogOutPopUp = true })
             }
         }
@@ -83,7 +85,7 @@ fun PreferencesScreen(navController: NavController) {
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            WideOption(ico = Icons.Filled.Notifications, text = "Notificacions")
+            WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), onClick = { navController.navigate("notifications") })
             WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = stringResource(R.string.language_catalan))
             WideOption(ico = Icons.Filled.FormatPaint,text = stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.theme_light))
         }
@@ -123,18 +125,88 @@ fun ProfileInfo(name: String, email: String) {
     }
 }
 
-/*
-@Preview()
 @Composable
-fun PreviewProfileInfo() {
-    ProfileInfo("Nil", "hola@gmail.com")
-}
- */
+fun AboutUsScreen(navController: NavController) {
+    Scaffold(
+        topBar = { MyTopBar(stringResource(id = R.string.aboutUs_button)) },
+        bottomBar = { MyBottomBar(navController) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
 
-@Preview
-@Composable
-fun PreviewLogOutPopUp() {
-    PopUp (show = true, title = "Title", text = "Text", acceptText = "Accept", cancelText = "Cancel", onAccept = {}, onDismiss = {})
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo_monarca),
+                    contentDescription = "Monarca Logo",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(100.dp)
+                        .aspectRatio(1f)
+                )
+                Text(
+                    text = "Monarca Smart Travel",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Versió 1.0.0",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Qui som?",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "Monarca Smart Travel és la teva aplicació ideal per planificar viatges. Organitza el teu itinerari, controla el teu pressupost i descobreix nous destins de forma fàcil i intel·ligent.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Equip de Desenvolupament",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Text(
+                    text = "• Nil Molinero\n• Guillem Alcoverro",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            WideOption(
+                ico = Icons.AutoMirrored.Filled.Assignment,
+                text = "Termes i Condicions",
+                onClick = { /* TODO */ }
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)
@@ -143,8 +215,36 @@ fun MainPreview() {
     ProfileScreen(rememberNavController())
 }
 
+/*
+@Preview(showBackground = true)
+@Composable
+fun TripHistoryPreview() {
+    TripHistoryScreen(rememberNavController())
+}
+*/
+
 @Preview(showBackground = true)
 @Composable
 fun PreferencesPreview() {
     PreferencesScreen(rememberNavController())
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AboutUsPreview() {
+    AboutUsScreen(rememberNavController())
+}
+
+/*
+@Preview(showBackground = true)
+@Composable
+fun TermsAndConditionsPreview() {
+    TermsAndConditionsScreen(rememberNavController())
+}
+*/
+
+@Preview
+@Composable
+fun PreviewLogOutPopUp() {
+    PopUp (show = true, title = "Title", text = "Text", acceptText = "Accept", cancelText = "Cancel", onAccept = {}, onDismiss = {})
 }
