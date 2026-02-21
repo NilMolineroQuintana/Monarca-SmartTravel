@@ -1,24 +1,30 @@
 package com.example.monarcasmarttravel.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowCircleRight
+import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Luggage
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -39,21 +45,40 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.monarcasmarttravel.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @Composable
-fun MyTopBar(title: String) {
+fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (() -> Unit)? = null) {
     Box(
         contentAlignment = Alignment.CenterStart,
         modifier = Modifier.fillMaxWidth()
             .statusBarsPadding()
             .padding(top = 24.dp, bottom = 10.dp)
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 16.dp)
-        )
+        Column() {
+            if (onBackClick != null) {
+                IconButton(
+                    onClick = {},
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+            if (showPageTitle) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
     }
 }
 
@@ -87,6 +112,60 @@ fun MyBottomBar(navController: NavController) {
             icon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null) },
             label = { Text(text = stringResource(R.string.bottom_menu_profile)) }
         )
+    }
+}
+
+@Composable
+fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean = true) {
+    val remainingDays = TimeUnit.MILLISECONDS.toDays(dateIn.time - System.currentTimeMillis())
+
+    val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+    val dateInString = dateFormat.format(dateIn)
+    val dateOutString = dateFormat.format(dateOut)
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (showNextTitle) {
+                    Text(
+                        text = "Tu próximo destino",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Filled.FlightTakeoff,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+
+            Text(
+                text = place,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+
+            Text(
+                text = "$dateInString - $dateOutString • Faltan $remainingDays días",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)
+            )
+        }
     }
 }
 
@@ -156,10 +235,16 @@ fun PopUp(show: Boolean, title: String, text: String, acceptText: String, cancel
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun PreviewMyTopBar() {
     MyTopBar("Test")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewMyTopBarBackbutton() {
+    MyTopBar("Test", onBackClick = {})
 }
 
 @Preview

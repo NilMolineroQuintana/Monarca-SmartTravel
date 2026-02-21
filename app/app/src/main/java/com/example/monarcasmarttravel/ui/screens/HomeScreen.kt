@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.MyBottomBar
+import com.example.monarcasmarttravel.ui.TripCard
 import com.example.monarcasmarttravel.ui.WideOption
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -59,7 +60,7 @@ fun HomeScreen(navController: NavController) {
             calendar.set(2026, Calendar.MARCH, 30)
             val dateOut = calendar.time
 
-            NextTripCard(
+            TripCard(
                 place = "Kioto, Japón",
                 dateIn = dateIn,
                 dateOut = dateOut
@@ -99,58 +100,6 @@ fun HeaderSection() {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-    }
-}
-
-@Composable
-fun NextTripCard(place: String, dateIn: Date, dateOut: Date) {
-    val remainingDays = TimeUnit.MILLISECONDS.toDays(dateIn.time - System.currentTimeMillis())
-
-    val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
-    val dateInString = dateFormat.format(dateIn)
-    val dateOutString = dateFormat.format(dateOut)
-
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Tu próximo destino",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                )
-                Icon(
-                    imageVector = Icons.Filled.FlightTakeoff,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-
-            Text(
-                text = place,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-
-            Text(
-                text = "$dateInString - $dateOutString • Faltan $remainingDays días",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)
-            )
-        }
     }
 }
 
