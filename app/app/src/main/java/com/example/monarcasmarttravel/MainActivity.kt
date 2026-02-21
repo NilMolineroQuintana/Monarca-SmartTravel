@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel
 
+import AboutUsScreen
 import HomeScreen
 import NotificationsScreen
 import PreferencesScreen
@@ -56,6 +57,9 @@ fun AppNavigation() {
             }
             composable("preferences") {
                 PreferencesScreen(navController)
+            }
+            composable("aboutUs") {
+                AboutUsScreen(navController)
             }
         }
     }
