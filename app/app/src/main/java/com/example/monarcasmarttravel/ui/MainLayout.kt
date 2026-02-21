@@ -76,12 +76,6 @@ fun MyBottomBar(navController: NavController) {
             label = { Text(text = stringResource(R.string.bottom_menu_trips)) }
         )
         NavigationBarItem(
-            selected = currentRoute == "notifications",
-            onClick = { if (currentRoute != "notifications") navController.navigate("notifications") },
-            icon = { Icon(imageVector = Icons.Filled.Notifications, contentDescription = null) },
-            label = { Text(text = stringResource(R.string.bottom_menu_notifications)) }
-        )
-        NavigationBarItem(
             selected = currentRoute == "profile",
             onClick = { if (currentRoute != "profile") navController.navigate("profile") },
             icon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null) },
