@@ -20,14 +20,9 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +60,11 @@ fun ProfileScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
         ) {
             ProfileInfo(name = "Dummy", email = "dummy@gmail.com")
-            Column() {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), onClick = { navController.navigate("notifications") })
                 WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button), onClick = {})
                 WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_text), onClick = { navController.navigate("preferences") })
                 WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { navController.navigate("aboutUs") })
@@ -82,11 +81,13 @@ fun PreferencesScreen(navController: NavController) {
         ,bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
         ) {
-            WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), onClick = { navController.navigate("notifications") })
+            WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = "Activades", onClick = { })
             WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = stringResource(R.string.language_catalan), onClick = {})
             WideOption(ico = Icons.Filled.FormatPaint,text = stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.theme_light), onClick = {})
         }
