@@ -170,15 +170,13 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
 }
 
 @Composable
-fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, secondaryText: String = "", onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, showIcon: Boolean = true, secondaryText: String = "", onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
     val shape = if (rounded) RoundedCornerShape(12.dp) else RectangleShape
     Surface(
         onClick = onClick,
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = shape,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -209,11 +207,13 @@ fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, secondar
                     )
                 }
             }
-            Icon(
-                imageVector = Icons.Filled.ArrowCircleRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
+            if (showIcon) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowCircleRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
