@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.monarcasmarttravel.ui.screens.ItineraryScreen
+import com.example.monarcasmarttravel.ui.screens.PlanScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 
 class MainActivity : ComponentActivity() {
@@ -56,6 +58,12 @@ fun AppNavigation() {
             }
             composable("preferences") {
                 PreferencesScreen(navController)
+            }
+            composable("itinerary") {
+                ItineraryScreen(navController)
+            }
+            composable("plan") {
+                PlanScreen(navController)
             }
         }
     }

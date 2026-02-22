@@ -68,7 +68,7 @@ fun ItineraryScreen(navController: NavController) {
                 modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
             )
             TextButton (
-                onClick = {},
+                onClick = { navController.navigate("plan") },
                 colors = ButtonDefaults.textButtonColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
@@ -83,7 +83,7 @@ fun ItineraryScreen(navController: NavController) {
     }
 }
 
-enum class PlanType(@StringRes val titleRes: Int, val icon: ImageVector, val route: String) {
+enum class PlanType(val titleRes: Int, val icon: ImageVector, val route: String) {
     FLIGHT(R.string.plan_flight, Icons.Default.FlightTakeoff, "detail_flight"),
     BOAT(R.string.plan_boat, Icons.Default.DirectionsBoatFilled, "detail_boat"),
     TRAIN(R.string.plan_train, Icons.Default.Train, "detail_train"),
@@ -107,7 +107,6 @@ fun PlanScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
         ) {
             item { Text(
                 text = "Els més populars",
