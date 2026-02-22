@@ -170,7 +170,7 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
 }
 
 @Composable
-fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, showIcon: Boolean = true, secondaryText: String = "", onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, showIcon: Boolean = true, secondaryText: String = "", onClick: () -> Unit, modifier: Modifier = Modifier) {
     val shape = if (rounded) RoundedCornerShape(12.dp) else RectangleShape
     Surface(
         onClick = onClick,

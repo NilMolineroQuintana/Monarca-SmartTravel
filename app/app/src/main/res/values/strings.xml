@@ -16,4 +16,11 @@
     <string name="language_english">Anglès</string>
     <string name="theme_light">Clar</string>
     <string name="theme_dark">Fosc</string>
+    <string name="plan_flight">Vol</string>
+    <string name="plan_boat">Vaixell</string>
+    <string name="plan_train">Tren</string>
+    <string name="plan_hotel">Allotjament</string>
+    <string name="plan_restaurant">Restaurant</string>
+    <string name="plan_location">Lloc d\'interès</string>
+    <string name="plan_parking">Aparcament</string>
 </resources>
