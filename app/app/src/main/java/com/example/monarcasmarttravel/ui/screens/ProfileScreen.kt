@@ -66,7 +66,7 @@ fun ProfileScreen(navController: NavController) {
         ) {
             ProfileInfo(name = "Dummy", email = "dummy@gmail.com")
             Column() {
-                WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button))
+                WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button), onClick = {})
                 WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_text), onClick = { navController.navigate("preferences") })
                 WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { navController.navigate("aboutUs") })
                 WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), onClick = { navController.navigate("termsAndConditions") })
@@ -87,8 +87,8 @@ fun PreferencesScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
         ) {
             WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), onClick = { navController.navigate("notifications") })
-            WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = stringResource(R.string.language_catalan))
-            WideOption(ico = Icons.Filled.FormatPaint,text = stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.theme_light))
+            WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = stringResource(R.string.language_catalan), onClick = {})
+            WideOption(ico = Icons.Filled.FormatPaint,text = stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.theme_light), onClick = {})
         }
     }
 }
