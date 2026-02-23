@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Luggage
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -50,6 +49,12 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+
+object AppDimensions {
+    val PaddingSmall = 8.dp
+    val PaddingMedium = 16.dp
+    val PaddingLarge = 24.dp
+}
 @Composable
 fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (() -> Unit)? = null) {
     Box(
@@ -75,7 +80,7 @@ fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (()
                     text = title,
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, bottom = AppDimensions.PaddingLarge)
                 )
             }
         }
