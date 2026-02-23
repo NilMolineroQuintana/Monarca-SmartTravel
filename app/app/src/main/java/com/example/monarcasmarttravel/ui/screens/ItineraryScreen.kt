@@ -1,6 +1,5 @@
 package com.example.monarcasmarttravel.ui.screens
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.TripCard
@@ -54,6 +54,8 @@ fun ItineraryScreen(navController: NavController) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(innerPadding)
+                .padding(horizontal = AppDimensions.PaddingMedium)
+                .verticalScroll(rememberScrollState())
         ) {
             TripCard(
                 place = "Kioto, Japón",
@@ -106,13 +108,13 @@ fun PlanScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = AppDimensions.PaddingMedium)
         ) {
             item { Text(
                 text = "Els més populars",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 10.dp, top = 20.dp)
+                modifier = Modifier.padding(bottom = 10.dp)
                 )
             }
 

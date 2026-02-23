@@ -23,4 +23,9 @@
     <string name="plan_restaurant">Restaurant</string>
     <string name="plan_location">Lloc d\'interès</string>
     <string name="plan_parking">Aparcament</string>
+    <string name="data_de_entrada">Data de entrada</string>
+    <string name="data_de_sortida">Data de sortida</string>
+    <string name="direccio">Direcció</string>
+    <string name="add">Afegir</string>
+    <string name="hotel_name">Nom allotjament</string>
 </resources>

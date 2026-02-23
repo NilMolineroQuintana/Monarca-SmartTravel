@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyTopBar
 
 @Composable
@@ -36,7 +37,7 @@ fun TransportScreen(navController: NavController) {
                 .padding(innerPadding)
         ) {
             item {
-                TextField(value = "", onValueChange = {}, label = { Text("Data de sortida") }, modifier = Modifier.padding(top = 20.dp))
+                TextField(value = "", onValueChange = {}, label = { Text(stringResource(R.string.data_de_sortida)) }, modifier = Modifier.padding(top = AppDimensions.PaddingLarge))
             }
             item {
                 TextField(value = "", onValueChange = {}, label = { Text("Companyia") })
