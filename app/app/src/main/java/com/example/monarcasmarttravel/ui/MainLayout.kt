@@ -61,7 +61,7 @@ fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (()
         Column() {
             if (onBackClick != null) {
                 IconButton(
-                    onClick = {},
+                    onClick = onBackClick,
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -99,12 +99,6 @@ fun MyBottomBar(navController: NavController) {
             onClick = {if (currentRoute != "trips") navController.navigate("trips") },
             icon = { Icon(imageVector = Icons.Filled.Luggage, contentDescription = null) },
             label = { Text(text = stringResource(R.string.bottom_menu_trips)) }
-        )
-        NavigationBarItem(
-            selected = currentRoute == "notifications",
-            onClick = { if (currentRoute != "notifications") navController.navigate("notifications") },
-            icon = { Icon(imageVector = Icons.Filled.Notifications, contentDescription = null) },
-            label = { Text(text = stringResource(R.string.bottom_menu_notifications)) }
         )
         NavigationBarItem(
             selected = currentRoute == "profile",
