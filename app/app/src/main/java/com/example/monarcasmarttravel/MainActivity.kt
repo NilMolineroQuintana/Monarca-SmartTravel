@@ -1,10 +1,10 @@
 package com.example.monarcasmarttravel
 
-import HomeScreen
-import NotificationsScreen
-import PreferencesScreen
-import ProfileScreen
-import TripsScreen
+import com.example.monarcasmarttravel.ui.screens.HomeScreen
+import com.example.monarcasmarttravel.ui.screens.NotificationsScreen
+import com.example.monarcasmarttravel.ui.screens.PreferencesScreen
+import com.example.monarcasmarttravel.ui.screens.ProfileScreen
+import com.example.monarcasmarttravel.ui.screens.TripsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
