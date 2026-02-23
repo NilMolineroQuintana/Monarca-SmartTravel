@@ -28,4 +28,7 @@
     <string name="direccio">Direcció</string>
     <string name="add">Afegir</string>
     <string name="hotel_name">Nom allotjament</string>
+    <string name="restaurant_name">Nom del restaurant</string>
+    <string name="location_name">Nom del lloc d\'interès</string>
+    <string name="parking_name">Nom del parking</string>
 </resources>

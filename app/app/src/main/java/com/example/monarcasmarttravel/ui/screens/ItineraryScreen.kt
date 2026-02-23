@@ -86,17 +86,17 @@ fun ItineraryScreen(navController: NavController) {
 }
 
 enum class PlanType(val titleRes: Int, val icon: ImageVector, val route: String) {
-    FLIGHT(R.string.plan_flight, Icons.Default.FlightTakeoff, "detail_flight"),
-    BOAT(R.string.plan_boat, Icons.Default.DirectionsBoatFilled, "detail_boat"),
-    TRAIN(R.string.plan_train, Icons.Default.Train, "detail_train"),
-    HOTEL(R.string.plan_hotel, Icons.Default.Hotel, "detail_hotel"),
-    RESTAURANT(R.string.plan_restaurant, Icons.Default.Restaurant, "detail_restaurant"),
-    LOCATION(R.string.plan_location, Icons.Default.LocationCity, "detail_location"),
-    PARKING(R.string.plan_parking, Icons.Default.LocalParking, "detail_parking")
+    FLIGHT(R.string.plan_flight, Icons.Default.FlightTakeoff, "flight"),
+    BOAT(R.string.plan_boat, Icons.Default.DirectionsBoatFilled, "boat"),
+    TRAIN(R.string.plan_train, Icons.Default.Train, "train"),
+    HOTEL(R.string.plan_hotel, Icons.Default.Hotel, "hotel"),
+    RESTAURANT(R.string.plan_restaurant, Icons.Default.Restaurant, "restaurant"),
+    LOCATION(R.string.plan_location, Icons.Default.LocationCity, "location"),
+    PARKING(R.string.plan_parking, Icons.Default.LocalParking, "parking")
 }
 
 @Composable
-fun PlanScreen(navController: NavController) {
+fun PlanOptionsScreen(navController: NavController) {
 
     val PopularPlans = listOf(PlanType.FLIGHT, PlanType.BOAT, PlanType.TRAIN,)
     val MorePlans = listOf(PlanType.HOTEL, PlanType.RESTAURANT, PlanType.LOCATION, PlanType.PARKING)
@@ -121,7 +121,7 @@ fun PlanScreen(navController: NavController) {
             val mod = Modifier.padding(vertical = 4.dp)
 
             items(PopularPlans) { plan ->
-                WideOption(plan.icon, stringResource(id = plan.titleRes), showIcon = false, modifier = mod, onClick = {})
+                WideOption(plan.icon, stringResource(id = plan.titleRes), showIcon = false, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
             }
 
             item {
@@ -134,7 +134,7 @@ fun PlanScreen(navController: NavController) {
             }
 
             items(MorePlans) { plan ->
-                WideOption(plan.icon, stringResource(id = plan.titleRes), showIcon = false, modifier = mod, onClick = {})
+                WideOption(plan.icon, stringResource(id = plan.titleRes), showIcon = false, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
             }
         }
     }
@@ -149,5 +149,5 @@ fun ItineraryPreview() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PlanScreenPreview() {
-    PlanScreen(rememberNavController())
+    PlanOptionsScreen(rememberNavController())
 }
