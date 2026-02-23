@@ -41,6 +41,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
     var checkInDate by rememberSaveable { mutableStateOf(date) }
     var checkOutDate by rememberSaveable { mutableStateOf(date) }
     var address by rememberSaveable { mutableStateOf("") }
+    var origin by rememberSaveable { mutableStateOf("") }
     var company by rememberSaveable { mutableStateOf("") }
     var transportNumber by rememberSaveable { mutableStateOf("") }
 
@@ -105,9 +106,17 @@ fun PlanScreen(navController: NavController, ruta: String?) {
             if (ruta in transports) {
                 item {
                     TextField(
+                        value = origin,
+                        onValueChange = { origin = it },
+                        label = { Text(stringResource(R.string.origin)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                item {
+                    TextField(
                         value = company,
                         onValueChange = { company = it },
-                        label = { Text("Companyia") },
+                        label = { Text(stringResource(R.string.company)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -160,5 +169,11 @@ fun PlanScreen(navController: NavController, ruta: String?) {
 @Preview(showBackground = true)
 @Composable
 fun HotelScreenPreview() {
+    PlanScreen(rememberNavController(), "hotel")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RestaurantScreenPreview() {
     PlanScreen(rememberNavController(), "flight")
 }

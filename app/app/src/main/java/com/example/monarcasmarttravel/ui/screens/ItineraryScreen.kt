@@ -1,12 +1,21 @@
 package com.example.monarcasmarttravel.ui.screens
 
+import android.graphics.drawable.Icon
+import android.widget.Space
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsBoatFilled
@@ -17,8 +26,10 @@ import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Train
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -51,35 +62,51 @@ fun ItineraryScreen(navController: NavController) {
         topBar = { MyTopBar(showPageTitle = false, onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
-        Column(
+        LazyColumn (
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(innerPadding)
-                .padding(horizontal = AppDimensions.PaddingMedium)
-                .verticalScroll(rememberScrollState())
         ) {
-            TripCard(
-                place = "Kioto, Japón",
-                dateIn = dateIn,
-                dateOut = dateOut,
-                showNextTitle = false
-            )
-            Text(
-                text = "No tens cap plan",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
-            )
-            TextButton (
-                onClick = { navController.navigate("plan") },
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                modifier = Modifier.size(width = 200.dp, height = 50.dp)
-            ) {
-                Text(
-                    text = "Afegir un nou",
-                    style = MaterialTheme.typography.bodyLarge
+            item {
+                TripCard(
+                    place = "Kioto, Japón",
+                    dateIn = dateIn,
+                    dateOut = dateOut,
+                    showNextTitle = false,
+                    modifier = Modifier
+                        .padding(horizontal = AppDimensions.PaddingMedium)
                 )
+                Spacer(modifier = Modifier.size(AppDimensions.PaddingLarge))
+            }
+            if (true) {
+                item {
+                    Text(
+                        text = "No tens cap plan",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
+                    )
+                }
+                item {
+                    TextButton (
+                        onClick = { navController.navigate("plan") },
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                        modifier = Modifier.size(width = 200.dp, height = 50.dp)
+                    ) {
+                        Text(
+                            text = "Afegir un nou",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            } else {
+                item {
+                    ItineraryItemComponent(Icons.Filled.FlightTakeoff,"21:15","BCN - HND", "FR 999 (Ryanair)", "Arribada: 23/03/2026 18:55")
+                }
+                item {
+                    ItineraryItemComponent(Icons.Filled.Hotel, "22:15","Sakura Mori Retreat", "3-chōme-43-15 Sendagi, Bunkyo City, Tokyo 113-0022, Japón", )
+                }
             }
         }
     }
@@ -139,6 +166,65 @@ fun PlanOptionsScreen(navController: NavController) {
         }
     }
 }
+
+@Composable
+fun ItineraryItemComponent(ico: ImageVector, enterTime: String, title: String, secondaryText: String, tertiaryText: String = "")
+{
+    Surface(
+        modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AppDimensions.PaddingSmall)
+        )
+        {
+            Text(
+                text = enterTime,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Box (
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(25.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = CircleShape
+                    ),
+            ) {
+                Icon(
+                    imageVector = ico,
+                    contentDescription = null,
+                    modifier = Modifier.size(15.dp)
+                )
+            }
+            Column() {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = secondaryText,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = tertiaryText,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ItineraryItemPreview() {
+    ItineraryItemComponent(Icons.Filled.Hotel,"Sakura Mori Retreat", "23/03/2026 18:55", "3-chōme-43-15 Sendagi, Bunkyo City, Tokyo 113-0022, Japón")
+}
+
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

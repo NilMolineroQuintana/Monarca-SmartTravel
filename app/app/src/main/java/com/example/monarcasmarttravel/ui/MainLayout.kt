@@ -115,7 +115,7 @@ fun MyBottomBar(navController: NavController) {
 }
 
 @Composable
-fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean = true) {
+fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean = true, modifier: Modifier = Modifier) {
     val remainingDays = TimeUnit.MILLISECONDS.toDays(dateIn.time - System.currentTimeMillis())
 
     val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
@@ -127,7 +127,7 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier.padding(20.dp),

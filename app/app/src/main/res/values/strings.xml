@@ -34,4 +34,6 @@
     <string name="flight_num">Número de vol</string>
     <string name="boat_num">Identificador de vaixell</string>
     <string name="train_num">Identificador de tren</string>
+    <string name="origin">Origen</string>
+    <string name="company">Companyia</string>
 </resources>
