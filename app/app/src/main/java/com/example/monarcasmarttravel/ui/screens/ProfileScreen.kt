@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
@@ -61,8 +62,8 @@ fun ProfileScreen(navController: NavController) {
         ) {
             ProfileInfo(name = "Dummy", email = "dummy@gmail.com")
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(horizontal = 16.dp)
+                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
+                modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
             ) {
                 WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), onClick = { navController.navigate("notifications") })
                 WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button), onClick = {})
@@ -81,11 +82,11 @@ fun PreferencesScreen(navController: NavController) {
         ,bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = AppDimensions.PaddingMedium)
         ) {
             WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = "Activades", onClick = { })
             WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = stringResource(R.string.language_catalan), onClick = {})
@@ -105,14 +106,14 @@ fun AboutUsScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .padding(horizontal = AppDimensions.PaddingMedium, vertical = AppDimensions.PaddingLarge),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingLarge)
         ) {
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo_monarca),
@@ -136,7 +137,7 @@ fun AboutUsScreen(navController: NavController) {
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
             ) {
                 Text(
                     text = "Qui som?",
@@ -152,7 +153,7 @@ fun AboutUsScreen(navController: NavController) {
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
             ) {
                 Text(
                     text = "Equip de Desenvolupament",
@@ -180,7 +181,7 @@ fun TermsAndConditionsScreen(navController: NavController) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 24.dp)
+                .padding(horizontal = AppDimensions.PaddingMedium)
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
@@ -196,7 +197,7 @@ fun ProfileInfo(name: String, email: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(AppDimensions.PaddingMedium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -212,12 +213,12 @@ fun ProfileInfo(name: String, email: String) {
         Column(
             modifier = Modifier
                 .weight(0.75f)
-                .padding(start = 16.dp)
+                .padding(start = AppDimensions.PaddingMedium)
         ) {
             Text(stringResource(R.string.profile_page_name_field), style = MaterialTheme.typography.labelSmall)
             Text(text = name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(AppDimensions.PaddingSmall))
 
             Text(stringResource(R.string.profile_page_email_field), style = MaterialTheme.typography.labelSmall)
             Text(text = email, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
