@@ -113,7 +113,7 @@ fun QuickActionsSection(navController: NavController) {
             ico = Icons.Filled.Explore,
             text = "Explorar destinos",
             secondaryText = "Inspírate con lugares populares",
-            onClick = { /* TODO: Navegar a explorador */ }
+            onClick = { navController.navigate("itinerary") }
         )
     }
 }

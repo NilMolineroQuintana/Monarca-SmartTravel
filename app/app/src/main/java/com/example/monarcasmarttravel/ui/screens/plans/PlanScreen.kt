@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,12 +36,12 @@ import java.util.Calendar
 fun PlanScreen(navController: NavController, ruta: String?) {
 
     val date = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(Calendar.getInstance().time)
-    var accommodationName by remember { mutableStateOf("") }
-    var checkInDate by remember { mutableStateOf(date) }
-    var checkOutDate by remember { mutableStateOf(date) }
-    var address by remember { mutableStateOf("") }
-    var company by remember { mutableStateOf("") }
-    var transportNumber by remember { mutableStateOf("") }
+    var accommodationName by rememberSaveable { mutableStateOf("") }
+    var checkInDate by rememberSaveable { mutableStateOf(date) }
+    var checkOutDate by rememberSaveable { mutableStateOf(date) }
+    var address by rememberSaveable { mutableStateOf("") }
+    var company by rememberSaveable { mutableStateOf("") }
+    var transportNumber by rememberSaveable { mutableStateOf("") }
 
     val transports = listOf("train", "boat", "flight")
 
