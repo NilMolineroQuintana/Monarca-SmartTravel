@@ -1,12 +1,10 @@
 package com.example.monarcasmarttravel
 
-import AboutUsScreen
-import HomeScreen
-import NotificationsScreen
-import PreferencesScreen
-import ProfileScreen
-import TermsAndConditionsScreen
-import TripsScreen
+import com.example.monarcasmarttravel.ui.screens.HomeScreen
+import com.example.monarcasmarttravel.ui.screens.NotificationsScreen
+import com.example.monarcasmarttravel.ui.screens.PreferencesScreen
+import com.example.monarcasmarttravel.ui.screens.ProfileScreen
+import com.example.monarcasmarttravel.ui.screens.TripsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -58,12 +56,6 @@ fun AppNavigation() {
             }
             composable("preferences") {
                 PreferencesScreen(navController)
-            }
-            composable("aboutUs") {
-                AboutUsScreen(navController)
-            }
-            composable("termsAndConditions") {
-                TermsAndConditionsScreen(navController)
             }
         }
     }
