@@ -1,10 +1,13 @@
 package com.example.monarcasmarttravel
 
+import com.example.monarcasmarttravel.ui.screens.AboutUsScreen
 import com.example.monarcasmarttravel.ui.screens.HomeScreen
 import com.example.monarcasmarttravel.ui.screens.NotificationsScreen
 import com.example.monarcasmarttravel.ui.screens.PreferencesScreen
 import com.example.monarcasmarttravel.ui.screens.ProfileScreen
 import com.example.monarcasmarttravel.ui.screens.TripsScreen
+import com.example.monarcasmarttravel.ui.screens.TermsAndConditionsScreen
+import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +58,12 @@ fun AppNavigation() {
             }
             composable("preferences") {
                 PreferencesScreen(navController)
+            }
+            composable("aboutUs") {
+                AboutUsScreen(navController)
+            }
+            composable("termsAndConditions") {
+                TermsAndConditionsScreen(navController)
             }
         }
     }
