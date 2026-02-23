@@ -31,4 +31,7 @@
     <string name="restaurant_name">Nom del restaurant</string>
     <string name="location_name">Nom del lloc d\'interès</string>
     <string name="parking_name">Nom del parking</string>
+    <string name="flight_num">Número de vol</string>
+    <string name="boat_num">Identificador de vaixell</string>
+    <string name="train_num">Identificador de tren</string>
 </resources>

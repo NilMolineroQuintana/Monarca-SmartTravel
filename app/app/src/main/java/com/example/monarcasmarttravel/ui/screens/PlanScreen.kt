@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.ui.screens.plans
+package com.example.monarcasmarttravel.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -17,7 +17,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,13 +29,15 @@ import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyTopBar
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun PlanScreen(navController: NavController, ruta: String?) {
 
-    val date = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(Calendar.getInstance().time)
-    var accommodationName by rememberSaveable { mutableStateOf("") }
+    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
+    var locationName by rememberSaveable { mutableStateOf("") }
     var checkInDate by rememberSaveable { mutableStateOf(date) }
     var checkOutDate by rememberSaveable { mutableStateOf(date) }
     var address by rememberSaveable { mutableStateOf("") }
@@ -44,6 +45,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
     var transportNumber by rememberSaveable { mutableStateOf("") }
 
     val transports = listOf("train", "boat", "flight")
+    val excludeCheckOut = listOf("train", "boat", "flight", "location", "restaurant")
 
     val titleName = when (ruta) {
         "flight" -> stringResource(R.string.plan_flight)
@@ -64,9 +66,15 @@ fun PlanScreen(navController: NavController, ruta: String?) {
          else -> "Nom"
     }
 
+    val transportName = when (ruta) {
+        "flight" -> stringResource(R.string.flight_num)
+        "boat" -> stringResource(R.string.boat_num)
+        "train" -> stringResource(R.string.train_num)
+        else -> "Identificador"
+    }
 
     Scaffold(
-        topBar = { MyTopBar(titleName, onBackClick = { navController.popBackStack() }) }
+        topBar = { MyTopBar( "${stringResource(R.string.add)} ${titleName.lowercase()}", onBackClick = { navController.popBackStack() }) }
     ) { innerPadding ->
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -79,8 +87,8 @@ fun PlanScreen(navController: NavController, ruta: String?) {
             if (ruta !in transports) {
                 item {
                     TextField(
-                        value = accommodationName,
-                        onValueChange = { accommodationName = it },
+                        value = locationName,
+                        onValueChange = { locationName = it },
                         label = { Text(labelName) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -107,7 +115,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                     TextField(
                         value = transportNumber,
                         onValueChange = { transportNumber = it },
-                        label = { Text("Número de vol") },
+                        label = { Text(transportName) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -123,7 +131,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                         label = { Text(stringResource(R.string.data_de_entrada)) },
                         modifier = Modifier.weight(1f)
                     )
-                    if (ruta !in transports) {
+                    if (ruta !in excludeCheckOut) {
                         TextField(
                             value = checkOutDate,
                             onValueChange = { checkOutDate = it },
@@ -152,5 +160,5 @@ fun PlanScreen(navController: NavController, ruta: String?) {
 @Preview(showBackground = true)
 @Composable
 fun HotelScreenPreview() {
-    PlanScreen(rememberNavController(), "hotel")
+    PlanScreen(rememberNavController(), "flight")
 }

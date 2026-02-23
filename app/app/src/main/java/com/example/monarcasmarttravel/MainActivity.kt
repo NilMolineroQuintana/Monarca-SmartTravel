@@ -21,7 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.monarcasmarttravel.ui.screens.ItineraryScreen
 import com.example.monarcasmarttravel.ui.screens.PlanOptionsScreen
-import com.example.monarcasmarttravel.ui.screens.plans.PlanScreen
+import com.example.monarcasmarttravel.ui.screens.PlanScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 
 class MainActivity : ComponentActivity() {
