@@ -29,11 +29,11 @@ The main objective of Sprint 01 is to build the initial structure and skeleton o
 | T3.4 | Implement data model classes and their functions | Guillem & Nil | 14 | Medium |
 | T3.4.1 | Implement User data class | Nil | 2 | Medium |
 | T3.4.2 | Implement Preferences data class | Nil | 2 | Medium |
-| T3.4.3 | Implement Authentication data class | TO ASSIGN | 2 | Medium |
-| T3.4.4 | Implement Trip data class | TO ASSIGN | 2 | Medium |
+| T3.4.3 | Implement Authentication data class | Guillem | 2 | Medium |
+| T3.4.4 | Implement Trip data class | Guillem | 2 | Medium |
 | T3.4.5 | Implement ItineraryItem data class | Nil | 2 | Medium |
 | T3.4.6 | Implement Image data class | Nil | 1 | Medium |
-| T3.4.7 | Implement AIRecomendations data class | TO ASSIGN | 2 | Medium |
+| T3.4.7 | Implement AIRecomendations data class | Guillem | 2 | Medium |
 | T3.4.8 | Implement Map data class | Nil | 2 | Medium |
 
 ---
