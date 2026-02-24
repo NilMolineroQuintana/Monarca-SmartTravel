@@ -49,6 +49,35 @@ fun ItineraryScreen(navController: NavController) {
     calendar.set(2026, Calendar.MARCH, 30)
     val dateOut = calendar.time
 
+    calendar.set(2026, Calendar.MARCH, 23, 10, 30)
+    val dataVol = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 23, 15, 0)
+    val checkInHotel = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 23, 17, 0)
+    val checkInParking = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 30, 11, 0)
+    val checkOutGeneral = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 25, 20, 30)
+    val dataRest = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 26, 12, 0)
+    val dataMirador = calendar.time
+
+    val mockData = listOf(
+        ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Ryanair", locationName = "Barcelona", checkInDate = dataVol, transportNumber = "FR1234"),
+        ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Hotel FAWLTY", checkInDate = checkInHotel, checkOutDate = checkOutGeneral, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+        ItineraryItem(id = 3, type = PlanType.PARKING, locationName = "Parking FAWLTY", checkInDate = checkInParking, checkOutDate = checkOutGeneral, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+        ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Restaurant FAWLTY", checkInDate = dataRest, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+        ItineraryItem(id = 5, type = PlanType.LOCATION, locationName = "Mirador FAWLTY", checkInDate = dataMirador, address = "Aquest text és una prova pera veure com es veu el camp de direcció")
+    )
+    val groupedData = mockData
+        .sortedBy { it.checkInDate }
+        .groupBy { it.formatDateKey(it.checkInDate) }
+
     Scaffold(
         topBar = { MyTopBar(showPageTitle = false, onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) }
@@ -92,24 +121,18 @@ fun ItineraryScreen(navController: NavController) {
                     }
                 }
             } else {
-                val calendar = Calendar.getInstance().apply {
-                    set(Calendar.YEAR, 2026)
-                    set(Calendar.MONTH, Calendar.FEBRUARY)
-                    set(Calendar.DAY_OF_MONTH, 15)
-                    set(Calendar.HOUR_OF_DAY, 14)
-                    set(Calendar.MINUTE, 30)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-                val mockData = listOf(
-                    ItineraryItem(id = 1, type = PlanType.TRAIN, company = "Ryanair", locationName = "Barcelona", checkInDate = calendar.time, transportNumber = "FR1234"),
-                    ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Hotel FAWLTY", checkInDate = calendar.time, checkOutDate = dateOut, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-                    ItineraryItem(id = 3, type = PlanType.PARKING, locationName = "Parking FAWLTY", checkInDate = calendar.time, checkOutDate = dateOut, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-                    ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Restaurant FAWLTY", checkInDate = calendar.time, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-                    ItineraryItem(id = 5, type = PlanType.LOCATION, locationName = "Mirador FAWLTY", checkInDate = calendar.time, address = "Aquest text és una prova pera veure com es veu el camp de direcció")
-                )
-                items (mockData) { item ->
-                    ItineraryItemComponent(item)
+                groupedData.forEach { (fecha, itemsDelDia) ->
+                    item {
+                        Text(
+                            text = fecha,
+                            modifier = Modifier.padding(16.dp),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    items(itemsDelDia) { plan ->
+                        ItineraryItemComponent(plan)
+                    }
                 }
             }
         }
