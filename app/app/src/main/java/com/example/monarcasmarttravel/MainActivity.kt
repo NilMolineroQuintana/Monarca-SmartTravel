@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.monarcasmarttravel.ui.screens.AlbumScreen
 import com.example.monarcasmarttravel.ui.screens.HomeScreen
 import com.example.monarcasmarttravel.ui.screens.ItineraryScreen
 import com.example.monarcasmarttravel.ui.screens.NotificationsScreen
@@ -67,6 +68,9 @@ fun AppNavigation() {
             }
             composable("plan") {
                 PlanOptionsScreen(navController)
+            }
+            composable("album") {
+                AlbumScreen(navController)
             }
             composable(
                 route = "plan/{route}",

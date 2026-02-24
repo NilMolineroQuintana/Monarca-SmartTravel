@@ -1,5 +1,7 @@
 package com.example.monarcasmarttravel.ui.screens
 
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,25 +15,36 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Hotel
+import androidx.compose.material.icons.filled.PhotoAlbum
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.Image
 import com.example.monarcasmarttravel.domain.ItineraryItem
 import com.example.monarcasmarttravel.domain.PlanType
 import com.example.monarcasmarttravel.ui.AppDimensions
@@ -43,6 +56,8 @@ import java.util.Calendar
 
 @Composable
 fun ItineraryScreen(navController: NavController) {
+    // Mock-up data
+
     val calendar = Calendar.getInstance()
     calendar.set(2026, Calendar.MARCH, 23)
     val dateIn = calendar.time
@@ -78,9 +93,24 @@ fun ItineraryScreen(navController: NavController) {
         .sortedBy { it.checkInDate }
         .groupBy { it.formatDateKey(it.checkInDate) }
 
+    // Mock-up data
+
     Scaffold(
         topBar = { MyTopBar(showPageTitle = false, onBackClick = { navController.popBackStack() }) },
-        bottomBar = { MyBottomBar(navController) }
+        bottomBar = { MyBottomBar(navController) },
+        floatingActionButton = {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
+            ) {
+                SmallFloatingActionButton (onClick = { navController.navigate("album") }) {
+                    Icon(imageVector = Icons.Filled.PhotoAlbum, contentDescription = null)
+                }
+                FloatingActionButton(onClick = { navController.navigate("plan") }) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                }
+            }
+        }
     ) { innerPadding ->
         LazyColumn (
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -121,10 +151,10 @@ fun ItineraryScreen(navController: NavController) {
                     }
                 }
             } else {
-                groupedData.forEach { (fecha, itemsDelDia) ->
+                groupedData.forEach { (date, itemsDelDia) ->
                     item {
                         Text(
-                            text = fecha,
+                            text = date,
                             modifier = Modifier.padding(16.dp),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
@@ -179,6 +209,49 @@ fun PlanOptionsScreen(navController: NavController) {
 
             items(MorePlans) { plan ->
                 WideOption(plan.icon, stringResource(id = plan.titleRes), showIcon = false, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
+            }
+        }
+    }
+}
+
+@Composable
+fun AlbumScreen(navController: NavController) {
+
+    // Mock-up data
+    val mockData = listOf(
+        Image(id = 1, image_id = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
+        Image(id = 2, image_id = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time)
+    )
+    // Mock-up data
+
+
+    val context = LocalContext.current
+    Scaffold(
+        topBar = { MyTopBar("Álbum", onBackClick = { navController.popBackStack() }) },
+        bottomBar = { MyBottomBar(navController) },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                Toast.makeText(
+                    context,
+                    "Funció que s'implementarà més endevant",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }) {
+                Icon(imageVector = Icons.Filled.Upload, contentDescription = null)
+            }
+        }
+    ) {
+        innerPadding ->
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = AppDimensions.PaddingMedium)
+                .fillMaxWidth()
+        ) {
+            items(mockData) { img ->
+                ImageComponent(img)
             }
         }
     }
@@ -253,10 +326,32 @@ fun ItineraryItemComponent(item: ItineraryItem) {
     }
 }
 
-@Preview
 @Composable
-fun ItineraryItemPreview() {
-    ItineraryItemComponent(Icons.Filled.Hotel,"Sakura Mori Retreat", "23/03/2026 18:55", "3-chōme-43-15 Sendagi, Bunkyo City, Tokyo 113-0022, Japón")
+fun ImageComponent(image: Image) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            horizontalAlignment = Alignment.End,
+        ) {
+            Image(
+                painter = painterResource(id = image.image_id),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(horizontal = AppDimensions.PaddingMedium)
+                    .padding(top = AppDimensions.PaddingMedium)
+                    .clip(RoundedCornerShape(12.dp))
+            )
+            Text(
+                text = image.dateUploaded.toString(),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .padding(top = AppDimensions.PaddingSmall ,end = AppDimensions.PaddingMedium, bottom = AppDimensions.PaddingSmall)
+            )
+        }
+    }
 }
 
 
@@ -270,4 +365,16 @@ fun ItineraryPreview() {
 @Composable
 fun PlanScreenPreview() {
     PlanOptionsScreen(rememberNavController())
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun AlbumScreenPreview() {
+    AlbumScreen(rememberNavController())
+}
+
+@Preview
+@Composable
+fun ItineraryItemPreview() {
+    ItineraryItemComponent(Icons.Filled.Hotel,"Sakura Mori Retreat", "23/03/2026 18:55", "3-chōme-43-15 Sendagi, Bunkyo City, Tokyo 113-0022, Japón")
 }

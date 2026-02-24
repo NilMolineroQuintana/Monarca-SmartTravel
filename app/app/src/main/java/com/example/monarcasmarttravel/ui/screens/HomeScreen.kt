@@ -54,7 +54,8 @@ fun HomeScreen(navController: NavController) {
             TripCard(
                 place = "Kioto, Japón",
                 dateIn = dateIn,
-                dateOut = dateOut
+                dateOut = dateOut,
+                onClick = { navController.navigate("itinerary") }
             )
 
             QuickActionsSection(navController)

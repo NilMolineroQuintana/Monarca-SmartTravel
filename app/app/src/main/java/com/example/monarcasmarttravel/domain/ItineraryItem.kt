@@ -46,7 +46,7 @@ data class ItineraryItem (
         return sdf.format(checkOutDate)
     }
 
-    fun formatDateKey(date: java.util.Date): String {
+    fun formatDateKey(date: Date): String {
         val sdf = SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault())
         return sdf.format(date)
     }
