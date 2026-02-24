@@ -16,4 +16,24 @@
     <string name="language_english">Anglès</string>
     <string name="theme_light">Clar</string>
     <string name="theme_dark">Fosc</string>
+    <string name="plan_flight">Vol</string>
+    <string name="plan_boat">Vaixell</string>
+    <string name="plan_train">Tren</string>
+    <string name="plan_hotel">Allotjament</string>
+    <string name="plan_restaurant">Restaurant</string>
+    <string name="plan_location">Lloc d\'interès</string>
+    <string name="plan_parking">Aparcament</string>
+    <string name="data_de_entrada">Data de entrada</string>
+    <string name="data_de_sortida">Data de sortida</string>
+    <string name="direccio">Direcció</string>
+    <string name="add">Afegir</string>
+    <string name="hotel_name">Nom allotjament</string>
+    <string name="restaurant_name">Nom del restaurant</string>
+    <string name="location_name">Nom del lloc d\'interès</string>
+    <string name="parking_name">Nom del parking</string>
+    <string name="flight_num">Número de vol</string>
+    <string name="boat_num">Identificador de vaixell</string>
+    <string name="train_num">Identificador de tren</string>
+    <string name="origin">Origen</string>
+    <string name="company">Companyia</string>
 </resources>

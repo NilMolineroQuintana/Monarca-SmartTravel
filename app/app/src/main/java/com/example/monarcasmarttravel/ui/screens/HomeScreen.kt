@@ -54,7 +54,8 @@ fun HomeScreen(navController: NavController) {
             TripCard(
                 place = "Kioto, Japón",
                 dateIn = dateIn,
-                dateOut = dateOut
+                dateOut = dateOut,
+                onClick = { navController.navigate("itinerary") }
             )
 
             QuickActionsSection(navController)
@@ -115,7 +116,7 @@ fun QuickActionsSection(navController: NavController) {
             ico = Icons.Filled.Explore,
             text = "Explorar destinos",
             secondaryText = "Inspírate con lugares populares",
-            onClick = { /* TODO: Navegar a explorador */ }
+            onClick = { navController.navigate("itinerary") }
         )
     }
 }

@@ -1,10 +1,5 @@
 package com.example.monarcasmarttravel
 
-import com.example.monarcasmarttravel.ui.screens.HomeScreen
-import com.example.monarcasmarttravel.ui.screens.NotificationsScreen
-import com.example.monarcasmarttravel.ui.screens.PreferencesScreen
-import com.example.monarcasmarttravel.ui.screens.ProfileScreen
-import com.example.monarcasmarttravel.ui.screens.TripsScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,9 +9,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.monarcasmarttravel.ui.screens.AlbumScreen
+import com.example.monarcasmarttravel.ui.screens.HomeScreen
+import com.example.monarcasmarttravel.ui.screens.ItineraryScreen
+import com.example.monarcasmarttravel.ui.screens.NotificationsScreen
+import com.example.monarcasmarttravel.ui.screens.PlanOptionsScreen
+import com.example.monarcasmarttravel.ui.screens.PlanScreen
+import com.example.monarcasmarttravel.ui.screens.PreferencesScreen
+import com.example.monarcasmarttravel.ui.screens.ProfileScreen
+import com.example.monarcasmarttravel.ui.screens.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 
 class MainActivity : ComponentActivity() {
@@ -56,6 +62,22 @@ fun AppNavigation() {
             }
             composable("preferences") {
                 PreferencesScreen(navController)
+            }
+            composable("itinerary") {
+                ItineraryScreen(navController)
+            }
+            composable("plan") {
+                PlanOptionsScreen(navController)
+            }
+            composable("album") {
+                AlbumScreen(navController)
+            }
+            composable(
+                route = "plan/{route}",
+                arguments = listOf(navArgument("route") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val ruta = backStackEntry.arguments?.getString("route")
+                PlanScreen(navController, ruta)
             }
         }
     }
