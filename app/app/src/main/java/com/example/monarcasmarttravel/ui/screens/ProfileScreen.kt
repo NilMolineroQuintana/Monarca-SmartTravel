@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.User
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
@@ -50,6 +51,9 @@ import com.example.monarcasmarttravel.ui.WideOption
 
 @Composable
 fun ProfileScreen(navController: NavController) {
+    // Mock-up data
+    val usr: User = User("1", "Dummy", "dummy@gmail.com", R.drawable.pfp_sample)
+    // Mock-up data
     var showLogOutPopUp by remember { mutableStateOf(false) }
     Scaffold(
         topBar = { MyTopBar("Perfil") },
@@ -62,7 +66,7 @@ fun ProfileScreen(navController: NavController) {
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            ProfileInfo(name = "Dummy", email = "dummy@gmail.com")
+            ProfileInfo(usr)
             Column(
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
                 modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
@@ -195,7 +199,7 @@ fun TermsAndConditionsScreen(navController: NavController) {
     }
 }
 @Composable
-fun ProfileInfo(name: String, email: String) {
+fun ProfileInfo(user: User) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -203,7 +207,7 @@ fun ProfileInfo(name: String, email: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.pfp_sample),
+            painter = painterResource(id = user.imageId),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -218,12 +222,12 @@ fun ProfileInfo(name: String, email: String) {
                 .padding(start = AppDimensions.PaddingMedium)
         ) {
             Text(stringResource(R.string.profile_page_name_field), style = MaterialTheme.typography.labelSmall)
-            Text(text = name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+            Text(text = user.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(AppDimensions.PaddingSmall))
 
             Text(stringResource(R.string.profile_page_email_field), style = MaterialTheme.typography.labelSmall)
-            Text(text = email, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+            Text(text = user.email, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
         }
     }
 }
