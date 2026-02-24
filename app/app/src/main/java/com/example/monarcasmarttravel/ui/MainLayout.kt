@@ -92,6 +92,9 @@ fun MyBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    val tripChilds = listOf("trips", "itinerary", "plan", "album")
+    val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
+
     NavigationBar {
         NavigationBarItem (
             selected = currentRoute == "home",
@@ -100,13 +103,13 @@ fun MyBottomBar(navController: NavController) {
             label = { Text(text = stringResource(R.string.bottom_menu_home)) }
         )
         NavigationBarItem(
-            selected = currentRoute == "trips",
+            selected = currentRoute in tripChilds,
             onClick = {if (currentRoute != "trips") navController.navigate("trips") },
             icon = { Icon(imageVector = Icons.Filled.Luggage, contentDescription = null) },
             label = { Text(text = stringResource(R.string.bottom_menu_trips)) }
         )
         NavigationBarItem(
-            selected = currentRoute == "profile",
+            selected = currentRoute in profileChilds,
             onClick = { if (currentRoute != "profile") navController.navigate("profile") },
             icon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null) },
             label = { Text(text = stringResource(R.string.bottom_menu_profile)) }

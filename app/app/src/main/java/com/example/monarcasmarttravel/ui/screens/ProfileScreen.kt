@@ -61,6 +61,7 @@ fun ProfileScreen(navController: NavController) {
     ) { innerPadding ->
         PopUp(show = showLogOutPopUp, title = stringResource(R.string.logOut_text), text = stringResource(R.string.logOut_popUp_text), acceptText = stringResource(R.string.popUp_accept), cancelText = stringResource(R.string.popUp_cancel), onAccept = {},onDismiss = { showLogOutPopUp = false })
         Column(
+            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -72,7 +73,6 @@ fun ProfileScreen(navController: NavController) {
                 modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
             ) {
                 WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), onClick = { navController.navigate("notifications") })
-                WideOption(ico = Icons.Filled.History, text = stringResource(R.string.travel_historic_button), onClick = {})
                 WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_text), onClick = { navController.navigate("preferences") })
                 WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { navController.navigate("aboutUs") })
                 WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), onClick = { navController.navigate("termsAndConditions") })
@@ -203,7 +203,7 @@ fun ProfileInfo(user: User) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(AppDimensions.PaddingMedium),
+            .padding(horizontal = AppDimensions.PaddingMedium),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
