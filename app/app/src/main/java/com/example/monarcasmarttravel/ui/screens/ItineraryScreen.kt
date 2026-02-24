@@ -1,7 +1,5 @@
 package com.example.monarcasmarttravel.ui.screens
 
-import android.graphics.drawable.Icon
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,17 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsBoatFilled
-import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Hotel
-import androidx.compose.material.icons.filled.LocalParking
-import androidx.compose.material.icons.filled.LocationCity
-import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material.icons.filled.Train
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.ItineraryItem
+import com.example.monarcasmarttravel.domain.PlanType
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
@@ -77,7 +68,7 @@ fun ItineraryScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.size(AppDimensions.PaddingLarge))
             }
-            if (true) {
+            if (false) {
                 item {
                     Text(
                         text = "No tens cap plan",
@@ -101,25 +92,28 @@ fun ItineraryScreen(navController: NavController) {
                     }
                 }
             } else {
-                item {
-                    ItineraryItemComponent(Icons.Filled.FlightTakeoff,"21:15","BCN - HND", "FR 999 (Ryanair)", "Arribada: 23/03/2026 18:55")
+                val calendar = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, 2026)
+                    set(Calendar.MONTH, Calendar.FEBRUARY)
+                    set(Calendar.DAY_OF_MONTH, 15)
+                    set(Calendar.HOUR_OF_DAY, 14)
+                    set(Calendar.MINUTE, 30)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
                 }
-                item {
-                    ItineraryItemComponent(Icons.Filled.Hotel, "22:15","Sakura Mori Retreat", "3-chōme-43-15 Sendagi, Bunkyo City, Tokyo 113-0022, Japón", )
+                val mockData = listOf(
+                    ItineraryItem(id = 1, type = PlanType.TRAIN, company = "Ryanair", locationName = "Barcelona", checkInDate = calendar.time, transportNumber = "FR1234"),
+                    ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Hotel FAWLTY", checkInDate = calendar.time, checkOutDate = dateOut, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+                    ItineraryItem(id = 3, type = PlanType.PARKING, locationName = "Parking FAWLTY", checkInDate = calendar.time, checkOutDate = dateOut, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+                    ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Restaurant FAWLTY", checkInDate = calendar.time, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+                    ItineraryItem(id = 5, type = PlanType.LOCATION, locationName = "Mirador FAWLTY", checkInDate = calendar.time, address = "Aquest text és una prova pera veure com es veu el camp de direcció")
+                )
+                items (mockData) { item ->
+                    ItineraryItemComponent(item)
                 }
             }
         }
     }
-}
-
-enum class PlanType(val titleRes: Int, val icon: ImageVector, val route: String) {
-    FLIGHT(R.string.plan_flight, Icons.Default.FlightTakeoff, "flight"),
-    BOAT(R.string.plan_boat, Icons.Default.DirectionsBoatFilled, "boat"),
-    TRAIN(R.string.plan_train, Icons.Default.Train, "train"),
-    HOTEL(R.string.plan_hotel, Icons.Default.Hotel, "hotel"),
-    RESTAURANT(R.string.plan_restaurant, Icons.Default.Restaurant, "restaurant"),
-    LOCATION(R.string.plan_location, Icons.Default.LocationCity, "location"),
-    PARKING(R.string.plan_parking, Icons.Default.LocalParking, "parking")
 }
 
 @Composable
@@ -177,7 +171,6 @@ fun ItineraryItemComponent(ico: ImageVector, enterTime: String, title: String, s
             horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(AppDimensions.PaddingSmall)
         )
         {
             Text(
@@ -216,6 +209,24 @@ fun ItineraryItemComponent(ico: ImageVector, enterTime: String, title: String, s
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ItineraryItemComponent(item: ItineraryItem) {
+    when (item.type.route) {
+        "flight","boat","train" -> ItineraryItemComponent(
+            item.type.icon,
+            item.getCheckInTime(),
+            "Origen: ${item.locationName}",
+            "${item.transportNumber} (${item.company})",
+        )
+        "hotel","parking","location","restaurant" -> ItineraryItemComponent(
+            item.type.icon,
+            item.getCheckInTime(),
+            item.locationName,
+            item.address
+        )
     }
 }
 
