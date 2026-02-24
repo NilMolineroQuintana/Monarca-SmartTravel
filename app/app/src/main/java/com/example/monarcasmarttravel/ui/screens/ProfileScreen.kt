@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -22,13 +23,19 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,11 +88,20 @@ fun ProfileScreen(navController: NavController) {
         }
     }
 }
+
+enum class ConfigType {
+    NOTIFICATIONS,
+    LANGUAGE,
+    THEME
+}
+
 @Composable
 fun PreferencesScreen(navController: NavController) {
+    var activeConfig by remember { mutableStateOf<ConfigType?>(null) }
+
     Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.preferences_text), onBackClick = { navController.popBackStack() }) }
-        ,bottomBar = { MyBottomBar(navController) }
+        topBar = { MyTopBar(stringResource(R.string.preferences_text), onBackClick = { navController.popBackStack() }) },
+        bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
@@ -94,9 +110,31 @@ fun PreferencesScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = AppDimensions.PaddingMedium)
         ) {
-            WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = "Activades", onClick = { })
-            WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = stringResource(R.string.language_catalan), onClick = {})
-            WideOption(ico = Icons.Filled.FormatPaint,text = stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.theme_light), onClick = {})
+            WideOption(
+                ico = Icons.Filled.Notifications,
+                text = stringResource(R.string.preferences_notification_button),
+                secondaryText = "Activades",
+                onClick = { activeConfig = ConfigType.NOTIFICATIONS }
+            )
+            WideOption(
+                ico = Icons.Filled.Flag,
+                text = stringResource(R.string.preferences_language_button),
+                secondaryText = stringResource(R.string.language_catalan),
+                onClick = { activeConfig = ConfigType.LANGUAGE }
+            )
+            WideOption(
+                ico = Icons.Filled.FormatPaint,
+                text = stringResource(R.string.preferences_theme_button),
+                secondaryText = stringResource(R.string.theme_light),
+                onClick = { activeConfig = ConfigType.THEME }
+            )
+
+            activeConfig?.let { type ->
+                MyModal(
+                    type = type,
+                    onDismiss = { activeConfig = null }
+                )
+            }
         }
     }
 }
@@ -112,7 +150,10 @@ fun AboutUsScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = AppDimensions.PaddingMedium, vertical = AppDimensions.PaddingLarge),
+                .padding(
+                    horizontal = AppDimensions.PaddingMedium,
+                    vertical = AppDimensions.PaddingLarge
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingLarge)
         ) {
@@ -228,6 +269,83 @@ fun ProfileInfo(user: User) {
 
             Text(stringResource(R.string.profile_page_email_field), style = MaterialTheme.typography.labelSmall)
             Text(text = user.email, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyModal(type: ConfigType, onDismiss: () -> Unit) {
+    val sheetState = rememberModalBottomSheetState()
+
+    val languages = listOf(stringResource(R.string.language_catalan), stringResource(R.string.language_spanish), stringResource(R.string.language_english))
+    val themes = listOf(stringResource(R.string.theme_system),stringResource(R.string.theme_light), stringResource(R.string.theme_dark))
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss() },
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 32.dp)
+        ) {
+            val title = when (type) {
+                ConfigType.NOTIFICATIONS -> stringResource(R.string.preferences_notification_button)
+                ConfigType.LANGUAGE -> stringResource(R.string.preferences_language_button)
+                ConfigType.THEME -> stringResource(R.string.preferences_theme_button)
+            }
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
+            )
+
+            Spacer(modifier = Modifier.height(AppDimensions.PaddingMedium))
+
+            when (type) {
+                ConfigType.NOTIFICATIONS -> {
+                    MyRadioButtonGroup(listOf(stringResource(R.string.actives), stringResource(R.string.disableds)))
+                }
+                ConfigType.LANGUAGE -> {
+                    MyRadioButtonGroup(languages)
+                }
+                ConfigType.THEME -> {
+                    MyRadioButtonGroup(themes)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MyRadioButtonGroup(options: List<String>) {
+    var selectedOption by remember { mutableStateOf(options[0]) }
+
+    Column {
+        options.forEach { text ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = (text == selectedOption),
+                        onClick = { selectedOption = text }
+                    )
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                RadioButton(
+                    selected = (text == selectedOption),
+                    onClick = null
+                )
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
         }
     }
 }
