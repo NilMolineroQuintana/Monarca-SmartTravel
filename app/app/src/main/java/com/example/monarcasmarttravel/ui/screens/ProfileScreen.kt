@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -31,6 +30,7 @@ import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
@@ -44,7 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,6 +67,8 @@ fun ProfileScreen(navController: NavController) {
     val usr: User = User("1", "Dummy", "dummy@gmail.com", R.drawable.pfp_sample)
     // Mock-up data
     var showLogOutPopUp by remember { mutableStateOf(false) }
+    
+    val ButtonsColor = Color.Transparent
     Scaffold(
         topBar = { MyTopBar("Preferències") },
         bottomBar = { MyBottomBar(navController) }
@@ -81,22 +83,27 @@ fun ProfileScreen(navController: NavController) {
         ) {
             item {
                 OptionGroup(title = "IDIOMA I REGIÓ") {
-                    WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = "Idioma de la interficie", rounded = false, onClick = { /*...*/ })
-                    WideOption(ico = Icons.Default.Payments, text = "Moneda", secondaryText = "Moneda a usar al pressupost",rounded = false, onClick = { /*...*/ })
+                    WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = "Idioma de la interficie", rounded = false, color = ButtonsColor, onClick = { /*...*/ })
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(ico = Icons.Default.Payments, text = "Moneda", secondaryText = "Moneda a usar al pressupost", rounded = false, color = ButtonsColor, onClick = { /*...*/ })
                 }
             }
             item {
                 OptionGroup(title = "APARENÇA") {
-                    WideOption(Icons.Filled.FormatPaint, stringResource(R.string.preferences_theme_button), secondaryText = "Colors de la interficie", rounded = false, onClick = { /*...*/ })
-                    WideOption(Icons.Default.TextFields, "Mida del text", rounded = false,onClick = { /*...*/ })
+                    WideOption(Icons.Filled.FormatPaint, stringResource(R.string.preferences_theme_button), secondaryText = "Colors de la interficie", rounded = false, color = ButtonsColor, onClick = { /*...*/ })
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(Icons.Default.TextFields, "Mida del text", secondaryText = "Ajuda a l'accessibilitat", rounded = false, color = ButtonsColor, onClick = { /*...*/ })
                 }
             }
             item {
                 OptionGroup(title = "ALTRES") {
-                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = "Activades", rounded = false,onClick = { })
-                    WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), rounded = false,onClick = { navController.navigate("aboutUs") })
-                    WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), rounded = false,onClick = { navController.navigate("termsAndConditions") })
-                    WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), rounded = false,onClick = { showLogOutPopUp = true })
+                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = "Rebre notifiacions rellevants", rounded = false, color = ButtonsColor, onClick = { })
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), secondaryText = "Conèix més informació sobre l'app", rounded = false, color = ButtonsColor, onClick = { navController.navigate("aboutUs") })
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), secondaryText = "Els teus drets i deures", rounded = false, color = ButtonsColor, onClick = { navController.navigate("termsAndConditions") })
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), secondaryText = "Surt del teu compte de forma segura", rounded = false, color = ButtonsColor, onClick = { showLogOutPopUp = true })
                 }
             }
         }
@@ -210,40 +217,6 @@ fun TermsAndConditionsScreen(navController: NavController) {
     }
 }
 
-@Composable
-fun ProfileInfo(user: User) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppDimensions.PaddingMedium),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = user.imageId),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .weight(0.25f)
-                .aspectRatio(1f)
-                .clip(CircleShape)
-        )
-
-        Column(
-            modifier = Modifier
-                .weight(0.75f)
-                .padding(start = AppDimensions.PaddingMedium)
-        ) {
-            Text(stringResource(R.string.profile_page_name_field), style = MaterialTheme.typography.labelSmall)
-            Text(text = user.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-
-            Spacer(modifier = Modifier.height(AppDimensions.PaddingSmall))
-
-            Text(stringResource(R.string.profile_page_email_field), style = MaterialTheme.typography.labelSmall)
-            Text(text = user.email, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyModal(type: ConfigType, onDismiss: () -> Unit) {
@@ -345,6 +318,8 @@ fun OptionGroup(
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 8.dp)
             )
+
+            HorizontalDivider(thickness = 1.dp)
 
             Column {
                 content()

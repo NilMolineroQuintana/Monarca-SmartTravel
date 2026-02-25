@@ -30,8 +30,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -68,7 +66,7 @@ object AppDimensions {
 fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (() -> Unit)? = null) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = AppDimensions.PaddingLarge)
+        modifier = Modifier.padding(top = 40.dp, bottom = AppDimensions.PaddingMedium)
     ) {
         if (onBackClick != null) {
             IconButton(
@@ -243,11 +241,11 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
 }
 
 @Composable
-fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, showIcon: Boolean = true, secondaryText: String = "", onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, showIcon: Boolean = true, secondaryText: String = "", color: Color = MaterialTheme.colorScheme.surfaceVariant, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val shape = if (rounded) RoundedCornerShape(12.dp) else RectangleShape
     Surface(
         onClick = onClick,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = color,
         shape = shape,
         modifier = modifier.fillMaxWidth()
     ) {
