@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DirectionsBoatFilled
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Hotel
-import androidx.compose.material.icons.filled.LocalParking
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Train
@@ -21,7 +20,6 @@ enum class PlanType(val titleRes: Int, val icon: ImageVector, val route: String)
     HOTEL(R.string.plan_hotel, Icons.Default.Hotel, "hotel"),
     RESTAURANT(R.string.plan_restaurant, Icons.Default.Restaurant, "restaurant"),
     LOCATION(R.string.plan_location, Icons.Default.LocationCity, "location"),
-    PARKING(R.string.plan_parking, Icons.Default.LocalParking, "parking")
 }
 
 data class ItineraryItem (

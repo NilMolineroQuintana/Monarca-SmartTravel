@@ -1,20 +1,24 @@
 package com.example.monarcasmarttravel.ui.screens
 
-import androidx.compose.ui.graphics.Color
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +29,6 @@ import androidx.compose.material.icons.filled.PhotoAlbum
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,11 +37,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -47,6 +55,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
@@ -56,9 +66,9 @@ import com.example.monarcasmarttravel.domain.PlanType
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
-import com.example.monarcasmarttravel.ui.TripCard
 import com.example.monarcasmarttravel.ui.WideOption
 import java.util.Calendar
+
 @Composable
 fun ItineraryScreen(navController: NavController) {
     // Mock-up data
@@ -75,9 +85,6 @@ fun ItineraryScreen(navController: NavController) {
     calendar.set(2026, Calendar.MARCH, 23, 15, 0)
     val checkInHotel = calendar.time
 
-    calendar.set(2026, Calendar.MARCH, 23, 17, 0)
-    val checkInParking = calendar.time
-
     calendar.set(2026, Calendar.MARCH, 30, 11, 0)
     val checkOutGeneral = calendar.time
 
@@ -90,9 +97,8 @@ fun ItineraryScreen(navController: NavController) {
     val mockData = listOf(
         ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Ryanair", locationName = "Barcelona", checkInDate = dataVol, price = 420.0, transportNumber = "FR1234"),
         ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Hotel FAWLTY", checkInDate = checkInHotel, checkOutDate = checkOutGeneral, price = 200.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-        ItineraryItem(id = 3, type = PlanType.PARKING, locationName = "Parking FAWLTY", checkInDate = checkInParking, checkOutDate = checkOutGeneral, price = 50.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-        ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Restaurant FAWLTY", checkInDate = dataRest, price = 100.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-        ItineraryItem(id = 5, type = PlanType.LOCATION, locationName = "Mirador FAWLTY", checkInDate = dataMirador, price = 30.0,address = "Aquest text és una prova pera veure com es veu el camp de direcció")
+        ItineraryItem(id = 3, type = PlanType.RESTAURANT, locationName = "Restaurant FAWLTY", checkInDate = dataRest, price = 100.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+        ItineraryItem(id = 4, type = PlanType.LOCATION, locationName = "Mirador FAWLTY", checkInDate = dataMirador, price = 30.0,address = "Aquest text és una prova pera veure com es veu el camp de direcció")
     )
     val groupedData = mockData
         .sortedBy { it.checkInDate }
@@ -144,9 +150,9 @@ fun ItineraryScreen(navController: NavController) {
                                 Brush.verticalGradient(
                                     colors = listOf(
                                         Color.Transparent,
-                                        Color.Black.copy(alpha = 0.7f) // Sombra negra con 70% opacidad
+                                        Color.Black.copy(alpha = 0.7f)
                                     ),
-                                    startY = 300f // Ajusta dónde empieza la sombra (opcional)
+                                    startY = 300f
                                 )
                             )
                     )
@@ -233,7 +239,7 @@ fun ItineraryScreen(navController: NavController) {
 fun PlanOptionsScreen(navController: NavController) {
 
     val PopularPlans = listOf(PlanType.FLIGHT, PlanType.BOAT, PlanType.TRAIN,)
-    val MorePlans = listOf(PlanType.HOTEL, PlanType.RESTAURANT, PlanType.LOCATION, PlanType.PARKING)
+    val MorePlans = listOf(PlanType.HOTEL, PlanType.RESTAURANT, PlanType.LOCATION)
 
     Scaffold(
         topBar = { MyTopBar("Afegir plan", onBackClick = { navController.popBackStack() }) }
@@ -276,16 +282,16 @@ fun PlanOptionsScreen(navController: NavController) {
 
 @Composable
 fun AlbumScreen(navController: NavController) {
-
-    // Mock-up data
     val mockData = listOf(
         Image(id = 1, image_id = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
-        Image(id = 2, image_id = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time)
+        Image(id = 2, image_id = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
+        Image(id = 3, image_id = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
+        Image(id = 4, image_id = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
     )
-    // Mock-up data
-
 
     val context = LocalContext.current
+    var selectedImage by remember { mutableStateOf<Image?>(null) }
+
     Scaffold(
         topBar = { MyTopBar("Álbum", onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) },
@@ -300,18 +306,46 @@ fun AlbumScreen(navController: NavController) {
                 Icon(imageVector = Icons.Filled.Upload, contentDescription = null)
             }
         }
-    ) {
-        innerPadding ->
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = AppDimensions.PaddingMedium)
-                .fillMaxWidth()
+    ) { innerPadding ->
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            contentPadding = innerPadding,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
             items(mockData) { img ->
-                ImageComponent(img)
+                Image(
+                    painter = painterResource(id = img.image_id),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .clickable { selectedImage = img },
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+    }
+
+    selectedImage?.let { img ->
+        Dialog(
+            onDismissRequest = { selectedImage = null },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.9f))
+                    .clickable { selectedImage = null },
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = img.image_id),
+                    contentDescription = "Imagen maximizada",
+                    modifier = Modifier.fillMaxSize(0.95f),
+                    contentScale = ContentScale.Fit
+                )
             }
         }
     }
@@ -380,7 +414,7 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             "${item.transportNumber} (${item.company})",
             tertiaryText = "${item.price}€"
         )
-        "hotel","parking","location","restaurant" -> ItineraryItemComponent(
+        "hotel","location","restaurant" -> ItineraryItemComponent(
             item.type.icon,
             item.getCheckInTime(),
             item.locationName,
