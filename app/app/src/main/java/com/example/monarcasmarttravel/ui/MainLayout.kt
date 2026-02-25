@@ -1,11 +1,17 @@
 package com.example.monarcasmarttravel.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -13,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
@@ -34,8 +39,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,7 +68,7 @@ object AppDimensions {
 fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (() -> Unit)? = null) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = AppDimensions.PaddingMedium)
+        modifier = Modifier.padding(vertical = AppDimensions.PaddingLarge)
     ) {
         if (onBackClick != null) {
             IconButton(
@@ -99,25 +108,82 @@ fun MyBottomBar(navController: NavController) {
     val tripChilds = listOf("trips", "itinerary", "plan", "album")
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
 
-    NavigationBar {
-        NavigationBarItem (
-            selected = currentRoute == "home",
-            onClick = { if (currentRoute != "home") navController.navigate("home") },
-            icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = null) },
-            label = { Text(text = stringResource(R.string.bottom_menu_home)) }
+    Surface(
+        modifier = Modifier
+            .padding(horizontal = 24.dp, vertical = 20.dp)
+            .fillMaxWidth()
+            .height(72.dp),
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+        tonalElevation = 8.dp,
+        shadowElevation = 10.dp
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CustomNavItem(
+                selected = currentRoute == "home",
+                icon = Icons.Default.Home,
+                label = stringResource(R.string.bottom_menu_home),
+                onClick = { if (currentRoute != "home") navController.navigate("home") }
+            )
+
+            // Item 2: Trips
+            CustomNavItem(
+                selected = currentRoute in tripChilds,
+                icon = Icons.Default.Luggage,
+                label = stringResource(R.string.bottom_menu_trips),
+                onClick = { if (currentRoute != "trips") navController.navigate("trips") }
+            )
+
+            // Item 3: Profile/Settings
+            CustomNavItem(
+                selected = currentRoute in profileChilds,
+                icon = Icons.Default.Settings,
+                label = stringResource(R.string.preferences_text),
+                onClick = { if (currentRoute != "profile") navController.navigate("profile") }
+            )
+        }
+    }
+}
+
+@Composable
+private fun CustomNavItem(
+    selected: Boolean,
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit
+) {
+    val scale by animateFloatAsState(targetValue = if (selected) 1.2f else 1.0f, label = "scale")
+    val color by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.primary else Color.Gray.copy(alpha = 0.6f),
+        label = "color"
+    )
+
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.graphicsLayer(scaleX = scale, scaleY = scale), // Aplica la escala
+            tint = color
         )
-        NavigationBarItem(
-            selected = currentRoute in tripChilds,
-            onClick = {if (currentRoute != "trips") navController.navigate("trips") },
-            icon = { Icon(imageVector = Icons.Filled.Luggage, contentDescription = null) },
-            label = { Text(text = stringResource(R.string.bottom_menu_trips)) }
-        )
-        NavigationBarItem(
-            selected = currentRoute in profileChilds,
-            onClick = { if (currentRoute != "profile") navController.navigate("profile") },
-            icon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null) },
-            label = { Text(text = stringResource(R.string.bottom_menu_profile)) }
-        )
+        AnimatedVisibility(visible = selected) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = color,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }
 
@@ -240,6 +306,12 @@ fun PopUp(show: Boolean, title: String, text: String, acceptText: String, cancel
             }
         )
     }
+}
+
+@Preview
+@Composable
+fun BottomBarPreview() {
+    MyBottomBar(navController = NavController(LocalContext.current))
 }
 
 @Preview(showBackground = true)

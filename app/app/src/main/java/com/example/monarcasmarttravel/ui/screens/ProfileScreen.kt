@@ -3,6 +3,7 @@ package com.example.monarcasmarttravel.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -10,32 +11,36 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FormatPaint
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,27 +68,36 @@ fun ProfileScreen(navController: NavController) {
     // Mock-up data
     var showLogOutPopUp by remember { mutableStateOf(false) }
     Scaffold(
-        topBar = { MyTopBar("Perfil") },
+        topBar = { MyTopBar("Preferències") },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         PopUp(show = showLogOutPopUp, title = stringResource(R.string.logOut_text), text = stringResource(R.string.logOut_popUp_text), acceptText = stringResource(R.string.popUp_accept), cancelText = stringResource(R.string.popUp_cancel), onAccept = {},onDismiss = { showLogOutPopUp = false })
-        Column(
-            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
             modifier = Modifier
-                .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
+                .padding(horizontal = AppDimensions.PaddingMedium)
+                .fillMaxSize()
         ) {
-            ProfileInfo(usr)
-            Column(
-                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
-                modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
-            ) {
-                WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), onClick = { navController.navigate("notifications") })
-                WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_text), onClick = { navController.navigate("preferences") })
-                WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { navController.navigate("aboutUs") })
-                WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), onClick = { navController.navigate("termsAndConditions") })
-                WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), onClick = { showLogOutPopUp = true })
+            item {
+                OptionGroup(title = "IDIOMA I REGIÓ") {
+                    WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = "Idioma de la interficie", rounded = false, onClick = { /*...*/ })
+                    WideOption(ico = Icons.Default.Payments, text = "Moneda", secondaryText = "Moneda a usar al pressupost",rounded = false, onClick = { /*...*/ })
+                }
+            }
+            item {
+                OptionGroup(title = "APARENÇA") {
+                    WideOption(Icons.Filled.FormatPaint, stringResource(R.string.preferences_theme_button), secondaryText = "Colors de la interficie", rounded = false, onClick = { /*...*/ })
+                    WideOption(Icons.Default.TextFields, "Mida del text", rounded = false,onClick = { /*...*/ })
+                }
+            }
+            item {
+                OptionGroup(title = "ALTRES") {
+                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = "Activades", rounded = false,onClick = { })
+                    WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), rounded = false,onClick = { navController.navigate("aboutUs") })
+                    WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), rounded = false,onClick = { navController.navigate("termsAndConditions") })
+                    WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), rounded = false,onClick = { showLogOutPopUp = true })
+                }
             }
         }
     }
@@ -93,50 +107,6 @@ enum class ConfigType {
     NOTIFICATIONS,
     LANGUAGE,
     THEME
-}
-
-@Composable
-fun PreferencesScreen(navController: NavController) {
-    var activeConfig by remember { mutableStateOf<ConfigType?>(null) }
-
-    Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.preferences_text), onBackClick = { navController.popBackStack() }) },
-        bottomBar = { MyBottomBar(navController) }
-    ) { innerPadding ->
-        Column(
-            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = AppDimensions.PaddingMedium)
-        ) {
-            WideOption(
-                ico = Icons.Filled.Notifications,
-                text = stringResource(R.string.preferences_notification_button),
-                secondaryText = "Activades",
-                onClick = { activeConfig = ConfigType.NOTIFICATIONS }
-            )
-            WideOption(
-                ico = Icons.Filled.Flag,
-                text = stringResource(R.string.preferences_language_button),
-                secondaryText = stringResource(R.string.language_catalan),
-                onClick = { activeConfig = ConfigType.LANGUAGE }
-            )
-            WideOption(
-                ico = Icons.Filled.FormatPaint,
-                text = stringResource(R.string.preferences_theme_button),
-                secondaryText = stringResource(R.string.theme_light),
-                onClick = { activeConfig = ConfigType.THEME }
-            )
-
-            activeConfig?.let { type ->
-                MyModal(
-                    type = type,
-                    onDismiss = { activeConfig = null }
-                )
-            }
-        }
-    }
 }
 
 @Composable
@@ -239,6 +209,7 @@ fun TermsAndConditionsScreen(navController: NavController) {
         }
     }
 }
+
 @Composable
 fun ProfileInfo(user: User) {
     Row(
@@ -350,6 +321,47 @@ fun MyRadioButtonGroup(options: List<String>) {
     }
 }
 
+@Composable
+fun OptionGroup(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit // Usamos ColumnScope para que los hijos hereden el comportamiento de columna
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow // Un tono sutil
+        ),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 12.dp)
+        ) {
+            Text(
+                text = title.uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary, // Color acentuado para el título
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 8.dp)
+            )
+
+            Column {
+                content()
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ItemGroupPreview() {
+    OptionGroup(title = "Cuenta") {
+        WideOption(Icons.Default.Person, "Perfil", rounded = false,onClick = { /*...*/ })
+        WideOption(Icons.Default.Email, "Cambiar correo", rounded = false,onClick = { /*...*/ })
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun MainPreview() {
@@ -363,12 +375,6 @@ fun TripHistoryPreview() {
     TripHistoryScreen(rememberNavController())
 }
 */
-
-@Preview(showBackground = true)
-@Composable
-fun PreferencesPreview() {
-    PreferencesScreen(rememberNavController())
-}
 
 @Preview(showBackground = true)
 @Composable

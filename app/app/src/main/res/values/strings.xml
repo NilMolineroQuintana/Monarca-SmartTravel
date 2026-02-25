@@ -3,7 +3,6 @@
 
     <string name="bottom_menu_home">Inici</string>
     <string name="bottom_menu_trips">Viatges</string>
-    <string name="bottom_menu_profile">Perfil</string>
 
     <string name="profile_page_name_field">Nom:</string>
     <string name="profile_page_email_field">Correu:</string>
