@@ -18,6 +18,7 @@ import com.example.monarcasmarttravel.ui.screens.AboutUsScreen
 import com.example.monarcasmarttravel.ui.screens.AlbumScreen
 import com.example.monarcasmarttravel.ui.screens.HomeScreen
 import com.example.monarcasmarttravel.ui.screens.ItineraryScreen
+import com.example.monarcasmarttravel.ui.screens.LoginScreen
 import com.example.monarcasmarttravel.ui.screens.NotificationsScreen
 import com.example.monarcasmarttravel.ui.screens.PlanOptionsScreen
 import com.example.monarcasmarttravel.ui.screens.PlanScreen
@@ -48,8 +49,11 @@ fun AppNavigation() {
     ) {
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = "login",
         ) {
+            composable ("login") {
+                LoginScreen(navController)
+            }
             composable("home") {
                 HomeScreen(navController)
             }
