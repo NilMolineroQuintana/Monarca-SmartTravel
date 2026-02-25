@@ -74,10 +74,6 @@ fun ItineraryScreen(navController: NavController) {
     // Mock-up data
 
     val calendar = Calendar.getInstance()
-    calendar.set(2026, Calendar.MARCH, 23)
-    val dateIn = calendar.time
-    calendar.set(2026, Calendar.MARCH, 30)
-    val dateOut = calendar.time
 
     calendar.set(2026, Calendar.MARCH, 23, 10, 30)
     val dataVol = calendar.time
@@ -85,8 +81,14 @@ fun ItineraryScreen(navController: NavController) {
     calendar.set(2026, Calendar.MARCH, 23, 15, 0)
     val checkInHotel = calendar.time
 
-    calendar.set(2026, Calendar.MARCH, 30, 11, 0)
-    val checkOutGeneral = calendar.time
+    calendar.set(2026, Calendar.MARCH, 24, 10, 0)
+    val dataSensoji = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 24, 19, 0)
+    val dataCenaShinjuku = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 25, 9, 30)
+    val dataShinkansenKyoto = calendar.time
 
     calendar.set(2026, Calendar.MARCH, 25, 20, 30)
     val dataRest = calendar.time
@@ -94,11 +96,38 @@ fun ItineraryScreen(navController: NavController) {
     calendar.set(2026, Calendar.MARCH, 26, 12, 0)
     val dataMirador = calendar.time
 
+    calendar.set(2026, Calendar.MARCH, 27, 11, 0)
+    val dataFushimiInari = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 28, 18, 0)
+    val dataOnsen = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 29, 13, 0)
+    val dataNaraPark = calendar.time
+
+    calendar.set(2026, Calendar.MARCH, 30, 11, 0)
+    val checkOutGeneral = calendar.time
+
     val mockData = listOf(
-        ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Ryanair", locationName = "Barcelona", checkInDate = dataVol, price = 420.0, transportNumber = "FR1234"),
-        ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Hotel FAWLTY", checkInDate = checkInHotel, checkOutDate = checkOutGeneral, price = 200.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-        ItineraryItem(id = 3, type = PlanType.RESTAURANT, locationName = "Restaurant FAWLTY", checkInDate = dataRest, price = 100.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-        ItineraryItem(id = 4, type = PlanType.LOCATION, locationName = "Mirador FAWLTY", checkInDate = dataMirador, price = 30.0,address = "Aquest text és una prova pera veure com es veu el camp de direcció")
+        ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Japan Airlines", locationName = "Narita Airport (NRT)", checkInDate = dataVol, price = 850.0, transportNumber = "JL123"),
+
+        ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Shinjuku Granbell Hotel", checkInDate = checkInHotel, checkOutDate = checkOutGeneral, price = 1200.0, address = "2-14-5 Kabukicho, Shinjuku-ku, Tokyo"),
+
+        ItineraryItem(id = 3, type = PlanType.LOCATION, locationName = "Templo Senso-ji", checkInDate = dataSensoji, price = 0.0, address = "2-3-1 Asakusa, Taito City, Tokyo"),
+
+        ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Ichiran Ramen Shinjuku", checkInDate = dataCenaShinjuku, price = 15.0, address = "3-34-11 Shinjuku, Tokyo"),
+
+        ItineraryItem(id = 5, type = PlanType.FLIGHT, company = "JR Central", locationName = "Shinkansen: Tokyo -> Kyoto", checkInDate = dataShinkansenKyoto, price = 90.0, transportNumber = "Nozomi 215"),
+
+        ItineraryItem(id = 6, type = PlanType.RESTAURANT, locationName = "Gion Karyo", checkInDate = dataRest, price = 120.0, address = "570-235 Gionmachi Minamigawa, Higashiyama Ward, Kyoto"),
+
+        ItineraryItem(id = 7, type = PlanType.LOCATION, locationName = "Shibuya Sky Mirador", checkInDate = dataMirador, price = 25.0, address = "2-24-12 Shibuya, Tokyo"),
+
+        ItineraryItem(id = 8, type = PlanType.LOCATION, locationName = "Fushimi Inari Taisha", checkInDate = dataFushimiInari, price = 0.0, address = "68 Fukakusa Yabunouchicho, Fushimi Ward, Kyoto"),
+
+        ItineraryItem(id = 9, type = PlanType.LOCATION, locationName = "Kurama Onsen Spa", checkInDate = dataOnsen, price = 45.0, address = "520 Kuramahonmachi, Sakyo Ward, Kyoto"),
+
+        ItineraryItem(id = 10, type = PlanType.LOCATION, locationName = "Nara Deer Park", checkInDate = dataNaraPark, price = 10.0, address = "Nara, Prefectura de Nara, Japón")
     )
     val groupedData = mockData
         .sortedBy { it.checkInDate }
@@ -125,15 +154,13 @@ fun ItineraryScreen(navController: NavController) {
     ) { innerPadding ->
         LazyColumn (
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(innerPadding)
         ) {
             item {
                 Box(
                     contentAlignment = Alignment.BottomStart,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(180.dp)
+                        .height(240.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.kyoto_2),
@@ -230,6 +257,9 @@ fun ItineraryScreen(navController: NavController) {
                         Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                     }
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
             }
         }
     }
