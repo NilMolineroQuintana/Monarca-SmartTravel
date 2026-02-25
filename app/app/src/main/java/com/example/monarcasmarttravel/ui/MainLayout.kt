@@ -30,6 +30,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -108,10 +109,12 @@ fun MyBottomBar(navController: NavController) {
 
     Surface(
         modifier = Modifier
-            .padding(horizontal = 24.dp, vertical = 20.dp)
             .fillMaxWidth()
             .height(72.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(
+            topStart = 24.dp,
+            topEnd = 24.dp
+        ),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
         tonalElevation = 8.dp,
         shadowElevation = 10.dp
@@ -306,10 +309,12 @@ fun PopUp(show: Boolean, title: String, text: String, acceptText: String, cancel
     }
 }
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun BottomBarPreview() {
-    MyBottomBar(navController = NavController(LocalContext.current))
+    Scaffold(
+        bottomBar = { MyBottomBar(navController = NavController(LocalContext.current)) }
+    ) { }
 }
 
 @Preview(showBackground = true)
