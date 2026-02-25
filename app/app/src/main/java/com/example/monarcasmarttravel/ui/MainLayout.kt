@@ -57,33 +57,37 @@ object AppDimensions {
 }
 @Composable
 fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (() -> Unit)? = null) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = AppDimensions.PaddingMedium)
+    ) {
+        if (onBackClick != null) {
+            IconButton(
+                onClick = onBackClick,
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        }
+        if (showPageTitle) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = (if (onBackClick == null) AppDimensions.PaddingMedium else AppDimensions.PaddingSmall))
+            )
+        }
+    }
     Box(
         contentAlignment = Alignment.CenterStart,
         modifier = Modifier.fillMaxWidth()
             .statusBarsPadding()
             .padding(top = 24.dp, bottom = 10.dp)
     ) {
-        Column() {
-            if (onBackClick != null) {
-                IconButton(
-                    onClick = onBackClick,
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-            }
-            if (showPageTitle) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp, bottom = AppDimensions.PaddingLarge)
-                )
-            }
-        }
+
     }
 }
 
