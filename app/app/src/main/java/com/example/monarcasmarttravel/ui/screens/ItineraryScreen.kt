@@ -67,6 +67,7 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.WideOption
+import com.example.monarcasmarttravel.ui.WideOptionAction
 import java.util.Calendar
 
 @Composable
@@ -188,7 +189,7 @@ fun ItineraryScreen(navController: NavController) {
                             .padding(start = AppDimensions.PaddingMedium, bottom = AppDimensions.PaddingSmall)
                     ) {
                         Text(
-                            text = "Viaje a Kioto",
+                            text = "Viatge a Kioto",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -291,7 +292,7 @@ fun PlanOptionsScreen(navController: NavController) {
             val mod = Modifier.padding(vertical = 4.dp)
 
             items(PopularPlans) { plan ->
-                WideOption(plan.icon, stringResource(id = plan.titleRes), showIcon = false, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
+                WideOption(plan.icon, stringResource(id = plan.titleRes), action = WideOptionAction.None, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
             }
 
             item {
@@ -304,7 +305,7 @@ fun PlanOptionsScreen(navController: NavController) {
             }
 
             items(MorePlans) { plan ->
-                WideOption(plan.icon, stringResource(id = plan.titleRes), showIcon = false, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
+                WideOption(plan.icon, stringResource(id = plan.titleRes), action = WideOptionAction.None, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
             }
         }
     }

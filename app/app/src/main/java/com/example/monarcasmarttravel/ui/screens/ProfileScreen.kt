@@ -34,6 +34,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -58,20 +60,32 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.WideOption
+import com.example.monarcasmarttravel.ui.WideOptionAction
 
 @Composable
 fun ProfileScreen(navController: NavController) {
     // Mock-up data
     val usr: User = User("1", "Dummy", "dummy@gmail.com", R.drawable.pfp_sample)
     // Mock-up data
+
     var showLogOutPopUp by remember { mutableStateOf(false) }
-    
+
+    var selectedLanguage by remember { mutableStateOf("Català") }
+    var langMenuExpanded by remember { mutableStateOf(false) }
+
+    var selectedCoin by remember { mutableStateOf("Euro (€)") }
+    var coinMenuExpanded by remember { mutableStateOf(false) }
+
+    var darkMode by remember { mutableStateOf(false) }
+    var wideText by remember { mutableStateOf(false) }
+    var notifications by remember { mutableStateOf(false) }
+
     val ButtonsColor = Color.Transparent
     Scaffold(
         topBar = { MyTopBar("Preferències") },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
-        PopUp(show = showLogOutPopUp, title = stringResource(R.string.logOut_text), text = stringResource(R.string.logOut_popUp_text), acceptText = stringResource(R.string.popUp_accept), cancelText = stringResource(R.string.popUp_cancel), onAccept = {},onDismiss = { showLogOutPopUp = false })
+        PopUp(show = showLogOutPopUp, title = stringResource(R.string.preferences_logOut_text), text = stringResource(R.string.logOut_popUp_text), acceptText = stringResource(R.string.popUp_accept), cancelText = stringResource(R.string.popUp_cancel), onAccept = { navController.navigate("login") },onDismiss = { showLogOutPopUp = false })
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
             modifier = Modifier
@@ -80,28 +94,58 @@ fun ProfileScreen(navController: NavController) {
                 .fillMaxSize()
         ) {
             item {
-                OptionGroup(title = "IDIOMA I REGIÓ") {
-                    WideOption(ico = Icons.Filled.Flag, text = stringResource(R.string.preferences_language_button), secondaryText = "Idioma de la interficie", rounded = false, color = ButtonsColor, onClick = { /*...*/ })
+                OptionGroup(title = stringResource(R.string.preferences_languageAndRegion)) {
+                    WideOption(
+                        ico = Icons.Default.Flag,
+                        text = stringResource(R.string.preferences_language_button),
+                        secondaryText = stringResource(R.string.preferences_language_description),
+                        onClick = { langMenuExpanded = true },
+                        color = ButtonsColor,
+                        action = WideOptionAction.Menu(
+                            currentSelection = selectedLanguage,
+                            options = listOf(stringResource(R.string.language_catalan), stringResource(R.string.language_spanish), stringResource(R.string.language_english)),
+                            isExpanded = langMenuExpanded,
+                            onDismiss = { langMenuExpanded = false },
+                            onOptionSelected = { selectedLanguage = it }
+                        )
+                    )
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(ico = Icons.Default.Payments, text = "Moneda", secondaryText = "Moneda a usar al pressupost", rounded = false, color = ButtonsColor, onClick = { /*...*/ })
+                    WideOption(
+                        ico = Icons.Default.Payments,
+                        text = stringResource(R.string.preferences_coin_button),
+                        secondaryText = stringResource(R.string.preferences_coin_description),
+                        onClick = { coinMenuExpanded = true },
+                        color = ButtonsColor,
+                        action = WideOptionAction.Menu(
+                            currentSelection = selectedCoin,
+                            options = listOf("Euro (€)", "Dollar (US$)", "Libra (GBP)"),
+                            isExpanded = coinMenuExpanded,
+                            onDismiss = { coinMenuExpanded = false },
+                            onOptionSelected = { selectedCoin = it }
+                        )
+                    )
                 }
             }
             item {
-                OptionGroup(title = "APARENÇA") {
-                    WideOption(Icons.Filled.FormatPaint, stringResource(R.string.preferences_theme_button), secondaryText = "Colors de la interficie", rounded = false, color = ButtonsColor, onClick = { /*...*/ })
+                OptionGroup(title = stringResource(R.string.preferences_appearance)) {
+                    WideOption(
+                        Icons.Filled.FormatPaint,
+                        stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.preferences_theme_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle(darkMode) { darkMode = it}, onClick = { darkMode = !darkMode }
+                    )
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(Icons.Default.TextFields, "Mida del text", secondaryText = "Ajuda a l'accessibilitat", rounded = false, color = ButtonsColor, onClick = { /*...*/ })
+                    WideOption(Icons.Default.TextFields,
+                        stringResource(R.string.preferences_wide_button), secondaryText = stringResource(R.string.preferences_wide_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle(wideText) { wideText = it } ,onClick = { wideText = !wideText })
                 }
             }
             item {
-                OptionGroup(title = "ALTRES") {
-                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = "Rebre notifiacions rellevants", rounded = false, color = ButtonsColor, onClick = { })
+                OptionGroup(title = stringResource(R.string.preferences_other)) {
+                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = stringResource(R.string.preferences_notifications_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle (notifications) { notifications = it } ,onClick = { notifications = !notifications })
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), secondaryText = "Conèix més informació sobre l'app", rounded = false, color = ButtonsColor, onClick = { navController.navigate("aboutUs") })
+                    WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.preferences_aboutUs_button), secondaryText = stringResource(R.string.preferences_aboutUs_description), rounded = false, color = ButtonsColor, onClick = { navController.navigate("aboutUs") })
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), secondaryText = "Els teus drets i deures", rounded = false, color = ButtonsColor, onClick = { navController.navigate("termsAndConditions") })
+                    WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.preferences_termsAndConditions_button), secondaryText = stringResource(R.string.preferences_termsAndConditions_description), rounded = false, color = ButtonsColor, onClick = { navController.navigate("termsAndConditions") })
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), secondaryText = "Surt del teu compte de forma segura", rounded = false, color = ButtonsColor, onClick = { showLogOutPopUp = true })
+                    WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.preferences_logOut_text), secondaryText = stringResource(R.string.preferences_logOut_description), rounded = false, color = ButtonsColor, onClick = { showLogOutPopUp = true })
                 }
             }
             item {
@@ -114,7 +158,7 @@ fun ProfileScreen(navController: NavController) {
 @Composable
 fun AboutUsScreen(navController: NavController) {
     Scaffold(
-        topBar = { MyTopBar(stringResource(id = R.string.aboutUs_button), onBackClick = { navController.popBackStack() }) },
+        topBar = { MyTopBar(stringResource(id = R.string.preferences_aboutUs_button), onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
@@ -193,7 +237,7 @@ fun AboutUsScreen(navController: NavController) {
 @Composable
 fun TermsAndConditionsScreen(navController: NavController) {
     Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.termsAndConditions_button), onBackClick = { navController.popBackStack() }) },
+        topBar = { MyTopBar(stringResource(R.string.preferences_termsAndConditions_button), onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(

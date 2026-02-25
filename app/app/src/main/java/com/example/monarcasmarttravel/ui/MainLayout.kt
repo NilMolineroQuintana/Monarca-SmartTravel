@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowCircleRight
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Luggage
@@ -27,11 +28,14 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -39,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -243,9 +248,32 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
     }
 }
 
+sealed class WideOptionAction {
+    object Arrow : WideOptionAction()
+    object None : WideOptionAction()
+    data class Toggle(val checked: Boolean, val onCheckedChange: (Boolean) -> Unit) : WideOptionAction()
+    data class Menu(
+        val currentSelection: String,
+        val options: List<String>,
+        val isExpanded: Boolean,
+        val onDismiss: () -> Unit,
+        val onOptionSelected: (String) -> Unit
+    ) : WideOptionAction()
+}
+
 @Composable
-fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, showIcon: Boolean = true, secondaryText: String = "", color: Color = MaterialTheme.colorScheme.surfaceVariant, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun WideOption(
+    ico: ImageVector,
+    text: String,
+    secondaryText: String = "",
+    rounded: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.surfaceVariant,
+    onClick: () -> Unit,
+    action: WideOptionAction = WideOptionAction.Arrow,
+    modifier: Modifier = Modifier
+) {
     val shape = if (rounded) RoundedCornerShape(12.dp) else RectangleShape
+
     Surface(
         onClick = onClick,
         color = color,
@@ -254,39 +282,62 @@ fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, showIcon
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            Icon(
-                imageVector = ico,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
+            Icon(ico, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+
             Spacer(modifier = Modifier.width(12.dp))
+
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (!secondaryText.isEmpty())
-                {
-                    Text(
-                        text = secondaryText,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                if (secondaryText.isNotEmpty()) {
+                    Text(secondaryText, style = MaterialTheme.typography.bodySmall)
                 }
             }
-            if (showIcon) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowCircleRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
+
+            when (action) {
+                is WideOptionAction.Arrow -> {
+                    Icon(Icons.Filled.ArrowCircleRight, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.scale(1.2f))
+                }
+                is WideOptionAction.Toggle -> {
+                    Switch(
+                        checked = action.checked,
+                        onCheckedChange = action.onCheckedChange,
+                        modifier = Modifier.scale(0.9f)
+                    )
+                }
+                // ... dentro del when(action) de WideOption ...
+                is WideOptionAction.Menu -> {
+                    Box {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { onClick() } // Asegura que abra al pulsar
+                        ) {
+                            Text(
+                                text = action.currentSelection,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Icon(Icons.Filled.ArrowDropDown, null, tint = MaterialTheme.colorScheme.primary)
+                        }
+
+                        DropdownMenu(
+                            expanded = action.isExpanded,
+                            onDismissRequest = { action.onDismiss() }
+                        ) {
+                                action.options.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        action.onOptionSelected(option)
+                                        action.onDismiss()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+                is WideOptionAction.None -> { /* No dibuja nada */ }
             }
         }
     }
@@ -307,14 +358,6 @@ fun PopUp(show: Boolean, title: String, text: String, acceptText: String, cancel
             }
         )
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun BottomBarPreview() {
-    Scaffold(
-        bottomBar = { MyBottomBar(navController = NavController(LocalContext.current)) }
-    ) { }
 }
 
 @Preview(showBackground = true)
