@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens
 
+import androidx.compose.ui.graphics.Color
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +25,7 @@ import androidx.compose.material.icons.filled.PhotoAlbum
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -33,8 +36,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,7 +59,6 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.TripCard
 import com.example.monarcasmarttravel.ui.WideOption
 import java.util.Calendar
-
 @Composable
 fun ItineraryScreen(navController: NavController) {
     // Mock-up data
@@ -83,11 +88,11 @@ fun ItineraryScreen(navController: NavController) {
     val dataMirador = calendar.time
 
     val mockData = listOf(
-        ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Ryanair", locationName = "Barcelona", checkInDate = dataVol, transportNumber = "FR1234"),
-        ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Hotel FAWLTY", checkInDate = checkInHotel, checkOutDate = checkOutGeneral, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-        ItineraryItem(id = 3, type = PlanType.PARKING, locationName = "Parking FAWLTY", checkInDate = checkInParking, checkOutDate = checkOutGeneral, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-        ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Restaurant FAWLTY", checkInDate = dataRest, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
-        ItineraryItem(id = 5, type = PlanType.LOCATION, locationName = "Mirador FAWLTY", checkInDate = dataMirador, address = "Aquest text és una prova pera veure com es veu el camp de direcció")
+        ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Ryanair", locationName = "Barcelona", checkInDate = dataVol, price = 420.0, transportNumber = "FR1234"),
+        ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Hotel FAWLTY", checkInDate = checkInHotel, checkOutDate = checkOutGeneral, price = 200.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+        ItineraryItem(id = 3, type = PlanType.PARKING, locationName = "Parking FAWLTY", checkInDate = checkInParking, checkOutDate = checkOutGeneral, price = 50.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+        ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Restaurant FAWLTY", checkInDate = dataRest, price = 100.0, address = "Aquest text és una prova pera veure com es veu el camp de direcció"),
+        ItineraryItem(id = 5, type = PlanType.LOCATION, locationName = "Mirador FAWLTY", checkInDate = dataMirador, price = 30.0,address = "Aquest text és una prova pera veure com es veu el camp de direcció")
     )
     val groupedData = mockData
         .sortedBy { it.checkInDate }
@@ -114,17 +119,55 @@ fun ItineraryScreen(navController: NavController) {
     ) { innerPadding ->
         LazyColumn (
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
         ) {
             item {
-                TripCard(
-                    place = "Kioto, Japón",
-                    dateIn = dateIn,
-                    dateOut = dateOut,
-                    showNextTitle = false,
+                Box(
+                    contentAlignment = Alignment.BottomStart,
                     modifier = Modifier
-                        .padding(horizontal = AppDimensions.PaddingMedium)
-                )
+                        .fillMaxWidth()
+                        .height(180.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.kyoto_2),
+                        contentDescription = "Imagen con blur",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .matchParentSize()
+                            .blur(radius = 3.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        Color.Black.copy(alpha = 0.7f) // Sombra negra con 70% opacidad
+                                    ),
+                                    startY = 300f // Ajusta dónde empieza la sombra (opcional)
+                                )
+                            )
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(start = AppDimensions.PaddingMedium, bottom = AppDimensions.PaddingSmall)
+                    ) {
+                        Text(
+                            text = "Viaje a Kioto",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier
+                        )
+                        Text(
+                            text = "23 Mar - 30 Mar • x dies",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color.White
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.size(AppDimensions.PaddingLarge))
             }
             if (false) {
@@ -153,15 +196,32 @@ fun ItineraryScreen(navController: NavController) {
             } else {
                 groupedData.forEach { (date, itemsDelDia) ->
                     item {
-                        Text(
-                            text = date,
-                            modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(24.dp)
+                                .padding(horizontal = AppDimensions.PaddingMedium)
+                        ) {
+                            Box (
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            ) {
+                                Text(
+                                    text = date,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                        }
+                    }
+                    item {
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
                     }
                     items(itemsDelDia) { plan ->
                         ItineraryItemComponent(plan)
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                     }
                 }
             }
@@ -301,7 +361,9 @@ fun ItineraryItemComponent(ico: ImageVector, enterTime: String, title: String, s
                 )
                 Text(
                     text = tertiaryText,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -316,12 +378,14 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             item.getCheckInTime(),
             "Origen: ${item.locationName}",
             "${item.transportNumber} (${item.company})",
+            tertiaryText = "${item.price}€"
         )
         "hotel","parking","location","restaurant" -> ItineraryItemComponent(
             item.type.icon,
             item.getCheckInTime(),
             item.locationName,
-            item.address
+            item.address,
+            tertiaryText = "${item.price}€"
         )
     }
 }

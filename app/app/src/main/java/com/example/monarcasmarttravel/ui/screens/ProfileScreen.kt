@@ -217,53 +217,6 @@ fun TermsAndConditionsScreen(navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MyModal(type: ConfigType, onDismiss: () -> Unit) {
-    val sheetState = rememberModalBottomSheetState()
-
-    val languages = listOf(stringResource(R.string.language_catalan), stringResource(R.string.language_spanish), stringResource(R.string.language_english))
-    val themes = listOf(stringResource(R.string.theme_system),stringResource(R.string.theme_light), stringResource(R.string.theme_dark))
-
-    ModalBottomSheet(
-        onDismissRequest = { onDismiss() },
-        sheetState = sheetState
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp)
-        ) {
-            val title = when (type) {
-                ConfigType.NOTIFICATIONS -> stringResource(R.string.preferences_notification_button)
-                ConfigType.LANGUAGE -> stringResource(R.string.preferences_language_button)
-                ConfigType.THEME -> stringResource(R.string.preferences_theme_button)
-            }
-
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
-            )
-
-            Spacer(modifier = Modifier.height(AppDimensions.PaddingMedium))
-
-            when (type) {
-                ConfigType.NOTIFICATIONS -> {
-                    MyRadioButtonGroup(listOf(stringResource(R.string.actives), stringResource(R.string.disableds)))
-                }
-                ConfigType.LANGUAGE -> {
-                    MyRadioButtonGroup(languages)
-                }
-                ConfigType.THEME -> {
-                    MyRadioButtonGroup(themes)
-                }
-            }
-        }
-    }
-}
-
 @Composable
 fun MyRadioButtonGroup(options: List<String>) {
     var selectedOption by remember { mutableStateOf(options[0]) }

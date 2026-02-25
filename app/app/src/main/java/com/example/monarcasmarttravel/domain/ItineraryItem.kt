@@ -27,6 +27,7 @@ enum class PlanType(val titleRes: Int, val icon: ImageVector, val route: String)
 data class ItineraryItem (
     val id: Int,
     val type: PlanType,
+    val price: Double,
     val checkInDate: Date,
     val checkOutDate: Date? = null,
     val locationName: String = "",
