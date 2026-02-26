@@ -67,7 +67,7 @@ fun LoginScreen(navController: NavController) {
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
-
+            /*
             Row {
                 Text(
                     text = "Has oblidat la contrasenya?",
@@ -103,6 +103,7 @@ fun LoginScreen(navController: NavController) {
                         //.clickable { navController.navigate("register") }
                 )
             }
+            */
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -115,9 +116,16 @@ fun LoginScreen(navController: NavController) {
                 )
 
                 Text(
-                    text = "Estic d'acord amb els termes i condicions",
+                    text = "Estic d'acord amb els ",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
+                )
+
+                Text(
+                    text = "termes i condicions",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { navController.navigate("termsAndConditions") }
                 )
             }
