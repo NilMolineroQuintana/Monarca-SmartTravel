@@ -112,12 +112,14 @@ fun QuickActionsSection(navController: NavController) {
             secondaryText = "Planifica tu viaje desde cero",
             onClick = { /* TODO: Navegar a pantalla de creación de intinerario */ }
         )
+        /*
         WideOption(
             ico = Icons.Filled.Explore,
             text = "Explorar destinos",
             secondaryText = "Inspírate con lugares populares",
             onClick = { navController.navigate("itinerary") }
         )
+        */
     }
 }
 

@@ -108,7 +108,7 @@ fun LoginScreen(navController: NavController) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+                //modifier = Modifier.fillMaxWidth()
             ) {
                 Checkbox(
                     checked = rememberTerms,
@@ -145,7 +145,7 @@ fun LoginScreen(navController: NavController) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(rememberNavController())
