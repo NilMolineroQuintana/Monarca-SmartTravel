@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,8 +25,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DirectionsBoatFilled
+import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Hotel
+import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.PhotoAlbum
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Train
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -109,16 +115,26 @@ fun ItineraryScreen(navController: NavController) {
     calendar.set(2026, Calendar.MARCH, 30, 11, 0)
     val checkOutGeneral = calendar.time
 
-    val mockData = listOf(
-        ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Japan Airlines", locationName = "Narita Airport (NRT)", checkInDate = dataVol, price = 850.0, transportNumber = "JL123"),
+    calendar.set(2026, Calendar.MARCH, 26, 10, 0)
+    val dataFerryMiyajima = calendar.time
 
-        ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Shinjuku Granbell Hotel", checkInDate = checkInHotel, checkOutDate = checkOutGeneral, price = 1200.0, address = "2-14-5 Kabukicho, Shinjuku-ku, Tokyo"),
+    calendar.set(2026, Calendar.MARCH, 27, 8, 45)
+    val dataTrenLimitedExp = calendar.time
+
+    val mockData = listOf(
+        ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Japan Airlines", locationName = "Narita Airport", checkInDate = dataVol, price = 850.0, transportNumber = "JL123"),
+
+        ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Shinjuku Granbell Hotel", checkInDate = checkInHotel, checkOutDate = checkOutGeneral, price = 1200.0, address = "2-14-5 Kabukicho, Shinjuku-ku"),
 
         ItineraryItem(id = 3, type = PlanType.LOCATION, locationName = "Templo Senso-ji", checkInDate = dataSensoji, price = 0.0, address = "2-3-1 Asakusa, Taito City, Tokyo"),
 
         ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Ichiran Ramen Shinjuku", checkInDate = dataCenaShinjuku, price = 15.0, address = "3-34-11 Shinjuku, Tokyo"),
 
-        ItineraryItem(id = 5, type = PlanType.FLIGHT, company = "JR Central", locationName = "Shinkansen: Tokyo -> Kyoto", checkInDate = dataShinkansenKyoto, price = 90.0, transportNumber = "Nozomi 215"),
+        ItineraryItem(id = 5, type = PlanType.TRAIN, company = "JR Central", locationName = "Tokyo", checkInDate = dataShinkansenKyoto, price = 90.0, transportNumber = "Nozomi 215"),
+
+        ItineraryItem(id = 11, type = PlanType.BOAT, company = "JR West Ferry", locationName = "Miyajima", checkInDate = dataFerryMiyajima, price = 5.0, transportNumber = "Miyajima Line"),
+
+        ItineraryItem(id = 12, type = PlanType.TRAIN, company = "Odakyu Railways", locationName = "Shinjuku", checkInDate = dataTrenLimitedExp, price = 22.0, transportNumber = "EXEα 30000"),
 
         ItineraryItem(id = 6, type = PlanType.RESTAURANT, locationName = "Gion Karyo", checkInDate = dataRest, price = 120.0, address = "570-235 Gionmachi Minamigawa, Higashiyama Ward, Kyoto"),
 
@@ -128,7 +144,7 @@ fun ItineraryScreen(navController: NavController) {
 
         ItineraryItem(id = 9, type = PlanType.LOCATION, locationName = "Kurama Onsen Spa", checkInDate = dataOnsen, price = 45.0, address = "520 Kuramahonmachi, Sakyo Ward, Kyoto"),
 
-        ItineraryItem(id = 10, type = PlanType.LOCATION, locationName = "Nara Deer Park", checkInDate = dataNaraPark, price = 10.0, address = "Nara, Prefectura de Nara, Japón")
+        ItineraryItem(id = 10, type = PlanType.LOCATION, locationName = "Nara Deer Park", checkInDate = dataNaraPark, price = 10.0, address = "Nara, Prefectura de Nara, Japón"),
     )
     val groupedData = mockData
         .sortedBy { it.checkInDate }
@@ -383,54 +399,54 @@ fun AlbumScreen(navController: NavController) {
 }
 
 @Composable
-fun ItineraryItemComponent(ico: ImageVector, enterTime: String, title: String, secondaryText: String, tertiaryText: String = "")
+fun ItineraryItemComponent(ico: ImageVector, color: Color, background: Color, enterTime: String, title: String, secondaryText: String, tertiaryText: String = "")
 {
     Surface(
-        modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = AppDimensions.PaddingMedium)
     ) {
         Row(
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        {
-            Text(
-                text = enterTime,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Box (
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(25.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = CircleShape
-                    ),
+            modifier = Modifier.padding(AppDimensions.PaddingMedium)
+        ) {
+            Surface(
+                modifier = Modifier.size(40.dp),
+                shape = RoundedCornerShape(12.dp),
+                color = background
             ) {
                 Icon(
                     imageVector = ico,
                     contentDescription = null,
-                    modifier = Modifier.size(15.dp)
+                    tint = color,
+                    modifier = Modifier.padding(AppDimensions.PaddingSmall)
                 )
             }
-            Column() {
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = enterTime,
+                    style = MaterialTheme.typography.labelMedium
+                )
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                 )
-                Text(
-                    text = secondaryText,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = tertiaryText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
+                Text(text = secondaryText, style = MaterialTheme.typography.bodySmall)
             }
+
+            Text(
+                text = tertiaryText,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
@@ -440,6 +456,8 @@ fun ItineraryItemComponent(item: ItineraryItem) {
     when (item.type.route) {
         "flight","boat","train" -> ItineraryItemComponent(
             item.type.icon,
+            item.type.iconColor,
+            item.type.backgroundColor,
             item.getCheckInTime(),
             "Origen: ${item.locationName}",
             "${item.transportNumber} (${item.company})",
@@ -447,6 +465,8 @@ fun ItineraryItemComponent(item: ItineraryItem) {
         )
         "hotel","location","restaurant" -> ItineraryItemComponent(
             item.type.icon,
+            item.type.iconColor,
+            item.type.backgroundColor,
             item.getCheckInTime(),
             item.locationName,
             item.address,
@@ -500,10 +520,4 @@ fun PlanScreenPreview() {
 @Composable
 fun AlbumScreenPreview() {
     AlbumScreen(rememberNavController())
-}
-
-@Preview
-@Composable
-fun ItineraryItemPreview() {
-    ItineraryItemComponent(Icons.Filled.Hotel,"Sakura Mori Retreat", "23/03/2026 18:55", "3-chōme-43-15 Sendagi, Bunkyo City, Tokyo 113-0022, Japón")
 }
