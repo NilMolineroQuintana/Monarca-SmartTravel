@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,23 +16,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DirectionsBoatFilled
-import androidx.compose.material.icons.filled.FlightTakeoff
-import androidx.compose.material.icons.filled.Hotel
-import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.PhotoAlbum
-import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material.icons.filled.Train
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -72,15 +65,20 @@ import com.example.monarcasmarttravel.domain.PlanType
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.PopUp
+import com.example.monarcasmarttravel.ui.TopBarAction
 import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.WideOptionAction
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+
+val calendar = Calendar.getInstance()
 
 @Composable
 fun ItineraryScreen(navController: NavController) {
     // Mock-up data
-
-    val calendar = Calendar.getInstance()
 
     calendar.set(2026, Calendar.MARCH, 23, 10, 30)
     val dataVol = calendar.time
@@ -152,8 +150,20 @@ fun ItineraryScreen(navController: NavController) {
 
     // Mock-up data
 
+    var showPopUp by remember { mutableStateOf(false) }
+
     Scaffold(
-        topBar = { MyTopBar(showPageTitle = false, onBackClick = { navController.popBackStack() }) },
+        topBar = { MyTopBar(
+            onBackClick = { navController.popBackStack() },
+            menuItems = listOf(
+                TopBarAction(
+                    stringResource(R.string.deleteTrip),
+                    onClick = {
+                        showPopUp = true
+                    }
+                    ),
+            ))
+            },
         bottomBar = { MyBottomBar(navController) },
         floatingActionButton = {
             Column(
@@ -169,6 +179,7 @@ fun ItineraryScreen(navController: NavController) {
             }
         }
     ) { innerPadding ->
+        PopUp(show = showPopUp, title = stringResource(R.string.deleteTrip), text = stringResource(R.string.popUp_deleteTrip_text), onAccept = { showPopUp = false }, onDismiss = { showPopUp = false })
         LazyColumn (
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -181,7 +192,7 @@ fun ItineraryScreen(navController: NavController) {
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.kyoto_2),
-                        contentDescription = "Imagen con blur",
+                        contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .matchParentSize()
@@ -211,8 +222,16 @@ fun ItineraryScreen(navController: NavController) {
                             color = Color.White,
                             modifier = Modifier
                         )
+                        calendar.set(2026, Calendar.MARCH, 23)
+                        val dateIn = calendar.time
+                        calendar.set(2026, Calendar.MARCH, 30)
+                        val dateOut = calendar.time
+                        val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+                        val dateInString = dateFormat.format(dateIn)
+                        val dateOutString = dateFormat.format(dateOut)
+                        val tripLength = TimeUnit.MILLISECONDS.toDays(dateOut.time - dateIn.time)
                         Text(
-                            text = "23 Mar - 30 Mar • x dies",
+                            text = "${dateInString} - ${dateOutString} • ${tripLength} dies de duració",
                             style = MaterialTheme.typography.titleSmall,
                             color = Color.White
                         )
@@ -289,7 +308,7 @@ fun PlanOptionsScreen(navController: NavController) {
     val MorePlans = listOf(PlanType.HOTEL, PlanType.RESTAURANT, PlanType.LOCATION)
 
     Scaffold(
-        topBar = { MyTopBar("Afegir plan", onBackClick = { navController.popBackStack() }) }
+        topBar = { MyTopBar(stringResource(R.string.add_plan), onBackClick = { navController.popBackStack() }) }
     ) { innerPadding ->
         LazyColumn (
             modifier = Modifier
@@ -327,8 +346,10 @@ fun PlanOptionsScreen(navController: NavController) {
     }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun AlbumScreen(navController: NavController) {
+    // Mock-up data
     val mockData = listOf(
         Image(id = 1, image_id = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
         Image(id = 2, image_id = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
@@ -336,11 +357,14 @@ fun AlbumScreen(navController: NavController) {
         Image(id = 4, image_id = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
     )
 
+    // Mock-up data
+
     val context = LocalContext.current
     var selectedImage by remember { mutableStateOf<Image?>(null) }
+    var showPopUp by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { MyTopBar("Álbum", onBackClick = { navController.popBackStack() }) },
+        topBar = { MyTopBar(stringResource(R.string.album), onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) },
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -354,6 +378,14 @@ fun AlbumScreen(navController: NavController) {
             }
         }
     ) { innerPadding ->
+        PopUp(
+            show = showPopUp,
+            title = stringResource(R.string.deleteImage),
+            text = stringResource(R.string.popUp_deleteImage_text),
+            acceptText = stringResource(R.string.delete),
+            onAccept = { showPopUp = false },
+            onDismiss = { showPopUp = false }
+        )
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
@@ -368,7 +400,10 @@ fun AlbumScreen(navController: NavController) {
                     contentDescription = null,
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .clickable { selectedImage = img },
+                        .combinedClickable(
+                            onClick = { selectedImage = img },
+                            onLongClick = { showPopUp = true }
+                        ),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -389,7 +424,7 @@ fun AlbumScreen(navController: NavController) {
             ) {
                 Image(
                     painter = painterResource(id = img.image_id),
-                    contentDescription = "Imagen maximizada",
+                    contentDescription = null,
                     modifier = Modifier.fillMaxSize(0.95f),
                     contentScale = ContentScale.Fit
                 )
@@ -398,20 +433,34 @@ fun AlbumScreen(navController: NavController) {
     }
 }
 
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
-fun ItineraryItemComponent(ico: ImageVector, color: Color, background: Color, enterTime: String, title: String, secondaryText: String, tertiaryText: String = "")
-{
+fun ItineraryItemComponent(
+    ico: ImageVector,
+    color: Color,
+    background: Color,
+    enterTime: String,
+    title: String,
+    secondaryText: String,
+    tertiaryText: String = "",
+    onLongClick: () -> Unit = {}
+) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = AppDimensions.PaddingMedium)
+            .clip(RoundedCornerShape(12.dp))
+            .combinedClickable(
+                onClick = { },
+                onLongClick = onLongClick
+            )
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
-            modifier = Modifier.padding(AppDimensions.PaddingMedium)
+            modifier = Modifier.padding(horizontal =  AppDimensions.PaddingMedium, vertical = AppDimensions.PaddingSmall)
         ) {
             Surface(
                 modifier = Modifier.size(40.dp),
@@ -439,20 +488,21 @@ fun ItineraryItemComponent(ico: ImageVector, color: Color, background: Color, en
                     fontWeight = FontWeight.Bold,
                 )
                 Text(text = secondaryText, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = tertiaryText,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
-
-            Text(
-                text = tertiaryText,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.primary
-            )
         }
     }
 }
 
 @Composable
 fun ItineraryItemComponent(item: ItineraryItem) {
+    var showPopUp by remember { mutableStateOf(false) }
+
     when (item.type.route) {
         "flight","boat","train" -> ItineraryItemComponent(
             item.type.icon,
@@ -461,7 +511,8 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             item.getCheckInTime(),
             "Origen: ${item.locationName}",
             "${item.transportNumber} (${item.company})",
-            tertiaryText = "${item.price}€"
+            tertiaryText = "${item.price}€",
+            onLongClick = { showPopUp = true }
         )
         "hotel","location","restaurant" -> ItineraryItemComponent(
             item.type.icon,
@@ -470,9 +521,12 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             item.getCheckInTime(),
             item.locationName,
             item.address,
-            tertiaryText = "${item.price}€"
+            tertiaryText = "${item.price}€",
+            onLongClick = { showPopUp = true }
         )
     }
+
+    PopUp(show = showPopUp, title = "Eliminar plan", text = "¿Estàs segur que vols eliminar aquest plan del teu itinerari?", acceptText = stringResource(R.string.delete), onAccept = { showPopUp = false }, onDismiss = { showPopUp = false })
 }
 
 @Composable

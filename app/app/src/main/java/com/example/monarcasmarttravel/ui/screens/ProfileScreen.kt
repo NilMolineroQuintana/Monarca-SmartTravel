@@ -34,7 +34,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -82,10 +80,10 @@ fun ProfileScreen(navController: NavController) {
 
     val ButtonsColor = Color.Transparent
     Scaffold(
-        topBar = { MyTopBar("Preferències") },
+        topBar = { MyTopBar(stringResource(R.string.preferences_text)) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
-        PopUp(show = showLogOutPopUp, title = stringResource(R.string.preferences_logOut_text), text = stringResource(R.string.logOut_popUp_text), acceptText = stringResource(R.string.popUp_accept), cancelText = stringResource(R.string.popUp_cancel), onAccept = { navController.navigate("login") },onDismiss = { showLogOutPopUp = false })
+        PopUp(show = showLogOutPopUp, title = stringResource(R.string.preferences_logOut_text), text = stringResource(R.string.logOut_popUp_text), onAccept = { navController.navigate("login") },onDismiss = { showLogOutPopUp = false })
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
             modifier = Modifier
@@ -290,12 +288,12 @@ fun MyRadioButtonGroup(options: List<String>) {
 fun OptionGroup(
     title: String,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit // Usamos ColumnScope para que los hijos hereden el comportamiento de columna
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow // Un tono sutil
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
         modifier = modifier.fillMaxWidth()
     ) {
@@ -305,7 +303,7 @@ fun OptionGroup(
             Text(
                 text = title.uppercase(),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary, // Color acentuado para el título
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 8.dp)
@@ -329,7 +327,7 @@ fun ItemGroupPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MainPreview() {
     ProfileScreen(rememberNavController())

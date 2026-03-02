@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +23,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Luggage
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -33,13 +33,15 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,10 +50,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -68,39 +68,73 @@ object AppDimensions {
     val PaddingMedium = 16.dp
     val PaddingLarge = 24.dp
 }
+
+
+data class TopBarAction(
+    val title: String,
+    val onClick: () -> Unit
+)
+
 @Composable
-fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (() -> Unit)? = null) {
+fun MyTopBar(
+    title: String = "",
+    menuItems: List<TopBarAction> = emptyList(),
+    onBackClick: (() -> Unit)? = null
+) {
+    var expanded by remember { mutableStateOf(false) }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(top = 40.dp, bottom = AppDimensions.PaddingMedium)
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = if (title.isNotEmpty()) 60.dp else 40.dp, bottom = AppDimensions.PaddingMedium)
     ) {
-        if (onBackClick != null) {
-            IconButton(
-                onClick = onBackClick,
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                    modifier = Modifier.size(30.dp)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (onBackClick != null) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Enrere",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+            if (title.isNotEmpty()) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = (if (onBackClick == null) AppDimensions.PaddingMedium else AppDimensions.PaddingSmall))
                 )
             }
         }
-        if (showPageTitle) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = (if (onBackClick == null) AppDimensions.PaddingMedium else AppDimensions.PaddingSmall))
-            )
-        }
-    }
-    Box(
-        contentAlignment = Alignment.CenterStart,
-        modifier = Modifier.fillMaxWidth()
-            .statusBarsPadding()
-            .padding(top = 24.dp, bottom = 10.dp)
-    ) {
 
+        if (menuItems.isNotEmpty()) {
+            Box(modifier = Modifier.padding(end = AppDimensions.PaddingSmall)) {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "Més opcions"
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    menuItems.forEach { item ->
+                        DropdownMenuItem(
+                            text = { Text(text = item.title) },
+                            onClick = {
+                                expanded = false // Cerramos el menú
+                                item.onClick()   // Ejecutamos la lógica de esta opción
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -344,7 +378,7 @@ fun WideOption(
 }
 
 @Composable
-fun PopUp(show: Boolean, title: String, text: String, acceptText: String, cancelText: String, onAccept: () -> Unit, onDismiss: () -> Unit, ) {
+fun PopUp(show: Boolean, title: String, text: String, acceptText: String = stringResource(R.string.accept), cancelText: String = stringResource(R.string.cancel), onAccept: () -> Unit, onDismiss: () -> Unit, ) {
     if (show) {
         AlertDialog(
             onDismissRequest = onDismiss,
