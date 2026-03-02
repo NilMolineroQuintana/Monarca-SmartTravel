@@ -1,32 +1,25 @@
 package com.example.monarcasmarttravel.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PhotoAlbum
-import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -49,18 +42,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.domain.Image
 import com.example.monarcasmarttravel.domain.ItineraryItem
 import com.example.monarcasmarttravel.domain.PlanType
 import com.example.monarcasmarttravel.ui.AppDimensions
@@ -68,8 +57,6 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.TopBarAction
-import com.example.monarcasmarttravel.ui.WideOption
-import com.example.monarcasmarttravel.ui.WideOptionAction
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -185,64 +172,17 @@ fun ItineraryScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                Box(
-                    contentAlignment = Alignment.BottomStart,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.kyoto_2),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .matchParentSize()
-                            .blur(radius = 3.dp)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color.Black.copy(alpha = 0.7f)
-                                    ),
-                                    startY = 300f
-                                )
-                            )
-                    )
-                    Column(
-                        modifier = Modifier
-                            .padding(start = AppDimensions.PaddingMedium, bottom = AppDimensions.PaddingSmall)
-                    ) {
-                        Text(
-                            text = "Viatge a Kioto",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier
-                        )
-                        calendar.set(2026, Calendar.MARCH, 23)
-                        val dateIn = calendar.time
-                        calendar.set(2026, Calendar.MARCH, 30)
-                        val dateOut = calendar.time
-                        val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
-                        val dateInString = dateFormat.format(dateIn)
-                        val dateOutString = dateFormat.format(dateOut)
-                        val tripLength = TimeUnit.MILLISECONDS.toDays(dateOut.time - dateIn.time)
-                        Text(
-                            text = "${dateInString} - ${dateOutString} • ${tripLength} dies de duració",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = Color.White
-                        )
-                    }
-                }
+                calendar.set(2026, Calendar.MARCH, 23)
+                val dateIn = calendar.time
+                calendar.set(2026, Calendar.MARCH, 30)
+                val dateOut = calendar.time
+                Header("Kioto", dateIn, dateOut)
             }
             item {
                 ItineraryStatsComponent(mockData.sumOf { it.price }, mockData)
                 Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
             }
+
             if (false) {
                 item {
                     Text(
@@ -269,28 +209,8 @@ fun ItineraryScreen(navController: NavController) {
             } else {
                 groupedData.forEach { (date, itemsDelDia) ->
                     item {
-                        Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(24.dp)
-                                .padding(horizontal = AppDimensions.PaddingMedium)
-                        ) {
-                            Box (
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                            ) {
-                                Text(
-                                    text = date,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
-                        }
-                    }
-                    item {
-                        Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
+                        DivisorComponent(date)
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                     }
                     items(itemsDelDia) { plan ->
                         ItineraryItemComponent(plan)
@@ -298,9 +218,64 @@ fun ItineraryScreen(navController: NavController) {
                     }
                 }
             }
+
             item {
                 Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
             }
+        }
+    }
+}
+
+// PER IMPLEMENTAR: Aqui li hauriem de passar un data class de tipus trip.
+@Composable
+fun Header(destination: String, startDate: java.util.Date, endDate: java.util.Date) {
+    Box(
+        contentAlignment = Alignment.BottomStart,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.kyoto_2),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .matchParentSize()
+                .blur(radius = 3.dp)
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.Black.copy(alpha = 0.7f)
+                        ),
+                        startY = 300f
+                    )
+                )
+        )
+        Column(
+            modifier = Modifier
+                .padding(start = AppDimensions.PaddingMedium, bottom = AppDimensions.PaddingSmall)
+        ) {
+            Text(
+                text = stringResource(R.string.trip_to, destination),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier
+            )
+            val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+            val dateInString = dateFormat.format(startDate)
+            val dateOutString = dateFormat.format(endDate)
+            val tripLength = TimeUnit.MILLISECONDS.toDays(endDate.time - startDate.time)
+            Text(
+                text = "${dateInString} - ${dateOutString} • ${tripLength} dies de duració",
+                style = MaterialTheme.typography.titleSmall,
+                color = Color.White
+            )
         }
     }
 }
@@ -346,6 +321,29 @@ private fun StatItem(
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleSmall
+            )
+        }
+    }
+}
+
+@Composable
+fun DivisorComponent(date: String) {
+    Surface(
+        color = MaterialTheme.colorScheme.primaryContainer,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(24.dp)
+            .padding(horizontal = AppDimensions.PaddingMedium)
+    ) {
+        Box (
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Text(
+                text = date,
+                fontWeight = FontWeight.Bold,
             )
         }
     }
