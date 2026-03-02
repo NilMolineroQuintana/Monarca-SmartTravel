@@ -3,6 +3,7 @@ package com.example.monarcasmarttravel.ui.screens
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -134,7 +135,7 @@ fun ItineraryScreen(navController: NavController) {
 
         ItineraryItem(id = 12, type = PlanType.TRAIN, company = "Odakyu Railways", locationName = "Shinjuku", checkInDate = dataTrenLimitedExp, price = 22.0, transportNumber = "EXEα 30000"),
 
-        ItineraryItem(id = 6, type = PlanType.RESTAURANT, locationName = "Gion Karyo", checkInDate = dataRest, price = 120.0, address = "570-235 Gionmachi Minamigawa, Higashiyama Ward, Kyoto"),
+        ItineraryItem(id = 6, type = PlanType.RESTAURANT, locationName = "Gion Karyo", checkInDate = dataRest, price = 120.5, address = "570-235 Gionmachi Minamigawa, Higashiyama Ward, Kyoto"),
 
         ItineraryItem(id = 7, type = PlanType.LOCATION, locationName = "Shibuya Sky Mirador", checkInDate = dataMirador, price = 25.0, address = "2-24-12 Shibuya, Tokyo"),
 
@@ -188,7 +189,7 @@ fun ItineraryScreen(navController: NavController) {
                     contentAlignment = Alignment.BottomStart,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(240.dp)
+                        .height(200.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.kyoto_2),
@@ -237,7 +238,10 @@ fun ItineraryScreen(navController: NavController) {
                         )
                     }
                 }
-                Spacer(modifier = Modifier.size(AppDimensions.PaddingLarge))
+            }
+            item {
+                ItineraryStatsComponent(mockData.sumOf { it.price }, mockData)
+                Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
             }
             if (false) {
                 item {
@@ -302,133 +306,47 @@ fun ItineraryScreen(navController: NavController) {
 }
 
 @Composable
-fun PlanOptionsScreen(navController: NavController) {
-
-    val PopularPlans = listOf(PlanType.FLIGHT, PlanType.BOAT, PlanType.TRAIN,)
-    val MorePlans = listOf(PlanType.HOTEL, PlanType.RESTAURANT, PlanType.LOCATION)
-
-    Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.add_plan), onBackClick = { navController.popBackStack() }) }
-    ) { innerPadding ->
-        LazyColumn (
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = AppDimensions.PaddingMedium)
-        ) {
-            item { Text(
-                text = "Els més populars",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 10.dp)
-                )
-            }
-
-            val mod = Modifier.padding(vertical = 4.dp)
-
-            items(PopularPlans) { plan ->
-                WideOption(plan.icon, stringResource(id = plan.titleRes), action = WideOptionAction.None, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
-            }
-
-            item {
-                Text (
-                    text = "Més",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-            }
-
-            items(MorePlans) { plan ->
-                WideOption(plan.icon, stringResource(id = plan.titleRes), action = WideOptionAction.None, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
-            }
-        }
+fun ItineraryStatsComponent(budget: Double, data: List<ItineraryItem>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        StatItem(
+            label = "Pressupost",
+            value = "$budget€",
+            modifier = Modifier.weight(1f)
+        )
+        StatItem(
+            label = "Activitats",
+            value = "${data.size}",
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
-fun AlbumScreen(navController: NavController) {
-    // Mock-up data
-    val mockData = listOf(
-        Image(id = 1, image_id = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
-        Image(id = 2, image_id = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
-        Image(id = 3, image_id = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
-        Image(id = 4, image_id = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
-    )
-
-    // Mock-up data
-
-    val context = LocalContext.current
-    var selectedImage by remember { mutableStateOf<Image?>(null) }
-    var showPopUp by remember { mutableStateOf(false) }
-
-    Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.album), onBackClick = { navController.popBackStack() }) },
-        bottomBar = { MyBottomBar(navController) },
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                Toast.makeText(
-                    context,
-                    "Funció que s'implementarà més endevant",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }) {
-                Icon(imageVector = Icons.Filled.Upload, contentDescription = null)
-            }
-        }
-    ) { innerPadding ->
-        PopUp(
-            show = showPopUp,
-            title = stringResource(R.string.deleteImage),
-            text = stringResource(R.string.popUp_deleteImage_text),
-            acceptText = stringResource(R.string.delete),
-            onAccept = { showPopUp = false },
-            onDismiss = { showPopUp = false }
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            contentPadding = innerPadding,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(mockData) { img ->
-                Image(
-                    painter = painterResource(id = img.image_id),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .combinedClickable(
-                            onClick = { selectedImage = img },
-                            onLongClick = { showPopUp = true }
-                        ),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
-    }
-
-    selectedImage?.let { img ->
-        Dialog(
-            onDismissRequest = { selectedImage = null },
-            properties = DialogProperties(usePlatformDefaultWidth = false)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.9f))
-                    .clickable { selectedImage = null },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = img.image_id),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(0.95f),
-                    contentScale = ContentScale.Fit
-                )
-            }
+private fun StatItem(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .border(0.5.dp, MaterialTheme.colorScheme.outline)
+            .padding(AppDimensions.PaddingSmall),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleSmall
+            )
         }
     }
 }
@@ -462,6 +380,11 @@ fun ItineraryItemComponent(
             horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
             modifier = Modifier.padding(horizontal =  AppDimensions.PaddingMedium, vertical = AppDimensions.PaddingSmall)
         ) {
+            Text(
+                text = enterTime,
+                style = MaterialTheme.typography.labelLarge
+            )
+
             Surface(
                 modifier = Modifier.size(40.dp),
                 shape = RoundedCornerShape(12.dp),
@@ -478,10 +401,6 @@ fun ItineraryItemComponent(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = enterTime,
-                    style = MaterialTheme.typography.labelMedium
-                )
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -528,35 +447,6 @@ fun ItineraryItemComponent(item: ItineraryItem) {
 
     PopUp(show = showPopUp, title = "Eliminar plan", text = "¿Estàs segur que vols eliminar aquest plan del teu itinerari?", acceptText = stringResource(R.string.delete), onAccept = { showPopUp = false }, onDismiss = { showPopUp = false })
 }
-
-@Composable
-fun ImageComponent(image: Image) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            horizontalAlignment = Alignment.End,
-        ) {
-            Image(
-                painter = painterResource(id = image.image_id),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(horizontal = AppDimensions.PaddingMedium)
-                    .padding(top = AppDimensions.PaddingMedium)
-                    .clip(RoundedCornerShape(12.dp))
-            )
-            Text(
-                text = image.dateUploaded.toString(),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .padding(top = AppDimensions.PaddingSmall ,end = AppDimensions.PaddingMedium, bottom = AppDimensions.PaddingSmall)
-            )
-        }
-    }
-}
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
