@@ -47,7 +47,7 @@ fun AppNavigation() {
     ) {
         NavHost(
             navController = navController,
-            startDestination = "home",
+            startDestination = "termsAndConditions?firstTime=true",
         ) {
             composable ("login") {
                 LoginScreen(navController)
@@ -64,8 +64,18 @@ fun AppNavigation() {
             composable("aboutUs") {
                 AboutUsScreen(navController)
             }
-            composable("termsAndConditions") {
-                TermsAndConditionsScreen(navController)
+            composable(
+                route = "termsAndConditions?firstTime={firstTime}",
+                arguments = listOf(
+                    navArgument("firstTime") {
+                        type = NavType.BoolType
+                        defaultValue = false
+                    }
+                )
+            ) { backStackEntry ->
+                val isFirstTime = backStackEntry.arguments?.getBoolean("firstTime") ?: false
+
+                TermsAndConditionsScreen(navController, isFirstTime)
             }
             composable("itinerary") {
                 ItineraryScreen(navController)

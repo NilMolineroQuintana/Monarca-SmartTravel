@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -27,14 +27,15 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -75,7 +77,6 @@ fun ProfileScreen(navController: NavController) {
     var coinMenuExpanded by remember { mutableStateOf(false) }
 
     var darkMode by remember { mutableStateOf(false) }
-    var wideText by remember { mutableStateOf(false) }
     var notifications by remember { mutableStateOf(false) }
 
     val ButtonsColor = Color.Transparent
@@ -125,19 +126,14 @@ fun ProfileScreen(navController: NavController) {
                 }
             }
             item {
-                OptionGroup(title = stringResource(R.string.preferences_appearance)) {
-                    WideOption(
-                        Icons.Filled.FormatPaint,
-                        stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.preferences_theme_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle(darkMode) { darkMode = it}, onClick = { darkMode = !darkMode }
-                    )
+                OptionGroup(stringResource(R.string.config)) {
+                    WideOption(Icons.Filled.FormatPaint, stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.preferences_theme_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle(darkMode) { darkMode = it}, onClick = { darkMode = !darkMode })
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(Icons.Default.TextFields,
-                        stringResource(R.string.preferences_wide_button), secondaryText = stringResource(R.string.preferences_wide_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle(wideText) { wideText = it } ,onClick = { wideText = !wideText })
+                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = stringResource(R.string.preferences_notifications_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle (notifications) { notifications = it } ,onClick = { notifications = !notifications })
                 }
             }
             item {
                 OptionGroup(title = stringResource(R.string.preferences_other)) {
-                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = stringResource(R.string.preferences_notifications_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle (notifications) { notifications = it } ,onClick = { notifications = !notifications })
                     HorizontalDivider(thickness = 1.dp)
                     WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.preferences_aboutUs_button), secondaryText = stringResource(R.string.preferences_aboutUs_description), rounded = false, color = ButtonsColor, onClick = { navController.navigate("aboutUs") })
                     HorizontalDivider(thickness = 1.dp)
@@ -233,10 +229,16 @@ fun AboutUsScreen(navController: NavController) {
 }
 
 @Composable
-fun TermsAndConditionsScreen(navController: NavController) {
+fun TermsAndConditionsScreen(navController: NavController, firstTime: Boolean = true) {
+    val context = LocalContext.current
+
     Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.preferences_termsAndConditions_button), onBackClick = { navController.popBackStack() }) },
-        bottomBar = { MyBottomBar(navController) }
+        topBar = { MyTopBar(stringResource(R.string.preferences_termsAndConditions_button), onBackClick = if (!firstTime) { { navController.popBackStack() } } else null) },
+        bottomBar = { if (!firstTime) MyBottomBar(navController) else AcceptOrDeclineBottomBar(
+            onAccept = { navController.navigate("login") {
+            popUpTo("termsAndConditions?firstTime={firstTime}") { inclusive = true } }
+                       },
+            onDecline = { (context as? Activity)?.finish() }) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -255,33 +257,44 @@ fun TermsAndConditionsScreen(navController: NavController) {
 }
 
 @Composable
-fun MyRadioButtonGroup(options: List<String>) {
-    var selectedOption by remember { mutableStateOf(options[0]) }
-
-    Column {
-        options.forEach { text ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = (text == selectedOption),
-                        onClick = { selectedOption = text }
-                    )
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+fun AcceptOrDeclineBottomBar(
+    onAccept: () -> Unit,
+    onDecline: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 3.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AppDimensions.PaddingMedium),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
+        ) {
+            TextButton(
+                onClick = onDecline,
+                modifier = Modifier.weight(1f)
             ) {
-                RadioButton(
-                    selected = (text == selectedOption),
-                    onClick = null
-                )
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
+                Text(text = stringResource(R.string.cancel))
+            }
+
+            Button(
+                onClick = onAccept,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = stringResource(R.string.accept))
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewAcceptOrDeclineBottomBar() {
+    AcceptOrDeclineBottomBar(onAccept = {}, onDecline = {})
 }
 
 @Composable
@@ -321,7 +334,7 @@ fun OptionGroup(
 @Preview(showBackground = true)
 @Composable
 fun ItemGroupPreview() {
-    OptionGroup(title = "Cuenta") {
+    OptionGroup(title = "Compte") {
         WideOption(Icons.Default.Person, "Perfil", rounded = false,onClick = { /*...*/ })
         WideOption(Icons.Default.Email, "Cambiar correo", rounded = false,onClick = { /*...*/ })
     }

@@ -308,6 +308,7 @@ private fun StatItem(
 ) {
     Box(
         modifier = modifier
+            .background(MaterialTheme.colorScheme.surfaceContainer)
             .border(0.5.dp, MaterialTheme.colorScheme.outline)
             .padding(AppDimensions.PaddingSmall),
         contentAlignment = Alignment.Center

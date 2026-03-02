@@ -115,7 +115,7 @@ fun MyTopBar(
                 IconButton(onClick = { expanded = true }) {
                     Icon(
                         imageVector = Icons.Filled.MoreVert,
-                        contentDescription = "Més opcions"
+                        contentDescription = null
                     )
                 }
 
