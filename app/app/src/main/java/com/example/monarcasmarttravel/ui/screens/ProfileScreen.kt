@@ -1,8 +1,10 @@
 package com.example.monarcasmarttravel.ui.screens
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -10,37 +12,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FormatPaint
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,85 +60,90 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.WideOption
+import com.example.monarcasmarttravel.ui.WideOptionAction
 
 @Composable
 fun ProfileScreen(navController: NavController) {
     // Mock-up data
     val usr: User = User("1", "Dummy", "dummy@gmail.com", R.drawable.pfp_sample)
     // Mock-up data
+
     var showLogOutPopUp by remember { mutableStateOf(false) }
+
+    var selectedLanguage by remember { mutableStateOf("Català") }
+    var langMenuExpanded by remember { mutableStateOf(false) }
+
+    var selectedCoin by remember { mutableStateOf("Euro (€)") }
+    var coinMenuExpanded by remember { mutableStateOf(false) }
+
+    var darkMode by remember { mutableStateOf(false) }
+    var notifications by remember { mutableStateOf(false) }
+
+    val ButtonsColor = Color.Transparent
     Scaffold(
-        topBar = { MyTopBar("Perfil") },
+        topBar = { MyTopBar(stringResource(R.string.preferences_text)) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
-        PopUp(show = showLogOutPopUp, title = stringResource(R.string.logOut_text), text = stringResource(R.string.logOut_popUp_text), acceptText = stringResource(R.string.popUp_accept), cancelText = stringResource(R.string.popUp_cancel), onAccept = {},onDismiss = { showLogOutPopUp = false })
-        Column(
-            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-        ) {
-            ProfileInfo(usr)
-            Column(
-                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
-                modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
-            ) {
-                WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), onClick = { navController.navigate("notifications") })
-                WideOption(ico = Icons.Filled.Settings, text = stringResource(R.string.preferences_text), onClick = { navController.navigate("preferences") })
-                WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.aboutUs_button), onClick = { navController.navigate("aboutUs") })
-                WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.termsAndConditions_button), onClick = { navController.navigate("termsAndConditions") })
-                WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.logOut_text), onClick = { showLogOutPopUp = true })
-            }
-        }
-    }
-}
-
-enum class ConfigType {
-    NOTIFICATIONS,
-    LANGUAGE,
-    THEME
-}
-
-@Composable
-fun PreferencesScreen(navController: NavController) {
-    var activeConfig by remember { mutableStateOf<ConfigType?>(null) }
-
-    Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.preferences_text), onBackClick = { navController.popBackStack() }) },
-        bottomBar = { MyBottomBar(navController) }
-    ) { innerPadding ->
-        Column(
+        PopUp(show = showLogOutPopUp, title = stringResource(R.string.preferences_logOut_text), text = stringResource(R.string.logOut_popUp_text), onAccept = { navController.navigate("login") },onDismiss = { showLogOutPopUp = false })
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
             modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
+                .padding(top = innerPadding.calculateTopPadding())
                 .padding(horizontal = AppDimensions.PaddingMedium)
+                .fillMaxSize()
         ) {
-            WideOption(
-                ico = Icons.Filled.Notifications,
-                text = stringResource(R.string.preferences_notification_button),
-                secondaryText = "Activades",
-                onClick = { activeConfig = ConfigType.NOTIFICATIONS }
-            )
-            WideOption(
-                ico = Icons.Filled.Flag,
-                text = stringResource(R.string.preferences_language_button),
-                secondaryText = stringResource(R.string.language_catalan),
-                onClick = { activeConfig = ConfigType.LANGUAGE }
-            )
-            WideOption(
-                ico = Icons.Filled.FormatPaint,
-                text = stringResource(R.string.preferences_theme_button),
-                secondaryText = stringResource(R.string.theme_light),
-                onClick = { activeConfig = ConfigType.THEME }
-            )
-
-            activeConfig?.let { type ->
-                MyModal(
-                    type = type,
-                    onDismiss = { activeConfig = null }
-                )
+            item {
+                OptionGroup(title = stringResource(R.string.preferences_languageAndRegion)) {
+                    WideOption(
+                        ico = Icons.Default.Flag,
+                        text = stringResource(R.string.preferences_language_button),
+                        secondaryText = stringResource(R.string.preferences_language_description),
+                        onClick = { langMenuExpanded = true },
+                        color = ButtonsColor,
+                        action = WideOptionAction.Menu(
+                            currentSelection = selectedLanguage,
+                            options = listOf(stringResource(R.string.language_catalan), stringResource(R.string.language_spanish), stringResource(R.string.language_english)),
+                            isExpanded = langMenuExpanded,
+                            onDismiss = { langMenuExpanded = false },
+                            onOptionSelected = { selectedLanguage = it }
+                        )
+                    )
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(
+                        ico = Icons.Default.Payments,
+                        text = stringResource(R.string.preferences_coin_button),
+                        secondaryText = stringResource(R.string.preferences_coin_description),
+                        onClick = { coinMenuExpanded = true },
+                        color = ButtonsColor,
+                        action = WideOptionAction.Menu(
+                            currentSelection = selectedCoin,
+                            options = listOf("Euro (€)", "Dollar (US$)", "Libra (GBP)"),
+                            isExpanded = coinMenuExpanded,
+                            onDismiss = { coinMenuExpanded = false },
+                            onOptionSelected = { selectedCoin = it }
+                        )
+                    )
+                }
+            }
+            item {
+                OptionGroup(stringResource(R.string.config)) {
+                    WideOption(Icons.Filled.FormatPaint, stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.preferences_theme_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle(darkMode) { darkMode = it}, onClick = { darkMode = !darkMode })
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = stringResource(R.string.preferences_notifications_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle (notifications) { notifications = it } ,onClick = { notifications = !notifications })
+                }
+            }
+            item {
+                OptionGroup(title = stringResource(R.string.preferences_other)) {
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.preferences_aboutUs_button), secondaryText = stringResource(R.string.preferences_aboutUs_description), rounded = false, color = ButtonsColor, onClick = { navController.navigate("aboutUs") })
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.preferences_termsAndConditions_button), secondaryText = stringResource(R.string.preferences_termsAndConditions_description), rounded = false, color = ButtonsColor, onClick = { navController.navigate("termsAndConditions") })
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.preferences_logOut_text), secondaryText = stringResource(R.string.preferences_logOut_description), rounded = false, color = ButtonsColor, onClick = { showLogOutPopUp = true })
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
             }
         }
     }
@@ -142,7 +152,7 @@ fun PreferencesScreen(navController: NavController) {
 @Composable
 fun AboutUsScreen(navController: NavController) {
     Scaffold(
-        topBar = { MyTopBar(stringResource(id = R.string.aboutUs_button), onBackClick = { navController.popBackStack() }) },
+        topBar = { MyTopBar(stringResource(id = R.string.preferences_aboutUs_button), onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
@@ -219,10 +229,16 @@ fun AboutUsScreen(navController: NavController) {
 }
 
 @Composable
-fun TermsAndConditionsScreen(navController: NavController) {
+fun TermsAndConditionsScreen(navController: NavController, firstTime: Boolean = true) {
+    val context = LocalContext.current
+
     Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.termsAndConditions_button), onBackClick = { navController.popBackStack() }) },
-        bottomBar = { MyBottomBar(navController) }
+        topBar = { MyTopBar(stringResource(R.string.preferences_termsAndConditions_button), onBackClick = if (!firstTime) { { navController.popBackStack() } } else null) },
+        bottomBar = { if (!firstTime) MyBottomBar(navController) else AcceptOrDeclineBottomBar(
+            onAccept = { navController.navigate("login") {
+            popUpTo("termsAndConditions?firstTime={firstTime}") { inclusive = true } }
+                       },
+            onDecline = { (context as? Activity)?.finish() }) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -239,118 +255,92 @@ fun TermsAndConditionsScreen(navController: NavController) {
         }
     }
 }
+
 @Composable
-fun ProfileInfo(user: User) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppDimensions.PaddingMedium),
-        verticalAlignment = Alignment.CenterVertically
+fun AcceptOrDeclineBottomBar(
+    onAccept: () -> Unit,
+    onDecline: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 3.dp
     ) {
-        Image(
-            painter = painterResource(id = user.imageId),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .weight(0.25f)
-                .aspectRatio(1f)
-                .clip(CircleShape)
-        )
-
-        Column(
-            modifier = Modifier
-                .weight(0.75f)
-                .padding(start = AppDimensions.PaddingMedium)
-        ) {
-            Text(stringResource(R.string.profile_page_name_field), style = MaterialTheme.typography.labelSmall)
-            Text(text = user.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-
-            Spacer(modifier = Modifier.height(AppDimensions.PaddingSmall))
-
-            Text(stringResource(R.string.profile_page_email_field), style = MaterialTheme.typography.labelSmall)
-            Text(text = user.email, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MyModal(type: ConfigType, onDismiss: () -> Unit) {
-    val sheetState = rememberModalBottomSheetState()
-
-    val languages = listOf(stringResource(R.string.language_catalan), stringResource(R.string.language_spanish), stringResource(R.string.language_english))
-    val themes = listOf(stringResource(R.string.theme_system),stringResource(R.string.theme_light), stringResource(R.string.theme_dark))
-
-    ModalBottomSheet(
-        onDismissRequest = { onDismiss() },
-        sheetState = sheetState
-    ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 32.dp)
+                .padding(AppDimensions.PaddingMedium),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
         ) {
-            val title = when (type) {
-                ConfigType.NOTIFICATIONS -> stringResource(R.string.preferences_notification_button)
-                ConfigType.LANGUAGE -> stringResource(R.string.preferences_language_button)
-                ConfigType.THEME -> stringResource(R.string.preferences_theme_button)
+            TextButton(
+                onClick = onDecline,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = stringResource(R.string.cancel))
             }
 
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium)
-            )
-
-            Spacer(modifier = Modifier.height(AppDimensions.PaddingMedium))
-
-            when (type) {
-                ConfigType.NOTIFICATIONS -> {
-                    MyRadioButtonGroup(listOf(stringResource(R.string.actives), stringResource(R.string.disableds)))
-                }
-                ConfigType.LANGUAGE -> {
-                    MyRadioButtonGroup(languages)
-                }
-                ConfigType.THEME -> {
-                    MyRadioButtonGroup(themes)
-                }
+            Button(
+                onClick = onAccept,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = stringResource(R.string.accept))
             }
         }
     }
 }
 
+@Preview
 @Composable
-fun MyRadioButtonGroup(options: List<String>) {
-    var selectedOption by remember { mutableStateOf(options[0]) }
+fun PreviewAcceptOrDeclineBottomBar() {
+    AcceptOrDeclineBottomBar(onAccept = {}, onDecline = {})
+}
 
-    Column {
-        options.forEach { text ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+@Composable
+fun OptionGroup(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 12.dp)
+        ) {
+            Text(
+                text = title.uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = (text == selectedOption),
-                        onClick = { selectedOption = text }
-                    )
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                RadioButton(
-                    selected = (text == selectedOption),
-                    onClick = null
-                )
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 8.dp)
+            )
+
+            HorizontalDivider(thickness = 1.dp)
+
+            Column {
+                content()
             }
         }
     }
 }
 
 @Preview(showBackground = true)
+@Composable
+fun ItemGroupPreview() {
+    OptionGroup(title = "Compte") {
+        WideOption(Icons.Default.Person, "Perfil", rounded = false,onClick = { /*...*/ })
+        WideOption(Icons.Default.Email, "Cambiar correo", rounded = false,onClick = { /*...*/ })
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MainPreview() {
     ProfileScreen(rememberNavController())
@@ -363,12 +353,6 @@ fun TripHistoryPreview() {
     TripHistoryScreen(rememberNavController())
 }
 */
-
-@Preview(showBackground = true)
-@Composable
-fun PreferencesPreview() {
-    PreferencesScreen(rememberNavController())
-}
 
 @Preview(showBackground = true)
 @Composable
