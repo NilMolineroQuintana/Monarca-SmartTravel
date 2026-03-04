@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.monarcasmarttravel.ui.screens.AboutUsScreen
 import com.example.monarcasmarttravel.ui.screens.AlbumScreen
+import com.example.monarcasmarttravel.ui.screens.CreateTripScreen
 import com.example.monarcasmarttravel.ui.screens.HomeScreen
 import com.example.monarcasmarttravel.ui.screens.ItineraryScreen
 import com.example.monarcasmarttravel.ui.screens.LoginScreen
@@ -96,6 +97,9 @@ fun AppNavigation() {
             ) { backStackEntry ->
                 val ruta = backStackEntry.arguments?.getString("route")
                 PlanScreen(navController, ruta)
+            }
+            composable("createTrip") {
+                CreateTripScreen(navController)
             }
         }
     }
