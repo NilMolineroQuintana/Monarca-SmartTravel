@@ -55,7 +55,7 @@ fun HomeScreen(navController: NavController) {
                 place = "Kioto, Japón",
                 dateIn = dateIn,
                 dateOut = dateOut,
-                onClick = { navController.navigate("itinerary") }
+                onClick = { navController.navigate("itinerary/1") }
             )
 
             QuickActionsSection(navController)
