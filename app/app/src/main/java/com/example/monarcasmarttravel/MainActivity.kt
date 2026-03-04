@@ -77,8 +77,12 @@ fun AppNavigation() {
 
                 TermsAndConditionsScreen(navController, isFirstTime)
             }
-            composable("itinerary") {
-                ItineraryScreen(navController)
+            composable(
+                route = "itinerary/{tripId}",
+                arguments = listOf(navArgument("tripId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
+                ItineraryScreen(navController, tripId)
             }
             composable("plan") {
                 PlanOptionsScreen(navController)
