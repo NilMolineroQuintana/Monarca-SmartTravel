@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,7 +52,7 @@ fun HomeScreen(navController: NavController) {
             val dateOut = calendar.time
 
             TripCard(
-                place = "Kioto, Japón",
+                place = stringResource(R.string.kyoto),
                 dateIn = dateIn,
                 dateOut = dateOut,
                 onClick = { navController.navigate("itinerary/1") }
@@ -88,7 +88,7 @@ fun HeaderSection() {
         }
 
         Text(
-            text = "¿Qué aventura planeamos hoy?",
+            text = "Quina aventura planejem avui?",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -99,7 +99,7 @@ fun HeaderSection() {
 fun QuickActionsSection(navController: NavController) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = "Acciones rápidas",
+            text = "Accions ràpides",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -108,9 +108,11 @@ fun QuickActionsSection(navController: NavController) {
 
         WideOption(
             ico = Icons.Filled.Map,
-            text = "Crear nuevo itinerario",
-            secondaryText = "Planifica tu viaje desde cero",
-            onClick = { /* TODO: Navegar a pantalla de creación de intinerario */ }
+            text = "Crear nou itinerari",
+            secondaryText = "Planifica el teu viatge des de zero",
+            onClick = {
+                navController.navigate("createTrip")
+            }
         )
         /*
         WideOption(
