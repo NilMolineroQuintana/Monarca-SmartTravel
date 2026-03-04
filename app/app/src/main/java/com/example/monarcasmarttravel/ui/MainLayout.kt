@@ -254,7 +254,7 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
             ) {
                 if (showNextTitle) {
                     Text(
-                        text = "Tu próximo destino",
+                        text = "El teu próxim destí",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                     )
@@ -274,7 +274,7 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
             )
 
             Text(
-                text = "$dateInString - $dateOutString • Faltan $remainingDays días",
+                text = "$dateInString - $dateOutString • Falten $remainingDays dies",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)
             )
