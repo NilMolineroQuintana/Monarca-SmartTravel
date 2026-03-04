@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Luggage
@@ -228,41 +229,63 @@ private fun CustomNavItem(
 }
 
 @Composable
-fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean = true, onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun TripCard(
+    place: String,
+    dateIn: Date,
+    dateOut: Date,
+    showNextTitle: Boolean = true,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     val remainingDays = TimeUnit.MILLISECONDS.toDays(dateIn.time - System.currentTimeMillis())
 
+    val dateStatus = when {
+        remainingDays > 1 -> "Falten $remainingDays dies"
+        remainingDays == 1L -> "Demà comença el viatge!"
+        remainingDays == 0L -> "Comença avui!"
+        else -> "Viatge realitzat"
+    }
+
+    val headerText = if (showNextTitle) "EL TEU PRÒXIM DESTÍ" else "DESTÍ FUTUR"
+    val headerColor = if (showNextTitle) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+
     val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
-    val dateInString = dateFormat.format(dateIn)
-    val dateOutString = dateFormat.format(dateOut)
+    val dateRange = "${dateFormat.format(dateIn)} - ${dateFormat.format(dateOut)}"
 
     Card(
         shape = RoundedCornerShape(16.dp),
         onClick = onClick,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = if (showNextTitle)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surfaceVariant
         ),
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                if (showNextTitle) {
-                    Text(
-                        text = "El teu próxim destí",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                    )
-                }
+                Text(
+                    text = headerText,
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.ExtraBold
+                    ),
+                    color = headerColor
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
                 Icon(
-                    imageVector = Icons.Filled.FlightTakeoff,
+                    imageVector = if (remainingDays >= 0) Icons.Filled.FlightTakeoff else Icons.Filled.CheckCircle,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = headerColor,
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
@@ -270,14 +293,26 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
                 text = place,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onSurface
             )
 
-            Text(
-                text = "$dateInString - $dateOutString • Falten $remainingDays dies",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = dateRange,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(text = "•", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = dateStatus,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = if (remainingDays in 0..7 && remainingDays >= 0) Color.Red else headerColor
+                )
+            }
         }
     }
 }
