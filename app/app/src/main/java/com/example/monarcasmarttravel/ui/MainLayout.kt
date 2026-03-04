@@ -1,11 +1,17 @@
 package com.example.monarcasmarttravel.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -13,8 +19,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowCircleRight
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Luggage
@@ -22,20 +28,27 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,33 +70,37 @@ object AppDimensions {
 }
 @Composable
 fun MyTopBar(title: String = "", showPageTitle: Boolean = true, onBackClick: (() -> Unit)? = null) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 40.dp, bottom = AppDimensions.PaddingMedium)
+    ) {
+        if (onBackClick != null) {
+            IconButton(
+                onClick = onBackClick,
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        }
+        if (showPageTitle) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = (if (onBackClick == null) AppDimensions.PaddingMedium else AppDimensions.PaddingSmall))
+            )
+        }
+    }
     Box(
         contentAlignment = Alignment.CenterStart,
         modifier = Modifier.fillMaxWidth()
             .statusBarsPadding()
             .padding(top = 24.dp, bottom = 10.dp)
     ) {
-        Column() {
-            if (onBackClick != null) {
-                IconButton(
-                    onClick = onBackClick,
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-            }
-            if (showPageTitle) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp, bottom = AppDimensions.PaddingLarge)
-                )
-            }
-        }
+
     }
 }
 
@@ -95,25 +112,84 @@ fun MyBottomBar(navController: NavController) {
     val tripChilds = listOf("trips", "itinerary", "plan", "album")
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
 
-    NavigationBar {
-        NavigationBarItem (
-            selected = currentRoute == "home",
-            onClick = { if (currentRoute != "home") navController.navigate("home") },
-            icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = null) },
-            label = { Text(text = stringResource(R.string.bottom_menu_home)) }
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(72.dp),
+        shape = RoundedCornerShape(
+            topStart = 24.dp,
+            topEnd = 24.dp
+        ),
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+        tonalElevation = 8.dp,
+        shadowElevation = 10.dp
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CustomNavItem(
+                selected = currentRoute == "home",
+                icon = Icons.Default.Home,
+                label = stringResource(R.string.bottom_menu_home),
+                onClick = { if (currentRoute != "home") navController.navigate("home") }
+            )
+
+            // Item 2: Trips
+            CustomNavItem(
+                selected = currentRoute in tripChilds,
+                icon = Icons.Default.Luggage,
+                label = stringResource(R.string.bottom_menu_trips),
+                onClick = { if (currentRoute != "trips") navController.navigate("trips") }
+            )
+
+            // Item 3: Profile/Settings
+            CustomNavItem(
+                selected = currentRoute in profileChilds,
+                icon = Icons.Default.Settings,
+                label = stringResource(R.string.preferences_text),
+                onClick = { if (currentRoute != "profile") navController.navigate("profile") }
+            )
+        }
+    }
+}
+
+@Composable
+private fun CustomNavItem(
+    selected: Boolean,
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit
+) {
+    val scale by animateFloatAsState(targetValue = if (selected) 1.2f else 1.0f, label = "scale")
+    val color by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.primary else Color.Gray.copy(alpha = 0.6f),
+        label = "color"
+    )
+
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.graphicsLayer(scaleX = scale, scaleY = scale), // Aplica la escala
+            tint = color
         )
-        NavigationBarItem(
-            selected = currentRoute in tripChilds,
-            onClick = {if (currentRoute != "trips") navController.navigate("trips") },
-            icon = { Icon(imageVector = Icons.Filled.Luggage, contentDescription = null) },
-            label = { Text(text = stringResource(R.string.bottom_menu_trips)) }
-        )
-        NavigationBarItem(
-            selected = currentRoute in profileChilds,
-            onClick = { if (currentRoute != "profile") navController.navigate("profile") },
-            icon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null) },
-            label = { Text(text = stringResource(R.string.bottom_menu_profile)) }
-        )
+        AnimatedVisibility(visible = selected) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = color,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }
 
@@ -172,50 +248,96 @@ fun TripCard(place: String, dateIn: Date, dateOut: Date, showNextTitle: Boolean 
     }
 }
 
+sealed class WideOptionAction {
+    object Arrow : WideOptionAction()
+    object None : WideOptionAction()
+    data class Toggle(val checked: Boolean, val onCheckedChange: (Boolean) -> Unit) : WideOptionAction()
+    data class Menu(
+        val currentSelection: String,
+        val options: List<String>,
+        val isExpanded: Boolean,
+        val onDismiss: () -> Unit,
+        val onOptionSelected: (String) -> Unit
+    ) : WideOptionAction()
+}
+
 @Composable
-fun WideOption(ico: ImageVector, text: String, rounded: Boolean = true, showIcon: Boolean = true, secondaryText: String = "", onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun WideOption(
+    ico: ImageVector,
+    text: String,
+    secondaryText: String = "",
+    rounded: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.surfaceVariant,
+    onClick: () -> Unit,
+    action: WideOptionAction = WideOptionAction.Arrow,
+    modifier: Modifier = Modifier
+) {
     val shape = if (rounded) RoundedCornerShape(12.dp) else RectangleShape
+
     Surface(
         onClick = onClick,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = color,
         shape = shape,
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            Icon(
-                imageVector = ico,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
+            Icon(ico, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+
             Spacer(modifier = Modifier.width(12.dp))
+
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (!secondaryText.isEmpty())
-                {
-                    Text(
-                        text = secondaryText,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                if (secondaryText.isNotEmpty()) {
+                    Text(secondaryText, style = MaterialTheme.typography.bodySmall)
                 }
             }
-            if (showIcon) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowCircleRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
+
+            when (action) {
+                is WideOptionAction.Arrow -> {
+                    Icon(Icons.Filled.ArrowCircleRight, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.scale(1.2f))
+                }
+                is WideOptionAction.Toggle -> {
+                    Switch(
+                        checked = action.checked,
+                        onCheckedChange = action.onCheckedChange,
+                        modifier = Modifier.scale(0.9f)
+                    )
+                }
+                // ... dentro del when(action) de WideOption ...
+                is WideOptionAction.Menu -> {
+                    Box {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { onClick() } // Asegura que abra al pulsar
+                        ) {
+                            Text(
+                                text = action.currentSelection,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Icon(Icons.Filled.ArrowDropDown, null, tint = MaterialTheme.colorScheme.primary)
+                        }
+
+                        DropdownMenu(
+                            expanded = action.isExpanded,
+                            onDismissRequest = { action.onDismiss() }
+                        ) {
+                                action.options.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        action.onOptionSelected(option)
+                                        action.onDismiss()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+                is WideOptionAction.None -> { /* No dibuja nada */ }
             }
         }
     }
