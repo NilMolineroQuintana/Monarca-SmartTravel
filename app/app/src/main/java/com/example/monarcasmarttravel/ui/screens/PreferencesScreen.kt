@@ -51,7 +51,7 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
 fun ProfileScreen(navController: NavController) {
     // Mock-up data
     val usr: User = User("1", "Dummy", "dummy@gmail.com", "123456")
-    val prefe: Preferences = Preferences(usr.userId, false, "Català", "Dark")
+    val prefe: Preferences = Preferences(usr.userId, false, stringResource(R.string.language_catalan), "Dark")
     val dark: Boolean = when (prefe.theme) {
         "Dark" -> true
         else -> false

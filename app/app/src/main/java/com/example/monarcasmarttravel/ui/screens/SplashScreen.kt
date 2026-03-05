@@ -52,14 +52,14 @@ fun SplashScreen(onTimeout: () -> Unit) {
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo_monarca),
-                contentDescription = "Logo",
+                contentDescription = null,
                 modifier = Modifier.size(120.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Monarca SmartTravel",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold

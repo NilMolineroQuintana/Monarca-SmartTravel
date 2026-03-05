@@ -80,5 +80,32 @@
     <string name="NY">Nova York, EUA</string>
     <string name="version">Versió: %1$s</string>
     <string name="no_date">Sense data</string>
+    <string name="who_are_we">Qui som?</string>
+    <string name="aboutUs_text">Monarca Smart Travel és la teva aplicació ideal per planificar viatges. Organitza el teu itinerari, controla el teu pressupost i descobreix nous destins de forma fàcil i intel·ligent.</string>
+    <string name="development_team">Equip de Desenvolupament</string>
+    <string name="new_trip">Nou viatge</string>
+    <string name="itinerary_details">Detalls de l\'itinerari</string>
+    <string name="example_destination">Ex: Roma, Itàlia</string>
+    <string name="start_date">Data inici</string>
+    <string name="dd_mm_aaaa">DD/MM/AAAA</string>
+    <string name="final_date">Data final</string>
+    <string name="create_trip">Crear viatge</string>
+    <string name="which_adventure">Quina aventura planejem avui?</string>
+    <string name="quick_actions">Accions ràpides</string>
+    <string name="create_new_trip">Crear nou viatge</string>
+    <string name="create_new_trip_description">Planifica el teu viatge des de zero</string>
+    <string name="no_plans">No tens cap plan</string>
+    <string name="add_new_plan">Afegir un nou</string>
+    <string name="days_of_duration">%1$s - %2$s • %3$d dies de durada</string>
+    <string name="budget">Pressupost</string>
+    <string name="activities">Activitats</string>
+    <string name="delete_plan">Eliminar plan</string>
+    <string name="delete_plan_description">¿Estàs segur que vols eliminar aquest plan del teu itinerari?</string>
+    <string name="login">Iniciar sessió</string>
+    <string name="email">Correu electrònic</string>
+    <string name="password">Contrasenya</string>
+    <string name="i_agree_with">"Estic d'acord amb els "</string>
+    <string name="most_popular">Els més populars</string>
+    <string name="more">Més</string>
 
 </resources>

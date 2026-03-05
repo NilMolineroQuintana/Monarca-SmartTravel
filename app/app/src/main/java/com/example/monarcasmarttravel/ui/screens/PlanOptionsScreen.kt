@@ -37,7 +37,7 @@ fun PlanOptionsScreen(navController: NavController) {
                 .padding(horizontal = AppDimensions.PaddingMedium)
         ) {
             item { Text(
-                text = "Els més populars",
+                text = stringResource(R.string.most_popular),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 10.dp)
@@ -52,7 +52,7 @@ fun PlanOptionsScreen(navController: NavController) {
 
             item {
                 Text (
-                    text = "Més",
+                    text = stringResource(R.string.more),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(vertical = 10.dp)

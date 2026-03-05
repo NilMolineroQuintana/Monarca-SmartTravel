@@ -77,7 +77,7 @@ fun HeaderSection() {
             )
 
             Text(
-                text = "Monarca Smart Travel",
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -88,7 +88,7 @@ fun HeaderSection() {
         }
 
         Text(
-            text = "Quina aventura planejem avui?",
+            text = stringResource(R.string.which_adventure),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -99,7 +99,7 @@ fun HeaderSection() {
 fun QuickActionsSection(navController: NavController) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = "Accions ràpides",
+            text = stringResource(R.string.quick_actions),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -108,8 +108,8 @@ fun QuickActionsSection(navController: NavController) {
 
         WideOption(
             ico = Icons.Filled.Map,
-            text = "Crear nou itinerari",
-            secondaryText = "Planifica el teu viatge des de zero",
+            text = stringResource(R.string.create_new_trip),
+            secondaryText = stringResource(R.string.create_new_trip_description),
             onClick = {
                 navController.navigate("createTrip")
             }

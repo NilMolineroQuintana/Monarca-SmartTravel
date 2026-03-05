@@ -335,7 +335,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
             if (numItems == 0) {
                 item {
                     Text(
-                        text = "No tens cap plan",
+                        text = stringResource(R.string.no_plans),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
@@ -350,7 +350,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                         modifier = Modifier.size(width = 200.dp, height = 50.dp)
                     ) {
                         Text(
-                            text = "Afegir un nou",
+                            text = stringResource(R.string.add_new_plan),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
@@ -430,7 +430,12 @@ fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int) {
             val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
             val tripLength = TimeUnit.MILLISECONDS.toDays(endDate.time - startDate.time)
             Text(
-                text = "${dateFormat.format(startDate)} - ${dateFormat.format(endDate)} • $tripLength dies de durada",
+                text = stringResource(
+                    R.string.days_of_duration,
+                    dateFormat.format(startDate),
+                    dateFormat.format(endDate),
+                    tripLength
+                ),
                 style = MaterialTheme.typography.titleSmall,
                 color = Color.White
             )
@@ -446,12 +451,12 @@ fun ItineraryStatsComponent(budget: Double, items: Int) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         StatItem(
-            label = "Pressupost",
+            label = stringResource(R.string.budget),
             value = "$budget€",
             modifier = Modifier.weight(1f)
         )
         StatItem(
-            label = "Activitats",
+            label = stringResource(R.string.activities),
             value = "$items",
             modifier = Modifier.weight(1f)
         )
@@ -602,7 +607,7 @@ fun ItineraryItemComponent(item: ItineraryItem) {
         )
     }
 
-    PopUp(show = showPopUp, title = "Eliminar plan", text = "¿Estàs segur que vols eliminar aquest plan del teu itinerari?", acceptText = stringResource(R.string.delete), onAccept = { showPopUp = false }, onDismiss = { showPopUp = false })
+    PopUp(show = showPopUp, title = stringResource(R.string.delete_plan), text = stringResource(R.string.delete_plan_description), acceptText = stringResource(R.string.delete), onAccept = { showPopUp = false }, onDismiss = { showPopUp = false })
 }
 
 @Preview(showBackground = true, showSystemUi = true)

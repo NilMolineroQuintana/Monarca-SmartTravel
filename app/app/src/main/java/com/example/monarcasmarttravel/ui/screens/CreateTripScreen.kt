@@ -18,12 +18,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyTopBar
 
@@ -38,7 +40,7 @@ fun CreateTripScreen(navController: NavController) {
     Scaffold(
         topBar = {
             MyTopBar(
-                title = "Nou viatge",
+                title = stringResource(R.string.new_trip),
                 onBackClick = { navController.popBackStack() }
             )
         }
@@ -51,7 +53,7 @@ fun CreateTripScreen(navController: NavController) {
                 .padding(16.dp)
         ) {
             Text(
-                text = "Detalls de l'itinerari",
+                text = stringResource(R.string.itinerary_details),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -60,8 +62,8 @@ fun CreateTripScreen(navController: NavController) {
             TextField(
                 value = destination,
                 onValueChange = { destination = it },
-                label = { Text("Destinació") },
-                placeholder = { Text("Ex: Roma, Itàlia") },
+                label = { Text(stringResource(R.string.destination)) },
+                placeholder = { Text(stringResource(R.string.example_destination)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -73,8 +75,8 @@ fun CreateTripScreen(navController: NavController) {
                 TextField(
                     value = startDate,
                     onValueChange = { startDate = it },
-                    label = { Text("Data inici") },
-                    placeholder = { Text("DD/MM/AAAA") },
+                    label = { Text(stringResource(R.string.start_date)) },
+                    placeholder = { Text(stringResource(R.string.dd_mm_aaaa)) },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true
@@ -83,8 +85,8 @@ fun CreateTripScreen(navController: NavController) {
                 TextField(
                     value = endDate,
                     onValueChange = { endDate = it },
-                    label = { Text("Data final") },
-                    placeholder = { Text("DD/MM/AAAA") },
+                    label = { Text(stringResource(R.string.final_date)) },
+                    placeholder = { Text(stringResource(R.string.dd_mm_aaaa)) },
                     modifier = Modifier.weight(1f),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true
@@ -99,7 +101,7 @@ fun CreateTripScreen(navController: NavController) {
                 enabled = isFormValid
             ) {
                 Text(
-                    text = "Crear itinerari",
+                    text = stringResource(R.string.create_trip),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )

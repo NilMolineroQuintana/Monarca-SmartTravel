@@ -62,7 +62,7 @@ fun AboutUsScreen(navController: NavController) {
                         .aspectRatio(1f)
                 )
                 Text(
-                    text = "Monarca Smart Travel",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -78,12 +78,12 @@ fun AboutUsScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
             ) {
                 Text(
-                    text = "Qui som?",
+                    text = stringResource(R.string.who_are_we),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "Monarca Smart Travel és la teva aplicació ideal per planificar viatges. Organitza el teu itinerari, controla el teu pressupost i descobreix nous destins de forma fàcil i intel·ligent.",
+                    text = stringResource(R.string.aboutUs_text),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -94,7 +94,7 @@ fun AboutUsScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
             ) {
                 Text(
-                    text = "Equip de Desenvolupament",
+                    text = stringResource(R.string.development_team),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )

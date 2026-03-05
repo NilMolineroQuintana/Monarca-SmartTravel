@@ -77,7 +77,7 @@ fun TripsScreen(navController: NavController) {
             FloatingActionButton(onClick = { navController.navigate("createTrip") }) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Afegir nou viatge"
+                    contentDescription = null
                 )
             }
         }

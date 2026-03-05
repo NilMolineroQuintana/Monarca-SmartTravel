@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyTopBar
 
@@ -42,7 +44,7 @@ fun LoginScreen(navController: NavController) {
     val isFormValid = isEmailValid && password.isNotEmpty() && rememberTerms
 
     Scaffold(
-        topBar = { MyTopBar("Iniciar sessió") }
+        topBar = { MyTopBar(stringResource(R.string.login)) }
     ) { innerPadding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
@@ -54,14 +56,14 @@ fun LoginScreen(navController: NavController) {
             TextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Correu electrònic") },
+                label = { Text(stringResource(R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
 
             TextField(
                 value = password,
-                label = { Text("Contrasenya") },
+                label = { Text(stringResource(R.string.password)) },
                 onValueChange = { password = it },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
@@ -116,13 +118,13 @@ fun LoginScreen(navController: NavController) {
                 )
 
                 Text(
-                    text = "Estic d'acord amb els ",
+                    text = stringResource(R.string.i_agree_with),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                 )
 
                 Text(
-                    text = "termes i condicions",
+                    text = stringResource(R.string.preferences_termsAndConditions_button).lowercase(),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -136,7 +138,7 @@ fun LoginScreen(navController: NavController) {
                 enabled = isFormValid
             ) {
                 Text(
-                    text = "Iniciar sessió",
+                    text = stringResource(R.string.login),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
