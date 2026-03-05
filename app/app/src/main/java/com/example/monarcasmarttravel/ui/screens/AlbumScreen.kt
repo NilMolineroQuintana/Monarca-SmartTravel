@@ -45,10 +45,10 @@ import java.util.Calendar
 fun AlbumScreen(navController: NavController) {
     // Mock-up data
     val mockData = listOf(
-        Image(id = 1, image_id = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
-        Image(id = 2, image_id = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
-        Image(id = 3, image_id = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
-        Image(id = 4, image_id = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
+        Image(id = 1, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
+        Image(id = 2, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
+        Image(id = 3, imageId = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
+        Image(id = 4, imageId = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
     )
 
     // Mock-up data
@@ -90,7 +90,7 @@ fun AlbumScreen(navController: NavController) {
         ) {
             items(mockData) { img ->
                 Image(
-                    painter = painterResource(id = img.image_id),
+                    painter = painterResource(id = img.imageId),
                     contentDescription = null,
                     modifier = Modifier
                         .aspectRatio(1f)
@@ -117,7 +117,7 @@ fun AlbumScreen(navController: NavController) {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = img.image_id),
+                    painter = painterResource(id = img.imageId),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(0.95f),
                     contentScale = ContentScale.Fit

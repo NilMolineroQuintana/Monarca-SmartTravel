@@ -19,7 +19,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DirectionsBoatFilled
+import androidx.compose.material.icons.filled.FlightTakeoff
+import androidx.compose.material.icons.filled.Hotel
+import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.PhotoAlbum
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Train
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -51,7 +57,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.domain.ItineraryItem
-import com.example.monarcasmarttravel.domain.PlanType
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
@@ -62,6 +67,58 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+
+enum class PlanType(
+    val titleRes: Int,
+    val icon: ImageVector,
+    val route: String,
+    val backgroundColor: Color,
+    val iconColor: Color
+) {
+    FLIGHT(
+        R.string.plan_flight,
+        Icons.Default.FlightTakeoff,
+        "flight",
+        Color(0xFFB3E5FC),
+        Color(0xFF0277BD)
+    ),
+    BOAT(
+        R.string.plan_boat,
+        Icons.Default.DirectionsBoatFilled,
+        "boat",
+        Color(0xFFB2DFDB),
+        Color(0xFF00695C)
+    ),
+    TRAIN(
+        R.string.plan_train,
+        Icons.Default.Train,
+        "train",
+        Color(0xFFE1BEE7),
+        Color(0xFF6A1B9A)
+    ),
+    HOTEL(
+        R.string.plan_hotel,
+        Icons.Default.Hotel,
+        "hotel",
+        Color(0xFFFFCCBC),
+        Color(0xFFD84315)
+    ),
+    RESTAURANT(
+        R.string.plan_restaurant,
+        Icons.Default.Restaurant,
+        "restaurant",
+        Color(0xFFC8E6C9),
+        Color(0xFF2E7D32)
+    ),
+    LOCATION(
+        R.string.plan_location,
+        Icons.Default.LocationCity,
+        "location",
+        Color(0xFFFFF9C4),
+        Color(0xFFF9A825)
+    )
+}
+
 
 @Composable
 fun ItineraryScreen(navController: NavController, tripId: Int) {

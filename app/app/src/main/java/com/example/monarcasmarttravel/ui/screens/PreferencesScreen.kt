@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FormatPaint
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.Button
@@ -54,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.Preferences
 import com.example.monarcasmarttravel.domain.User
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
@@ -65,19 +65,17 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
 @Composable
 fun ProfileScreen(navController: NavController) {
     // Mock-up data
-    val usr: User = User("1", "Dummy", "dummy@gmail.com", R.drawable.pfp_sample)
+    val usr: User = User("1", "Dummy", "dummy@gmail.com", "123456")
+    val prefe: Preferences = Preferences(usr.userId, false, "Català", true)
     // Mock-up data
 
     var showLogOutPopUp by remember { mutableStateOf(false) }
 
-    var selectedLanguage by remember { mutableStateOf("Català") }
+    var selectedLanguage by remember { mutableStateOf(prefe.preferredLanguage) }
     var langMenuExpanded by remember { mutableStateOf(false) }
 
-    var selectedCoin by remember { mutableStateOf("Euro (€)") }
-    var coinMenuExpanded by remember { mutableStateOf(false) }
-
-    var darkMode by remember { mutableStateOf(false) }
-    var notifications by remember { mutableStateOf(false) }
+    var darkMode by remember { mutableStateOf(prefe.themeDark) }
+    var notifications by remember { mutableStateOf(prefe.notificationEnabled) }
 
     val ButtonsColor = Color.Transparent
     Scaffold(
@@ -106,21 +104,6 @@ fun ProfileScreen(navController: NavController) {
                             isExpanded = langMenuExpanded,
                             onDismiss = { langMenuExpanded = false },
                             onOptionSelected = { selectedLanguage = it }
-                        )
-                    )
-                    HorizontalDivider(thickness = 1.dp)
-                    WideOption(
-                        ico = Icons.Default.Payments,
-                        text = stringResource(R.string.preferences_coin_button),
-                        secondaryText = stringResource(R.string.preferences_coin_description),
-                        onClick = { coinMenuExpanded = true },
-                        color = ButtonsColor,
-                        action = WideOptionAction.Menu(
-                            currentSelection = selectedCoin,
-                            options = listOf("Euro (€)", "Dollar (US$)", "Libra (GBP)"),
-                            isExpanded = coinMenuExpanded,
-                            onDismiss = { coinMenuExpanded = false },
-                            onOptionSelected = { selectedCoin = it }
                         )
                     )
                 }
