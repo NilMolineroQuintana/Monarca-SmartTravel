@@ -55,7 +55,7 @@ fun AppNavigation() {
         ) {
             composable("splash") {
                 SplashScreen(onTimeout = {
-                    navController.navigate("termsAndConditions?firstTime=true") {
+                    navController.navigate("login") {
                         popUpTo("splash") { inclusive = true }
                     }
                 })
@@ -76,17 +76,17 @@ fun AppNavigation() {
                 AboutUsScreen(navController)
             }
             composable(
-                route = "termsAndConditions?firstTime={firstTime}",
+                route = "termsAndConditions?isLoginScreen={isLoginScreen}",
                 arguments = listOf(
-                    navArgument("firstTime") {
+                    navArgument("isLoginScreen") {
                         type = NavType.BoolType
                         defaultValue = false
                     }
                 )
             ) { backStackEntry ->
-                val isFirstTime = backStackEntry.arguments?.getBoolean("firstTime") ?: false
+                val isLoginScreen = backStackEntry.arguments?.getBoolean("isLoginScreen") ?: false
 
-                TermsAndConditionsScreen(navController, isFirstTime)
+                TermsAndConditionsScreen(navController, isLoginScreen)
             }
             composable(
                 route = "itinerary/{tripId}",

@@ -126,7 +126,7 @@ fun LoginScreen(navController: NavController) {
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { navController.navigate("termsAndConditions") }
+                    modifier = Modifier.clickable { navController.navigate("termsAndConditions?isLoginScreen=true") }
                 )
             }
 

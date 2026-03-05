@@ -6,6 +6,14 @@ data class User(
     val email: String,
     val password: String
 ) {
+    fun addUser(): Unit {
+        // @TODO Implement user creation
+    }
+
+    fun deleteUser(): Unit {
+        // @TODO Implement user deletion
+    }
+
     fun updateUser(): Unit {
         // @TODO Implement update user info
     }
