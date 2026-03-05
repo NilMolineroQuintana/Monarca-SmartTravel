@@ -6,7 +6,5 @@ data class Preferences(
     val preferredLanguage: String,
     val theme: String
 ) {
-    fun updatePreferences() {
-        // @TODO Implement update preferences
-    }
+    // No afegim funcions que agreguen ja que d'això s'encarregarà un Repository
 }

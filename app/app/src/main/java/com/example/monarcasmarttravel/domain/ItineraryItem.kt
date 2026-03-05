@@ -28,21 +28,9 @@ data class ItineraryItem(
     val checkOutDate: Date? = null,    // Només HOTEL i PARKING
 ) {
 
-    fun addItineraryItem() {
-        // @TODO Implement add itinerary item
-    }
-
-    fun deleteItineraryItem() {
-        // @TODO Implement delete itinerary item
-    }
-
     fun hasScheduleConflict(other: ItineraryItem): Boolean {
         // @TODO Logic to compare departureDate or checkInDate between items
         return false
-    }
-
-    fun updateStatus() {
-        // @TODO Updates the item when the time has arrived
     }
 
     fun getInDate(): Date? = checkInDate ?: departureDate
