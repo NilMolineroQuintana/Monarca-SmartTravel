@@ -7,7 +7,12 @@ data class Image(
     val tripId: Int,
     val imageId: Int,
     val dateUploaded: Date,
-)
+) {
+    fun uploadImage() {
+        // @TODO Implement upload image
+    }
 
-
-// No afegim funcions que agreguen ja que d'això s'encarregarà un Repository
+    fun deleteImage() {
+        // @TODO Implement delete image
+    }
+}
