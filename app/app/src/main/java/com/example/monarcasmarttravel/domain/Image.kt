@@ -4,6 +4,7 @@ import java.util.Date
 
 data class Image(
     val id: Int,
+    val tripId: Int,
     val imageId: Int,
     val dateUploaded: Date,
 ) {

@@ -48,18 +48,18 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
         when (tripId) {
             2 -> // PARÍS
                 listOf(
-                    Image(id = 1, imageId = R.drawable.paris, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 1, tripId = tripId, imageId = R.drawable.paris, dateUploaded = Calendar.getInstance().time),
                 )
             3 -> // NOVA YORK
                 listOf(
-                    Image(id = 1, imageId = R.drawable.ny, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 1, tripId = tripId, imageId = R.drawable.ny, dateUploaded = Calendar.getInstance().time),
                 )
             else -> // KYOTO
                 listOf(
-                    Image(id = 1, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 2, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 3, imageId = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 4, imageId = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
+                    Image(id = 1, tripId = tripId, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 2, tripId = tripId, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 3, tripId = tripId, imageId = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 4, tripId = tripId, imageId = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
                 )
         }
     }

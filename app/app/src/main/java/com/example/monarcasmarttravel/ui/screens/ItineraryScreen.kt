@@ -132,10 +132,34 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 val dOut = calendar.apply { set(2026, Calendar.MAY, 22, 18, 0) }.time
 
                 val items = listOf(
-                    ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Air France", locationName = "Aeroport Charles de Gaulle", checkInDate = dIn, price = 180.0, transportNumber = "AF1024"),
-                    ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Pullman Paris Tour Eiffel", checkInDate = dIn, checkOutDate = dOut, price = 1400.0, address = "18 Avenue de Suffren"),
-                    ItineraryItem(id = 3, type = PlanType.LOCATION, locationName = "Museu del Louvre", checkInDate = calendar.apply { set(2026, Calendar.MAY, 16, 10, 0) }.time, price = 17.0, address = "Rue de Rivoli, Paris"),
-                    ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Le Jules Verne", checkInDate = calendar.apply { set(2026, Calendar.MAY, 16, 20, 0) }.time, price = 250.0, address = "Torre Eiffel, 2on Pis")
+                    ItineraryItem(
+                        id = 1, tripId = tripId, type = PlanType.FLIGHT,
+                        company = "Air France", transportNumber = "AF1024",
+                        origin = "Barcelona", destination = "Aeroport Charles de Gaulle",
+                        departureDate = dIn,
+                        price = 180.0
+                    ),
+                    ItineraryItem(
+                        id = 2, tripId = tripId, type = PlanType.HOTEL,
+                        locationName = "Pullman Paris Tour Eiffel",
+                        address = "18 Avenue de Suffren",
+                        checkInDate = dIn, checkOutDate = dOut,
+                        price = 1400.0
+                    ),
+                    ItineraryItem(
+                        id = 3, tripId = tripId, type = PlanType.LOCATION,
+                        locationName = "Museu del Louvre",
+                        address = "Rue de Rivoli, Paris",
+                        checkInDate = calendar.apply { set(2026, Calendar.MAY, 16, 10, 0) }.time,
+                        price = 17.0
+                    ),
+                    ItineraryItem(
+                        id = 4, tripId = tripId, type = PlanType.RESTAURANT,
+                        locationName = "Le Jules Verne",
+                        address = "Torre Eiffel, 2on Pis",
+                        checkInDate = calendar.apply { set(2026, Calendar.MAY, 16, 20, 0) }.time,
+                        price = 250.0
+                    )
                 )
                 TripItineraryInfo("París", R.drawable.paris, dIn, dOut, items)
             }
@@ -144,29 +168,120 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 val dOut = calendar.apply { set(2026, Calendar.AUGUST, 25, 11, 0) }.time
 
                 val items = listOf(
-                    ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Delta Airlines", locationName = "Aeroport JFK", checkInDate = dIn, price = 650.0, transportNumber = "DL201"),
-                    ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Marriott Marquis", checkInDate = dIn, checkOutDate = dOut, price = 2800.0, address = "Times Square, NY"),
-                    ItineraryItem(id = 3, type = PlanType.LOCATION, locationName = "Estàtua de la Llibertat", checkInDate = calendar.apply { set(2026, Calendar.AUGUST, 11, 9, 30) }.time, price = 25.0, address = "Liberty Island"),
-                    ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Joe's Pizza", checkInDate = calendar.apply { set(2026, Calendar.AUGUST, 11, 13, 0) }.time, price = 15.0, address = "Greenwich Village")
+                    ItineraryItem(
+                        id = 1, tripId = tripId, type = PlanType.FLIGHT,
+                        company = "Delta Airlines", transportNumber = "DL201",
+                        origin = "Barcelona", destination = "Aeroport JFK",
+                        departureDate = dIn,
+                        price = 650.0
+                    ),
+                    ItineraryItem(
+                        id = 2, tripId = tripId, type = PlanType.HOTEL,
+                        locationName = "Marriott Marquis",
+                        address = "Times Square, NY",
+                        checkInDate = dIn, checkOutDate = dOut,
+                        price = 2800.0
+                    ),
+                    ItineraryItem(
+                        id = 3, tripId = tripId, type = PlanType.LOCATION,
+                        locationName = "Estàtua de la Llibertat",
+                        address = "Liberty Island",
+                        checkInDate = calendar.apply { set(2026, Calendar.AUGUST, 11, 9, 30) }.time,
+                        price = 25.0
+                    ),
+                    ItineraryItem(
+                        id = 4, tripId = tripId, type = PlanType.RESTAURANT,
+                        locationName = "Joe's Pizza",
+                        address = "Greenwich Village",
+                        checkInDate = calendar.apply { set(2026, Calendar.AUGUST, 11, 13, 0) }.time,
+                        price = 15.0
+                    )
                 )
                 TripItineraryInfo("Nova York", R.drawable.ny, dIn, dOut, items)
             }
-            else -> { // KYOTO (ID 1 i altres)
+            else -> { // KYOTO
                 val dIn = calendar.apply { set(2026, Calendar.MARCH, 23, 10, 30) }.time
                 val dOut = calendar.apply { set(2026, Calendar.MARCH, 30, 15, 0) }.time
 
                 val items = listOf(
-                    ItineraryItem(id = 1, type = PlanType.FLIGHT, company = "Japan Airlines", locationName = "Aeroport de Narita", checkInDate = dIn, price = 850.0, transportNumber = "JL123"),
-                    ItineraryItem(id = 2, type = PlanType.HOTEL, locationName = "Shinjuku Granbell Hotel", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 23, 15, 0) }.time, checkOutDate = calendar.apply { set(2026, Calendar.MARCH, 30, 11, 0) }.time, price = 1200.0, address = "2-14-5 Kabukicho, Shinjuku-ku"),
-                    ItineraryItem(id = 3, type = PlanType.LOCATION, locationName = "Temple Senso-ji", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 24, 10, 0) }.time, price = 0.0, address = "2-3-1 Asakusa, Taito, Tòquio"),
-                    ItineraryItem(id = 4, type = PlanType.RESTAURANT, locationName = "Ichiran Ramen Shinjuku", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 24, 19, 0) }.time, price = 15.0, address = "3-34-11 Shinjuku, Tòquio"),
-                    ItineraryItem(id = 5, type = PlanType.TRAIN, company = "JR Central", locationName = "Tòquio", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 25, 9, 30) }.time, price = 90.0, transportNumber = "Nozomi 215"),
-                    ItineraryItem(id = 11, type = PlanType.BOAT, company = "JR West Ferry", locationName = "Miyajima", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 26, 10, 0) }.time, price = 5.0, transportNumber = "Miyajima Line"),
-                    ItineraryItem(id = 12, type = PlanType.TRAIN, company = "Odakyu Railways", locationName = "Shinjuku", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 27, 8, 45) }.time, price = 22.0, transportNumber = "EXEα 30000"),
-                    ItineraryItem(id = 6, type = PlanType.RESTAURANT, locationName = "Gion Karyo", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 25, 20, 30) }.time, price = 120.5, address = "570-235 Gionmachi, Kyoto"),
-                    ItineraryItem(id = 7, type = PlanType.LOCATION, locationName = "Shibuya Sky Mirador", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 26, 12, 0) }.time, price = 25.0, address = "2-24-12 Shibuya, Tòquio"),
-                    ItineraryItem(id = 8, type = PlanType.LOCATION, locationName = "Fushimi Inari Taisha", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 27, 11, 0) }.time, price = 0.0, address = "68 Fukakusa Yabunouchicho, Kyoto"),
-                    ItineraryItem(id = 10, type = PlanType.LOCATION, locationName = "Parc dels Cérvols de Nara", checkInDate = calendar.apply { set(2026, Calendar.MARCH, 29, 13, 0) }.time, price = 10.0, address = "Nara, Japó"),
+                    ItineraryItem(
+                        id = 1, tripId = tripId, type = PlanType.FLIGHT,
+                        company = "Japan Airlines", transportNumber = "JL123",
+                        origin = "Barcelona", destination = "Aeroport de Narita",
+                        departureDate = dIn,
+                        price = 850.0
+                    ),
+                    ItineraryItem(
+                        id = 2, tripId = tripId, type = PlanType.HOTEL,
+                        locationName = "Shinjuku Granbell Hotel",
+                        address = "2-14-5 Kabukicho, Shinjuku-ku",
+                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 23, 15, 0) }.time,
+                        checkOutDate = calendar.apply { set(2026, Calendar.MARCH, 30, 11, 0) }.time,
+                        price = 1200.0
+                    ),
+                    ItineraryItem(
+                        id = 3, tripId = tripId, type = PlanType.LOCATION,
+                        locationName = "Temple Senso-ji",
+                        address = "2-3-1 Asakusa, Taito, Tòquio",
+                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 24, 10, 0) }.time,
+                        price = 0.0
+                    ),
+                    ItineraryItem(
+                        id = 4, tripId = tripId, type = PlanType.RESTAURANT,
+                        locationName = "Ichiran Ramen Shinjuku",
+                        address = "3-34-11 Shinjuku, Tòquio",
+                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 24, 19, 0) }.time,
+                        price = 15.0
+                    ),
+                    ItineraryItem(
+                        id = 5, tripId = tripId, type = PlanType.TRAIN,
+                        company = "JR Central", transportNumber = "Nozomi 215",
+                        origin = "Tòquio", destination = "Kyoto",
+                        departureDate = calendar.apply { set(2026, Calendar.MARCH, 25, 9, 30) }.time,
+                        price = 90.0
+                    ),
+                    ItineraryItem(
+                        id = 11, tripId = tripId, type = PlanType.BOAT,
+                        company = "JR West Ferry", transportNumber = "Miyajima Line",
+                        origin = "Hiroshima", destination = "Miyajima",
+                        departureDate = calendar.apply { set(2026, Calendar.MARCH, 26, 10, 0) }.time,
+                        price = 5.0
+                    ),
+                    ItineraryItem(
+                        id = 12, tripId = tripId, type = PlanType.TRAIN,
+                        company = "Odakyu Railways", transportNumber = "EXEα 30000",
+                        origin = "Shinjuku", destination = "Hakone",
+                        departureDate = calendar.apply { set(2026, Calendar.MARCH, 27, 8, 45) }.time,
+                        price = 22.0
+                    ),
+                    ItineraryItem(
+                        id = 6, tripId = tripId, type = PlanType.RESTAURANT,
+                        locationName = "Gion Karyo",
+                        address = "570-235 Gionmachi, Kyoto",
+                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 25, 20, 30) }.time,
+                        price = 120.5
+                    ),
+                    ItineraryItem(
+                        id = 7, tripId = tripId, type = PlanType.LOCATION,
+                        locationName = "Shibuya Sky Mirador",
+                        address = "2-24-12 Shibuya, Tòquio",
+                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 26, 12, 0) }.time,
+                        price = 25.0
+                    ),
+                    ItineraryItem(
+                        id = 8, tripId = tripId, type = PlanType.LOCATION,
+                        locationName = "Fushimi Inari Taisha",
+                        address = "68 Fukakusa Yabunouchicho, Kyoto",
+                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 27, 11, 0) }.time,
+                        price = 0.0
+                    ),
+                    ItineraryItem(
+                        id = 10, tripId = tripId, type = PlanType.LOCATION,
+                        locationName = "Parc dels Cérvols de Nara",
+                        address = "Nara, Japó",
+                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 29, 13, 0) }.time,
+                        price = 10.0
+                    ),
                 )
                 TripItineraryInfo("Kyoto", R.drawable.kyoto_2, dIn, dOut, items)
             }
@@ -174,8 +289,10 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
     }
 
     val groupedData = mockData
-        .sortedBy { it.checkInDate }
-        .groupBy { it.formatDateKey(it.checkInDate) }
+        .sortedBy { it.getDate() }
+        .groupBy { it.formatDateKey(it.getDate()!!) }
+
+    val numItems = mockData.size
 
     var showPopUp by remember { mutableStateOf(false) }
 
@@ -214,12 +331,8 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
             item {
                 Header(destinationName, dateIn, dateOut, headerImg)
             }
-            item {
-                ItineraryStatsComponent(mockData.sumOf { it.price }, mockData)
-                Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
-            }
 
-            if (false) {
+            if (numItems == 0) {
                 item {
                     Text(
                         text = "No tens cap plan",
@@ -243,6 +356,10 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                     }
                 }
             } else {
+                item {
+                    ItineraryStatsComponent(mockData.sumOf { it.price }, numItems)
+                    Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
+                }
                 groupedData.forEach { (date, itemsDelDia) ->
                     item {
                         DivisorComponent(date)
@@ -322,7 +439,7 @@ fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int) {
 }
 
 @Composable
-fun ItineraryStatsComponent(budget: Double, data: List<ItineraryItem>) {
+fun ItineraryStatsComponent(budget: Double, items: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -335,7 +452,7 @@ fun ItineraryStatsComponent(budget: Double, data: List<ItineraryItem>) {
         )
         StatItem(
             label = "Activitats",
-            value = "${data.size}",
+            value = "$items",
             modifier = Modifier.weight(1f)
         )
     }
@@ -468,8 +585,8 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             item.type.iconColor,
             item.type.backgroundColor,
             item.getCheckInTime(),
-            "Origen: ${item.locationName}",
-            "${item.transportNumber} (${item.company})",
+            "${item.origin ?: "-"} -> ${item.destination ?: "-"}",
+            "${item.transportNumber ?: "-"} (${item.company ?: "-"})",
             tertiaryText = "${item.price}€",
             onLongClick = { showPopUp = true }
         )
@@ -478,8 +595,8 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             item.type.iconColor,
             item.type.backgroundColor,
             item.getCheckInTime(),
-            item.locationName,
-            item.address,
+            item.locationName ?: "",
+            item.address ?: "",
             tertiaryText = "${item.price}€",
             onLongClick = { showPopUp = true }
         )

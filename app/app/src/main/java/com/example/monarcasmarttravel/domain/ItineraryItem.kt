@@ -5,33 +5,25 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-data class ItineraryItem (
+data class ItineraryItem(
     val id: Int,
+    val tripId: Int,
     val type: PlanType,
     val price: Double,
-    val checkInDate: Date,
-    val checkOutDate: Date? = null,
-    val locationName: String = "",
-    val address: String = "",
-    val company: String = "",
-    val transportNumber: String = ""
+
+    // Transport (FLIGHT, BOAT, TRAIN)
+    val origin: String? = null,
+    val destination: String? = null,   // <- falta en tu UI actual
+    val company: String? = null,
+    val transportNumber: String? = null,
+    val departureDate: Date? = null,
+
+    // Allotjament / POI (HOTEL, RESTAURANT, LOCATION, PARKING)
+    val locationName: String? = null,
+    val address: String? = null,
+    val checkInDate: Date? = null,
+    val checkOutDate: Date? = null,    // Només HOTEL i PARKING
 ) {
-    fun getCheckInTime(): String {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return sdf.format(checkInDate)
-    }
-
-    fun getCheckOutTime(): String? {
-        if (checkOutDate == null) return null
-
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return sdf.format(checkOutDate)
-    }
-
-    fun formatDateKey(date: Date): String {
-        val sdf = SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault())
-        return sdf.format(date)
-    }
 
     fun addItineraryItem() {
         // @TODO Implement add itinerary item
@@ -39,5 +31,17 @@ data class ItineraryItem (
 
     fun deleteItineraryItem() {
         // @TODO Implement delete itinerary item
+    }
+
+    fun getDate(): Date? = checkInDate ?: departureDate
+
+    fun getCheckInTime(): String {
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return sdf.format(getDate())
+    }
+
+    fun formatDateKey(date: Date): String {
+        val sdf = SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault())
+        return sdf.format(date)
     }
 }
