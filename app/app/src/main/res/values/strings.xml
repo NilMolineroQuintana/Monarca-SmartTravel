@@ -42,6 +42,7 @@
     <string name="plan_parking">Aparcament</string>
 
     <string name="origin">Origen</string>
+    <string name="destination">Destí</string>
     <string name="company">Companyia</string>
     <string name="data_de_entrada">Data de entrada</string>
     <string name="data_de_sortida">Data de sortida</string>
@@ -78,5 +79,6 @@
     <string name="paris">París, França</string>
     <string name="NY">Nova York, EUA</string>
     <string name="version">Versió: %1$s</string>
+    <string name="no_date">Sense data</string>
 
 </resources>

@@ -38,6 +38,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
 
     val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
     var locationName by rememberSaveable { mutableStateOf("") }
+    var destination by rememberSaveable { mutableStateOf("") }
     var checkInDate by rememberSaveable { mutableStateOf(date) }
     var checkOutDate by rememberSaveable { mutableStateOf(date) }
     var address by rememberSaveable { mutableStateOf("") }
@@ -108,6 +109,14 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                         value = locationName,
                         onValueChange = { locationName = it },
                         label = { Text(stringResource(R.string.origin)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                item {
+                    TextField(
+                        value = destination,
+                        onValueChange = { destination = it },
+                        label = { Text(stringResource(R.string.destination)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

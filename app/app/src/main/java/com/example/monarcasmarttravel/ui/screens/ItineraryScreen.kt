@@ -289,8 +289,8 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
     }
 
     val groupedData = mockData
-        .sortedBy { it.getDate() }
-        .groupBy { it.formatDateKey(it.getDate()!!) }
+        .sortedBy { it.getInDate() }
+        .groupBy { it.formatDateKey(it.getInDate()!!) }
 
     val numItems = mockData.size
 
@@ -584,7 +584,7 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             item.type.icon,
             item.type.iconColor,
             item.type.backgroundColor,
-            item.getCheckInTime(),
+            item.getDateInTime(),
             "${item.origin ?: "-"} -> ${item.destination ?: "-"}",
             "${item.transportNumber ?: "-"} (${item.company ?: "-"})",
             tertiaryText = "${item.price}€",
@@ -594,7 +594,7 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             item.type.icon,
             item.type.iconColor,
             item.type.backgroundColor,
-            item.getCheckInTime(),
+            item.getDateInTime(),
             item.locationName ?: "",
             item.address ?: "",
             tertiaryText = "${item.price}€",
@@ -609,12 +609,6 @@ fun ItineraryItemComponent(item: ItineraryItem) {
 @Composable
 fun ItineraryPreview() {
     ItineraryScreen(rememberNavController(),1)
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PlanScreenPreview() {
-    PlanOptionsScreen(rememberNavController())
 }
 
 @Preview(showBackground = true, showSystemUi = true)

@@ -1,5 +1,8 @@
 package com.example.monarcasmarttravel.domain
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.screens.PlanType
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -13,7 +16,7 @@ data class ItineraryItem(
 
     // Transport (FLIGHT, BOAT, TRAIN)
     val origin: String? = null,
-    val destination: String? = null,   // <- falta en tu UI actual
+    val destination: String? = null,
     val company: String? = null,
     val transportNumber: String? = null,
     val departureDate: Date? = null,
@@ -33,11 +36,20 @@ data class ItineraryItem(
         // @TODO Implement delete itinerary item
     }
 
-    fun getDate(): Date? = checkInDate ?: departureDate
+    fun getInDate(): Date? = checkInDate ?: departureDate
 
-    fun getCheckInTime(): String {
+    @Composable
+    fun getDateInTime(): String {
+        val date = getInDate() ?: return stringResource(R.string.no_date)
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return sdf.format(getDate())
+        return sdf.format(date)
+    }
+
+    @Composable
+    fun getDateOutTime(): String {
+        val date = checkOutDate ?: return stringResource(R.string.no_date)
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return sdf.format(date)
     }
 
     fun formatDateKey(date: Date): String {
