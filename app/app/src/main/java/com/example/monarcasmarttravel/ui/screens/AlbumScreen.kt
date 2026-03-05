@@ -44,22 +44,24 @@ import java.util.Calendar
 @Composable
 fun AlbumScreen(navController: NavController, tripId: Int) {
     // Mock-up data
-    val mockData = when (tripId) {
-        2 -> // PARÍS
-            listOf(
-                Image(id = 1, imageId = R.drawable.paris, dateUploaded = Calendar.getInstance().time),
-            )
-        3 -> // NOVA YORK
-            listOf(
-                Image(id = 1, imageId = R.drawable.ny, dateUploaded = Calendar.getInstance().time),
-            )
-        else ->
-            listOf(
-                Image(id = 1, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
-                Image(id = 2, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
-                Image(id = 3, imageId = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
-                Image(id = 4, imageId = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
-            )
+    val mockData = remember(tripId) {
+        when (tripId) {
+            2 -> // PARÍS
+                listOf(
+                    Image(id = 1, imageId = R.drawable.paris, dateUploaded = Calendar.getInstance().time),
+                )
+            3 -> // NOVA YORK
+                listOf(
+                    Image(id = 1, imageId = R.drawable.ny, dateUploaded = Calendar.getInstance().time),
+                )
+            else -> // KYOTO
+                listOf(
+                    Image(id = 1, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 2, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 3, imageId = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 4, imageId = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
+                )
+        }
     }
 
     // Mock-up data

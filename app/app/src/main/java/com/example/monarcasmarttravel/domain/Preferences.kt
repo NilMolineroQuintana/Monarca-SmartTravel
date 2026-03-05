@@ -4,7 +4,7 @@ data class Preferences(
     val userId: String,
     val notificationEnabled: Boolean,
     val preferredLanguage: String,
-    val themeDark: Boolean
+    val theme: String
 ) {
     fun updatePreferences() {
         // @TODO Implement update preferences

@@ -1,22 +1,15 @@
 package com.example.monarcasmarttravel.ui.screens
 
-import android.app.Activity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -26,28 +19,20 @@ import androidx.compose.material.icons.filled.FormatPaint
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -66,7 +51,11 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
 fun ProfileScreen(navController: NavController) {
     // Mock-up data
     val usr: User = User("1", "Dummy", "dummy@gmail.com", "123456")
-    val prefe: Preferences = Preferences(usr.userId, false, "Català", true)
+    val prefe: Preferences = Preferences(usr.userId, false, "Català", "Dark")
+    val dark: Boolean = when (prefe.theme) {
+        "Dark" -> true
+        else -> false
+    }
     // Mock-up data
 
     var showLogOutPopUp by remember { mutableStateOf(false) }
@@ -74,7 +63,7 @@ fun ProfileScreen(navController: NavController) {
     var selectedLanguage by remember { mutableStateOf(prefe.preferredLanguage) }
     var langMenuExpanded by remember { mutableStateOf(false) }
 
-    var darkMode by remember { mutableStateOf(prefe.themeDark) }
+    var darkMode by remember { mutableStateOf(dark) }
     var notifications by remember { mutableStateOf(prefe.notificationEnabled) }
 
     val ButtonsColor = Color.Transparent
@@ -133,154 +122,6 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun AboutUsScreen(navController: NavController) {
-    Scaffold(
-        topBar = { MyTopBar(stringResource(id = R.string.preferences_aboutUs_button), onBackClick = { navController.popBackStack() }) },
-        bottomBar = { MyBottomBar(navController) }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(
-                    horizontal = AppDimensions.PaddingMedium,
-                    vertical = AppDimensions.PaddingLarge
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingLarge)
-        ) {
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo_monarca),
-                    contentDescription = "Monarca Logo",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .height(100.dp)
-                        .aspectRatio(1f)
-                )
-                Text(
-                    text = "Monarca Smart Travel",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Versió 1.0.0",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
-            ) {
-                Text(
-                    text = "Qui som?",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = "Monarca Smart Travel és la teva aplicació ideal per planificar viatges. Organitza el teu itinerari, controla el teu pressupost i descobreix nous destins de forma fàcil i intel·ligent.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
-            ) {
-                Text(
-                    text = "Equip de Desenvolupament",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Text(
-                    text = "• Nil Molinero\n• Guillem Alcoverro",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun TermsAndConditionsScreen(navController: NavController, firstTime: Boolean = true) {
-    val context = LocalContext.current
-
-    Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.preferences_termsAndConditions_button), onBackClick = if (!firstTime) { { navController.popBackStack() } } else null) },
-        bottomBar = { if (!firstTime) MyBottomBar(navController) else AcceptOrDeclineBottomBar(
-            onAccept = { navController.navigate("login") {
-            popUpTo("termsAndConditions?firstTime={firstTime}") { inclusive = true } }
-                       },
-            onDecline = { (context as? Activity)?.finish() }) }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(horizontal = AppDimensions.PaddingMedium)
-                .verticalScroll(rememberScrollState())
-        ) {
-            Text(
-                text = stringResource(R.string.termsAndConditions_text),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-@Composable
-fun AcceptOrDeclineBottomBar(
-    onAccept: () -> Unit,
-    onDecline: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 3.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(AppDimensions.PaddingMedium),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
-        ) {
-            TextButton(
-                onClick = onDecline,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(text = stringResource(R.string.cancel))
-            }
-
-            Button(
-                onClick = onAccept,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(text = stringResource(R.string.accept))
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewAcceptOrDeclineBottomBar() {
-    AcceptOrDeclineBottomBar(onAccept = {}, onDecline = {})
-}
-
-@Composable
 fun OptionGroup(
     title: String,
     modifier: Modifier = Modifier,
@@ -327,20 +168,6 @@ fun ItemGroupPreview() {
 @Composable
 fun MainPreview() {
     ProfileScreen(rememberNavController())
-}
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun TripHistoryPreview() {
-    TripHistoryScreen(rememberNavController())
-}
-*/
-
-@Preview(showBackground = true)
-@Composable
-fun AboutUsPreview() {
-    AboutUsScreen(rememberNavController())
 }
 
 @Preview(showBackground = true)
