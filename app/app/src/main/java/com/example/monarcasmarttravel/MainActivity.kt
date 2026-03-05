@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,12 +24,14 @@ import com.example.monarcasmarttravel.ui.screens.LoginScreen
 import com.example.monarcasmarttravel.ui.screens.PlanOptionsScreen
 import com.example.monarcasmarttravel.ui.screens.PlanScreen
 import com.example.monarcasmarttravel.ui.screens.ProfileScreen
+import com.example.monarcasmarttravel.ui.screens.SplashScreen
 import com.example.monarcasmarttravel.ui.screens.TermsAndConditionsScreen
 import com.example.monarcasmarttravel.ui.screens.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -48,8 +51,15 @@ fun AppNavigation() {
     ) {
         NavHost(
             navController = navController,
-            startDestination = "termsAndConditions?firstTime=true",
+            startDestination = "splash",
         ) {
+            composable("splash") {
+                SplashScreen(onTimeout = {
+                    navController.navigate("termsAndConditions?firstTime=true") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                })
+            }
             composable ("login") {
                 LoginScreen(navController)
             }

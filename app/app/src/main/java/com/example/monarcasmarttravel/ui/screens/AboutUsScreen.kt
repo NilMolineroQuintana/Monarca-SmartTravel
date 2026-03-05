@@ -28,6 +28,7 @@ import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.getAppVersion
 
 @Composable
 fun AboutUsScreen(navController: NavController) {
@@ -66,7 +67,7 @@ fun AboutUsScreen(navController: NavController) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Versió 1.0.0",
+                    text = stringResource(R.string.version, getAppVersion()),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
                 )

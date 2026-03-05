@@ -1,5 +1,7 @@
 package com.example.monarcasmarttravel.ui
 
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -51,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -426,6 +429,22 @@ fun PopUp(show: Boolean, title: String, text: String, acceptText: String = strin
                 TextButton (onClick = onDismiss) { Text(text = cancelText) }
             }
         )
+    }
+}
+
+@Composable
+fun getAppVersion(): String {
+    val context = LocalContext.current
+    return try {
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
+        } else {
+            @Suppress("DEPRECATION")
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        }
+        packageInfo.versionName ?: "1.0.0"
+    } catch (e: Exception) {
+        "Desconocida"
     }
 }
 

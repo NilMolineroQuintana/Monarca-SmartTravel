@@ -77,5 +77,6 @@
     <string name="kyoto">Kyoto, Japó</string>
     <string name="paris">París, França</string>
     <string name="NY">Nova York, EUA</string>
+    <string name="version">Versió: %1$s</string>
 
 </resources>
