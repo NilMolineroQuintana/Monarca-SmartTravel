@@ -197,7 +197,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
             ) {
-                SmallFloatingActionButton (onClick = { navController.navigate("album") }) {
+                SmallFloatingActionButton (onClick = { navController.navigate("album/$tripId") }) {
                     Icon(imageVector = Icons.Filled.PhotoAlbum, contentDescription = null)
                 }
                 FloatingActionButton(onClick = { navController.navigate("plan") }) {
@@ -503,5 +503,5 @@ fun PlanScreenPreview() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AlbumScreenPreview() {
-    AlbumScreen(rememberNavController())
+    AlbumScreen(rememberNavController(),3)
 }
