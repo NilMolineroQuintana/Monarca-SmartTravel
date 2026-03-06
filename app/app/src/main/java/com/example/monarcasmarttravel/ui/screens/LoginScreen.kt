@@ -35,8 +35,8 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 
 @Composable
 fun LoginScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("test@email.com") }
+    var password by remember { mutableStateOf("1234") }
     var rememberTerms by remember { mutableStateOf(false) }
 
     val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,}\$".toRegex()
