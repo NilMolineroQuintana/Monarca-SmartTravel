@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -146,9 +147,16 @@ fun MyTopBar(
 fun MyBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val isDark = isSystemInDarkTheme()
 
     val tripChilds = listOf("trips", "itinerary", "plan", "album")
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
+
+    val barColor = if (isDark) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f)
+    } else {
+        MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+    }
 
     Surface(
         modifier = Modifier
@@ -158,8 +166,8 @@ fun MyBottomBar(navController: NavController) {
             topStart = 24.dp,
             topEnd = 24.dp
         ),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-        tonalElevation = 8.dp,
+        color = barColor,
+        tonalElevation = if (isDark) 16.dp else 8.dp,
         shadowElevation = 10.dp
     ) {
         Row(
