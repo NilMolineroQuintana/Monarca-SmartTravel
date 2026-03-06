@@ -21,11 +21,11 @@ data class ItineraryItem(
     val transportNumber: String? = null,
     val departureDate: Date? = null,
 
-    // Allotjament / POI (HOTEL, RESTAURANT, LOCATION, PARKING)
+    // Allotjament / POI (HOTEL, RESTAURANT, LOCATION)
     val locationName: String? = null,
     val address: String? = null,
     val checkInDate: Date? = null,
-    val checkOutDate: Date? = null,    // Només HOTEL i PARKING
+    val checkOutDate: Date? = null,    // Només HOTEL
 ) {
 
     fun addItineraryItem() {

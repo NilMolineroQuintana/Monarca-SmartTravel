@@ -2,6 +2,7 @@ package com.example.monarcasmarttravel.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,6 +63,7 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.TopBarAction
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -567,6 +569,12 @@ fun ItineraryItemComponent(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                    maxLines = 1, // Forzamos a que sea una sola línea
+                    modifier = Modifier.basicMarquee(
+                        iterations = Int.MAX_VALUE, // Para que sea un bucle infinito
+                        repeatDelayMillis = 1000,
+                        initialDelayMillis = 5000   // Tiempo de espera la primera vez que aparece
+                    )
                 )
                 Text(text = secondaryText, style = MaterialTheme.typography.bodySmall)
                 Text(
