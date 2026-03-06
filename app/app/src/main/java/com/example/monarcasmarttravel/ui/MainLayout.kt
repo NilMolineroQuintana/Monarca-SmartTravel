@@ -5,7 +5,10 @@ import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,13 +50,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,11 +68,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.Trip
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
-import java.util.concurrent.TimeUnit
-import androidx.compose.foundation.isSystemInDarkTheme
 
 /** Dimensions globals reutilitzables per mantenir la consistència d'espaiat a tota l'app. */
 object AppDimensions {
@@ -294,14 +299,15 @@ private fun CustomNavItem(
  */
 @Composable
 fun TripCard(
-    place: String,
-    dateIn: Date,
-    dateOut: Date,
+    trip: Trip,
     showNextTitle: Boolean = true,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val remainingDays = TimeUnit.MILLISECONDS.toDays(dateIn.time - System.currentTimeMillis())
+    val dateIn = trip.dateIn
+    val dateOut = trip.dateOut
+    val place = trip.destination
+    val remainingDays = trip.getDaysUntilStart();
 
     // Text d'estat dinàmic segons la proximitat del viatge
     val dateStatus = when {
@@ -311,7 +317,6 @@ fun TripCard(
         else -> "Viatge realitzat"
     }
 
-    val headerText = if (showNextTitle) "EL TEU PRÒXIM DESTÍ" else "DESTÍ FUTUR"
     val headerColor = if (showNextTitle) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
 
     val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
@@ -328,53 +333,97 @@ fun TripCard(
         ),
         modifier = modifier.fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = headerText,
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.ExtraBold),
-                    color = headerColor
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                // Icona d'avió si el viatge és futur; de verificació si ja ha passat
-                Icon(
-                    imageVector = if (remainingDays >= 0) Icons.Filled.FlightTakeoff else Icons.Filled.CheckCircle,
+            if (trip.imageResId != null) {
+                Image(
+                    painter = painterResource(id = trip.imageResId),
                     contentDescription = null,
-                    tint = headerColor,
-                    modifier = Modifier.size(24.dp)
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .blur(radius = 3.dp)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Black.copy(alpha = 0.3f),
+                                    Color.Black.copy(alpha = 0.7f)
+                                )
+                            )
+                        )
+                )
+            } else {
+                // Si no hi ha imatge, mostra el fons de color com abans
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            if (showNextTitle)
+                                MaterialTheme.colorScheme.primaryContainer
+                            else
+                                MaterialTheme.colorScheme.surfaceVariant
+                        )
                 )
             }
 
-            Text(
-                text = place,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = dateStatus,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.ExtraBold),
+                        color = headerColor
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    // Icona d'avió si el viatge és futur; de verificació si ja ha passat
+                    Icon(
+                        imageVector = if (remainingDays >= 0) Icons.Filled.FlightTakeoff else Icons.Filled.CheckCircle,
+                        contentDescription = null,
+                        tint = headerColor,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+
                 Text(
-                    text = dateRange,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(text = "•", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                // Color vermell si el viatge és en menys de 7 dies
-                Text(
-                    text = dateStatus,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = place,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    color = if (remainingDays in 0..7 && remainingDays >= 0) Color.Red else headerColor
+                    color = MaterialTheme.colorScheme.onSurface
                 )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = dateRange,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(text = "•", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    // Color vermell si el viatge és en menys de 7 dies
+                    Text(
+                        text = "Estancia de ${trip.getTripDuration()} dies",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = if (remainingDays in 0..7 && remainingDays >= 0) Color.Red else headerColor
+                    )
+                }
             }
         }
     }
