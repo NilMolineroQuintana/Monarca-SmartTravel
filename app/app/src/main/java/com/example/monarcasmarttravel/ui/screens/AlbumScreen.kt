@@ -62,7 +62,7 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
                 )
             3 -> // NOVA YORK
                 listOf(
-                    Image(id = 1, tripId = tripId, imageId = R.drawable.ny, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 1, tripId = tripId, imageId = R.drawable.newyork, dateUploaded = Calendar.getInstance().time),
                 )
             else -> // KYOTO (per defecte)
                 listOf(

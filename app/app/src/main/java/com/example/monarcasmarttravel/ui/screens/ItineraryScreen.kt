@@ -213,7 +213,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                         price = 15.0
                     )
                 )
-                TripItineraryInfo("Nova York", R.drawable.ny, dIn, dOut, items)
+                TripItineraryInfo("Nova York", R.drawable.newyork, dIn, dOut, items)
             }
             else -> { // KYOTO (per defecte)
                 val dIn = calendar.apply { set(2026, Calendar.MARCH, 23, 10, 30) }.time
