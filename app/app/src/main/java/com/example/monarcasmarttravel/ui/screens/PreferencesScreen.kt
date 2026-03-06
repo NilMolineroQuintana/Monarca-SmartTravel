@@ -47,31 +47,52 @@ import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.WideOptionAction
 
+/**
+ * Pantalla de preferències de l'usuari.
+ *
+ * Permet configurar l'idioma de l'aplicació, el tema (fosc/clar), les notificacions,
+ * i accedir a la informació sobre l'app, els termes i condicions i tancar sessió.
+ *
+ * @param navController Controlador de navegació.
+ */
 @Composable
 fun ProfileScreen(navController: NavController) {
+
     // Mock-up data
     val usr: User = User("1", "Dummy", "dummy@gmail.com", "123456")
     val prefe: Preferences = Preferences(usr.userId, false, stringResource(R.string.language_catalan), "Dark")
-    val dark: Boolean = when (prefe.theme) {
-        "Dark" -> true
-        else -> false
-    }
-    // Mock-up data
 
+    // Determina si el tema és fosc a partir de les preferències
+    val dark: Boolean = prefe.theme == "Dark"
+
+    // Controla la visibilitat del diàleg de confirmació de tancament de sessió
     var showLogOutPopUp by remember { mutableStateOf(false) }
 
+    // Estat del selector d'idioma
     var selectedLanguage by remember { mutableStateOf(prefe.preferredLanguage) }
     var langMenuExpanded by remember { mutableStateOf(false) }
 
+    // Estats dels interruptors de tema i notificacions
     var darkMode by remember { mutableStateOf(dark) }
     var notifications by remember { mutableStateOf(prefe.notificationEnabled) }
 
-    val ButtonsColor = Color.Transparent
+    // Color transparent per als botons de les opcions (sense fons propi)
+    val buttonsColor = Color.Transparent
+
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.preferences_text)) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
-        PopUp(show = showLogOutPopUp, title = stringResource(R.string.preferences_logOut_text), text = stringResource(R.string.logOut_popUp_text), onAccept = { navController.navigate("login") },onDismiss = { showLogOutPopUp = false })
+
+        // Diàleg de confirmació per tancar la sessió
+        PopUp(
+            show = showLogOutPopUp,
+            title = stringResource(R.string.preferences_logOut_text),
+            text = stringResource(R.string.logOut_popUp_text),
+            onAccept = { navController.navigate("login") },
+            onDismiss = { showLogOutPopUp = false }
+        )
+
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
             modifier = Modifier
@@ -79,6 +100,7 @@ fun ProfileScreen(navController: NavController) {
                 .padding(horizontal = AppDimensions.PaddingMedium)
                 .fillMaxSize()
         ) {
+            // Grup: selecció d'idioma
             item {
                 OptionGroup(title = stringResource(R.string.preferences_languageAndRegion)) {
                     WideOption(
@@ -86,10 +108,14 @@ fun ProfileScreen(navController: NavController) {
                         text = stringResource(R.string.preferences_language_button),
                         secondaryText = stringResource(R.string.preferences_language_description),
                         onClick = { langMenuExpanded = true },
-                        color = ButtonsColor,
+                        color = buttonsColor,
                         action = WideOptionAction.Menu(
                             currentSelection = selectedLanguage,
-                            options = listOf(stringResource(R.string.language_catalan), stringResource(R.string.language_spanish), stringResource(R.string.language_english)),
+                            options = listOf(
+                                stringResource(R.string.language_catalan),
+                                stringResource(R.string.language_spanish),
+                                stringResource(R.string.language_english)
+                            ),
                             isExpanded = langMenuExpanded,
                             onDismiss = { langMenuExpanded = false },
                             onOptionSelected = { selectedLanguage = it }
@@ -97,23 +123,65 @@ fun ProfileScreen(navController: NavController) {
                     )
                 }
             }
+
+            // Grup: configuració de tema i notificacions
             item {
                 OptionGroup(stringResource(R.string.config)) {
-                    WideOption(Icons.Filled.FormatPaint, stringResource(R.string.preferences_theme_button), secondaryText = stringResource(R.string.preferences_theme_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle(darkMode) { darkMode = it}, onClick = { darkMode = !darkMode })
+                    WideOption(
+                        ico = Icons.Filled.FormatPaint,
+                        text = stringResource(R.string.preferences_theme_button),
+                        secondaryText = stringResource(R.string.preferences_theme_description),
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Toggle(darkMode) { darkMode = it },
+                        onClick = { darkMode = !darkMode }
+                    )
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(ico = Icons.Filled.Notifications, text = stringResource(R.string.preferences_notification_button), secondaryText = stringResource(R.string.preferences_notifications_description), rounded = false, color = ButtonsColor, action = WideOptionAction.Toggle (notifications) { notifications = it } ,onClick = { notifications = !notifications })
+                    WideOption(
+                        ico = Icons.Filled.Notifications,
+                        text = stringResource(R.string.preferences_notification_button),
+                        secondaryText = stringResource(R.string.preferences_notifications_description),
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Toggle(notifications) { notifications = it },
+                        onClick = { notifications = !notifications }
+                    )
                 }
             }
+
+            // Grup: altres opcions (sobre nosaltres, termes, tancar sessió)
             item {
                 OptionGroup(title = stringResource(R.string.preferences_other)) {
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(ico = Icons.Filled.QuestionMark, text = stringResource(R.string.preferences_aboutUs_button), secondaryText = stringResource(R.string.preferences_aboutUs_description), rounded = false, color = ButtonsColor, onClick = { navController.navigate("aboutUs") })
+                    WideOption(
+                        ico = Icons.Filled.QuestionMark,
+                        text = stringResource(R.string.preferences_aboutUs_button),
+                        secondaryText = stringResource(R.string.preferences_aboutUs_description),
+                        rounded = false,
+                        color = buttonsColor,
+                        onClick = { navController.navigate("aboutUs") }
+                    )
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(ico = Icons.AutoMirrored.Filled.Assignment, text = stringResource(R.string.preferences_termsAndConditions_button), secondaryText = stringResource(R.string.preferences_termsAndConditions_description), rounded = false, color = ButtonsColor, onClick = { navController.navigate("termsAndConditions") })
+                    WideOption(
+                        ico = Icons.AutoMirrored.Filled.Assignment,
+                        text = stringResource(R.string.preferences_termsAndConditions_button),
+                        secondaryText = stringResource(R.string.preferences_termsAndConditions_description),
+                        rounded = false,
+                        color = buttonsColor,
+                        onClick = { navController.navigate("termsAndConditions") }
+                    )
                     HorizontalDivider(thickness = 1.dp)
-                    WideOption(ico = Icons.AutoMirrored.Filled.Logout, text = stringResource(R.string.preferences_logOut_text), secondaryText = stringResource(R.string.preferences_logOut_description), rounded = false, color = ButtonsColor, onClick = { showLogOutPopUp = true })
+                    WideOption(
+                        ico = Icons.AutoMirrored.Filled.Logout,
+                        text = stringResource(R.string.preferences_logOut_text),
+                        secondaryText = stringResource(R.string.preferences_logOut_description),
+                        rounded = false,
+                        color = buttonsColor,
+                        onClick = { showLogOutPopUp = true }
+                    )
                 }
             }
+
             item {
                 Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
             }
@@ -121,6 +189,13 @@ fun ProfileScreen(navController: NavController) {
     }
 }
 
+/**
+ * Component de targeta que agrupa diverses opcions de preferències sota un títol comú.
+ *
+ * @param title Text del títol del grup, mostrat en majúscules i en color primari.
+ * @param modifier Modifier opcional per personalitzar el contenidor extern.
+ * @param content Contingut composable que s'inclou dins de la targeta.
+ */
 @Composable
 fun OptionGroup(
     title: String,
@@ -159,8 +234,8 @@ fun OptionGroup(
 @Composable
 fun ItemGroupPreview() {
     OptionGroup(title = "Compte") {
-        WideOption(Icons.Default.Person, "Perfil", rounded = false,onClick = { /*...*/ })
-        WideOption(Icons.Default.Email, "Cambiar correo", rounded = false,onClick = { /*...*/ })
+        WideOption(Icons.Default.Person, "Perfil", rounded = false, onClick = { })
+        WideOption(Icons.Default.Email, "Cambiar correo", rounded = false, onClick = { })
     }
 }
 
@@ -179,5 +254,5 @@ fun TermsAndConditionsPreview() {
 @Preview
 @Composable
 fun PreviewLogOutPopUp() {
-    PopUp (show = true, title = "Title", text = "Text", acceptText = "Accept", cancelText = "Cancel", onAccept = {}, onDismiss = {})
+    PopUp(show = true, title = "Title", text = "Text", acceptText = "Accept", cancelText = "Cancel", onAccept = {}, onDismiss = {})
 }

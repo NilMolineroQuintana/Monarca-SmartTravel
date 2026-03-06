@@ -33,10 +33,22 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * Pantalla de formulari per afegir un nou pla a l'itinerari.
+ *
+ * Els camps mostrats s'adapten dinàmicament segons el tipus de pla ([ruta]):
+ * - Transport (flight, boat, train): origen, destí, companyia, número i data de sortida.
+ * - Allotjament/POI (hotel, restaurant, location): nom, adreça i dates d'entrada/sortida.
+ *
+ * @param navController Controlador de navegació.
+ * @param ruta Tipus de pla seleccionat (p. ex. "flight", "hotel", "restaurant"...).
+ */
 @Composable
 fun PlanScreen(navController: NavController, ruta: String?) {
 
     val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
+
+    // Estats dels camps del formulari, persistents en rotació de pantalla
     var locationName by rememberSaveable { mutableStateOf("") }
     var destination by rememberSaveable { mutableStateOf("") }
     var checkInDate by rememberSaveable { mutableStateOf(date) }
@@ -45,9 +57,13 @@ fun PlanScreen(navController: NavController, ruta: String?) {
     var company by rememberSaveable { mutableStateOf("") }
     var transportNumber by rememberSaveable { mutableStateOf("") }
 
+    // Tipus que es consideren transport (no mostren camp de nom ni adreça)
     val transports = listOf("train", "boat", "flight")
+
+    // Tipus pels quals no té sentit mostrar la data de sortida
     val excludeCheckOut = listOf("train", "boat", "flight", "location", "restaurant")
 
+    // Títol de la pantalla segons el tipus de pla
     val titleName = when (ruta) {
         "flight" -> stringResource(R.string.plan_flight)
         "boat" -> stringResource(R.string.plan_boat)
@@ -55,18 +71,18 @@ fun PlanScreen(navController: NavController, ruta: String?) {
         "hotel" -> stringResource(R.string.plan_hotel)
         "restaurant" -> stringResource(R.string.plan_restaurant)
         "location" -> stringResource(R.string.plan_location)
-        "parking" -> stringResource(R.string.plan_parking)
         else -> "Nom"
     }
 
+    // Etiqueta del camp de nom, adaptada al tipus de pla
     val labelName = when (ruta) {
         "hotel" -> stringResource(R.string.hotel_name)
         "restaurant" -> stringResource(R.string.restaurant_name)
         "location" -> stringResource(R.string.location_name)
-        "parking" -> stringResource(R.string.parking_name)
-         else -> "Nom"
+        else -> "Nom"
     }
 
+    // Etiqueta del camp d'identificador del transport (número de vol, tren, etc.)
     val transportName = when (ruta) {
         "flight" -> stringResource(R.string.flight_num)
         "boat" -> stringResource(R.string.boat_num)
@@ -75,7 +91,12 @@ fun PlanScreen(navController: NavController, ruta: String?) {
     }
 
     Scaffold(
-        topBar = { MyTopBar( "${stringResource(R.string.add)} ${titleName.lowercase()}", onBackClick = { navController.popBackStack() }) }
+        topBar = {
+            MyTopBar(
+                "${stringResource(R.string.add)} ${titleName.lowercase()}",
+                onBackClick = { navController.popBackStack() }
+            )
+        }
     ) { innerPadding ->
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,6 +106,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                 .padding(innerPadding)
                 .padding(horizontal = AppDimensions.PaddingMedium)
         ) {
+            // Camps exclusius per a plans que no són transport
             if (ruta !in transports) {
                 item {
                     TextField(
@@ -103,6 +125,8 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                     )
                 }
             }
+
+            // Camps exclusius per a plans de transport
             if (ruta in transports) {
                 item {
                     TextField(
@@ -137,6 +161,8 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                     )
                 }
             }
+
+            // Camp(s) de data: sempre es mostra entrada; sortida s'oculta per a certs tipus
             item {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -158,6 +184,8 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                     }
                 }
             }
+
+            // Botó per confirmar i afegir el pla; torna a la pantalla anterior
             item {
                 TextButton(
                     colors = ButtonDefaults.textButtonColors(

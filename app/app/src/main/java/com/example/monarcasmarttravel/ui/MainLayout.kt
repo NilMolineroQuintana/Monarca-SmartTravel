@@ -6,7 +6,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,20 +65,36 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import androidx.compose.foundation.isSystemInDarkTheme
 
-
+/** Dimensions globals reutilitzables per mantenir la consistència d'espaiat a tota l'app. */
 object AppDimensions {
     val PaddingSmall = 8.dp
     val PaddingMedium = 16.dp
     val PaddingLarge = 24.dp
 }
 
-
+/**
+ * Model d'una acció del menú de la barra superior.
+ *
+ * @param title Text visible al menú desplegable.
+ * @param onClick Acció a executar en seleccionar l'opció.
+ */
 data class TopBarAction(
     val title: String,
     val onClick: () -> Unit
 )
 
+/**
+ * Barra superior de l'aplicació.
+ *
+ * Mostra el títol de la pantalla, opcionalment un botó de retrocés i un menú de tres punts
+ * amb les accions indicades.
+ *
+ * @param title Text del títol. Si és buit, no es mostra.
+ * @param menuItems Llista d'accions del menú desplegable. Si és buida, no es mostra el menú.
+ * @param onBackClick Acció del botó de retrocés. Si és null, no es mostra el botó.
+ */
 @Composable
 fun MyTopBar(
     title: String = "",
@@ -93,7 +108,10 @@ fun MyTopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = if (title.isNotEmpty()) 60.dp else 40.dp, bottom = AppDimensions.PaddingMedium)
+            .padding(
+                top = if (title.isNotEmpty()) 60.dp else 40.dp,
+                bottom = AppDimensions.PaddingMedium
+            )
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (onBackClick != null) {
@@ -110,20 +128,17 @@ fun MyTopBar(
                     text = title,
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = (if (onBackClick == null) AppDimensions.PaddingMedium else AppDimensions.PaddingSmall))
+                    modifier = Modifier.padding(start = if (onBackClick == null) AppDimensions.PaddingMedium else AppDimensions.PaddingSmall)
                 )
             }
         }
 
+        // Menú de tres punts, visible només si hi ha accions definides
         if (menuItems.isNotEmpty()) {
             Box(modifier = Modifier.padding(end = AppDimensions.PaddingSmall)) {
                 IconButton(onClick = { expanded = true }) {
-                    Icon(
-                        imageVector = Icons.Filled.MoreVert,
-                        contentDescription = null
-                    )
+                    Icon(imageVector = Icons.Filled.MoreVert, contentDescription = null)
                 }
-
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
@@ -132,8 +147,8 @@ fun MyTopBar(
                         DropdownMenuItem(
                             text = { Text(text = item.title) },
                             onClick = {
-                                expanded = false // Cerramos el menú
-                                item.onClick()   // Ejecutamos la lógica de esta opción
+                                expanded = false
+                                item.onClick()
                             }
                         )
                     }
@@ -143,13 +158,27 @@ fun MyTopBar(
     }
 }
 
+/**
+ * Barra de navegació inferior de l'aplicació.
+ *
+ * Conté tres elements de navegació: Inici, Viatges i Preferències. Ressalta l'element
+ * corresponent a la ruta activa i escala lleument la icona seleccionada.
+ *
+ * Les rutes fill de cada secció es mapegen al seu element de navegació per mantenir
+ * la selecció activa en navegar a pantalles internes.
+ *
+ * @param navController Controlador de navegació per detectar la ruta actual i navegar.
+ */
 @Composable
 fun MyBottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val isDark = isSystemInDarkTheme()
 
+    // Rutes que pertanyen a la secció de viatges
     val tripChilds = listOf("trips", "itinerary", "plan", "album")
+
+    // Rutes que pertanyen a la secció de perfil/preferències
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
 
     val barColor = if (isDark) {
@@ -181,16 +210,12 @@ fun MyBottomBar(navController: NavController) {
                 label = stringResource(R.string.bottom_menu_home),
                 onClick = { if (currentRoute != "home") navController.navigate("home") }
             )
-
-            // Item 2: Trips
             CustomNavItem(
                 selected = currentRoute in tripChilds,
                 icon = Icons.Default.Luggage,
                 label = stringResource(R.string.bottom_menu_trips),
                 onClick = { if (currentRoute != "trips") navController.navigate("trips") }
             )
-
-            // Item 3: Profile/Settings
             CustomNavItem(
                 selected = currentRoute in profileChilds,
                 icon = Icons.Default.Settings,
@@ -201,6 +226,17 @@ fun MyBottomBar(navController: NavController) {
     }
 }
 
+/**
+ * Element individual de la barra de navegació inferior.
+ *
+ * Anima la mida de la icona i el seu color en funció de si és l'element seleccionat.
+ * L'etiqueta de text només s'mostra quan l'element és actiu.
+ *
+ * @param selected Indica si aquest element és l'actiu.
+ * @param icon Icona a mostrar.
+ * @param label Text descriptiu de la secció.
+ * @param onClick Acció en prémer l'element.
+ */
 @Composable
 private fun CustomNavItem(
     selected: Boolean,
@@ -208,7 +244,10 @@ private fun CustomNavItem(
     label: String,
     onClick: () -> Unit
 ) {
+    // Animació d'escala: l'element actiu és lleugerament més gran
     val scale by animateFloatAsState(targetValue = if (selected) 1.2f else 1.0f, label = "scale")
+
+    // Animació de color: actiu = color primari, inactiu = gris semitransparent
     val color by animateColorAsState(
         targetValue = if (selected) MaterialTheme.colorScheme.primary else Color.Gray.copy(alpha = 0.6f),
         label = "color"
@@ -225,9 +264,10 @@ private fun CustomNavItem(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.graphicsLayer(scaleX = scale, scaleY = scale), // Aplica la escala
+            modifier = Modifier.graphicsLayer(scaleX = scale, scaleY = scale),
             tint = color
         )
+        // L'etiqueta apareix i desapareix amb animació segons si l'element és actiu
         AnimatedVisibility(visible = selected) {
             Text(
                 text = label,
@@ -239,6 +279,19 @@ private fun CustomNavItem(
     }
 }
 
+/**
+ * Targeta de resum d'un viatge, que mostra el destí, el rang de dates i el temps restant.
+ *
+ * El text d'estat varia segons si el viatge és futur, imminent, comença avui o ja ha passat.
+ * El color del text d'estat es torna vermell si falten 7 dies o menys.
+ *
+ * @param place Nom del destí del viatge.
+ * @param dateIn Data d'inici del viatge.
+ * @param dateOut Data de fi del viatge.
+ * @param showNextTitle Si és true, mostra "EL TEU PRÒXIM DESTÍ"; si no, "DESTÍ FUTUR".
+ * @param onClick Acció en prémer la targeta.
+ * @param modifier Modifier opcional per personalitzar el contenidor.
+ */
 @Composable
 fun TripCard(
     place: String,
@@ -250,6 +303,7 @@ fun TripCard(
 ) {
     val remainingDays = TimeUnit.MILLISECONDS.toDays(dateIn.time - System.currentTimeMillis())
 
+    // Text d'estat dinàmic segons la proximitat del viatge
     val dateStatus = when {
         remainingDays > 1 -> "Falten $remainingDays dies"
         remainingDays == 1L -> "Demà comença el viatge!"
@@ -284,14 +338,11 @@ fun TripCard(
             ) {
                 Text(
                     text = headerText,
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.ExtraBold
-                    ),
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.ExtraBold),
                     color = headerColor
                 )
-
                 Spacer(modifier = Modifier.weight(1f))
-
+                // Icona d'avió si el viatge és futur; de verificació si ja ha passat
                 Icon(
                     imageVector = if (remainingDays >= 0) Icons.Filled.FlightTakeoff else Icons.Filled.CheckCircle,
                     contentDescription = null,
@@ -317,6 +368,7 @@ fun TripCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(text = "•", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                // Color vermell si el viatge és en menys de 7 dies
                 Text(
                     text = dateStatus,
                     style = MaterialTheme.typography.bodyMedium,
@@ -328,6 +380,14 @@ fun TripCard(
     }
 }
 
+/**
+ * Sealed class que representa les possibles accions visuals d'una opció ampla ([WideOption]).
+ *
+ * - [Arrow]: mostra una fletxa a la dreta (navegació).
+ * - [None]: no mostra cap acció.
+ * - [Toggle]: mostra un interruptor (Switch) per activar/desactivar una opció.
+ * - [Menu]: mostra un selector desplegable amb diverses opcions.
+ */
 sealed class WideOptionAction {
     object Arrow : WideOptionAction()
     object None : WideOptionAction()
@@ -341,6 +401,21 @@ sealed class WideOptionAction {
     ) : WideOptionAction()
 }
 
+/**
+ * Component d'opció ampla reutilitzable per a llistes de configuració o accions.
+ *
+ * Mostra una icona, un text principal, un text secundari opcional i una acció a la dreta
+ * determinada per [action].
+ *
+ * @param ico Icona de l'opció.
+ * @param text Text principal de l'opció.
+ * @param secondaryText Text descriptiu secundari. Opcional.
+ * @param rounded Si és true, aplica cantonades arrodonides; si no, és rectangular.
+ * @param color Color de fons del component.
+ * @param onClick Acció al prémer l'opció.
+ * @param action Tipus d'acció visual que es mostra a la dreta (Arrow, Toggle, Menu o None).
+ * @param modifier Modifier opcional addicional.
+ */
 @Composable
 fun WideOption(
     ico: ImageVector,
@@ -365,7 +440,6 @@ fun WideOption(
             modifier = Modifier.padding(16.dp)
         ) {
             Icon(ico, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
@@ -375,9 +449,15 @@ fun WideOption(
                 }
             }
 
+            // Renderització de l'acció corresponent a la dreta de l'opció
             when (action) {
                 is WideOptionAction.Arrow -> {
-                    Icon(Icons.Filled.ArrowCircleRight, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.scale(1.2f))
+                    Icon(
+                        Icons.Filled.ArrowCircleRight,
+                        null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.scale(1.2f)
+                    )
                 }
                 is WideOptionAction.Toggle -> {
                     Switch(
@@ -386,12 +466,12 @@ fun WideOption(
                         modifier = Modifier.scale(0.9f)
                     )
                 }
-                // ... dentro del when(action) de WideOption ...
                 is WideOptionAction.Menu -> {
                     Box {
+                        // Selector amb el valor actual i una fletxa desplegable
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { onClick() } // Asegura que abra al pulsar
+                            modifier = Modifier.clickable { onClick() }
                         ) {
                             Text(
                                 text = action.currentSelection,
@@ -401,11 +481,12 @@ fun WideOption(
                             Icon(Icons.Filled.ArrowDropDown, null, tint = MaterialTheme.colorScheme.primary)
                         }
 
+                        // Menú desplegable amb les opcions disponibles
                         DropdownMenu(
                             expanded = action.isExpanded,
                             onDismissRequest = { action.onDismiss() }
                         ) {
-                                action.options.forEach { option ->
+                            action.options.forEach { option ->
                                 DropdownMenuItem(
                                     text = { Text(option) },
                                     onClick = {
@@ -417,29 +498,55 @@ fun WideOption(
                         }
                     }
                 }
-                is WideOptionAction.None -> { /* No dibuja nada */ }
+                is WideOptionAction.None -> { /* No es renderitza cap acció */ }
             }
         }
     }
 }
 
+/**
+ * Diàleg de confirmació genèric reutilitzable.
+ *
+ * Mostra un AlertDialog amb títol, text, i botons d'acceptar i cancel·lar.
+ * Només es renderitza quan [show] és true.
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param title Títol del diàleg.
+ * @param text Missatge informatiu del diàleg.
+ * @param acceptText Text del botó de confirmació.
+ * @param cancelText Text del botó de cancel·lació.
+ * @param onAccept Acció en confirmar.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
 @Composable
-fun PopUp(show: Boolean, title: String, text: String, acceptText: String = stringResource(R.string.accept), cancelText: String = stringResource(R.string.cancel), onAccept: () -> Unit, onDismiss: () -> Unit, ) {
+fun PopUp(
+    show: Boolean,
+    title: String,
+    text: String,
+    acceptText: String = stringResource(R.string.accept),
+    cancelText: String = stringResource(R.string.cancel),
+    onAccept: () -> Unit,
+    onDismiss: () -> Unit
+) {
     if (show) {
         AlertDialog(
             onDismissRequest = onDismiss,
             title = { Text(text = title) },
             text = { Text(text = text) },
             confirmButton = {
-                TextButton (onClick = onAccept) { Text(text = acceptText) }
+                TextButton(onClick = onAccept) { Text(text = acceptText) }
             },
             dismissButton = {
-                TextButton (onClick = onDismiss) { Text(text = cancelText) }
+                TextButton(onClick = onDismiss) { Text(text = cancelText) }
             }
         )
     }
 }
 
+/**
+ * Obté la versió de l'aplicació instal·lada al dispositiu a partir del PackageManager.
+ * Retorna "Desconegut" en cas d'error.
+ */
 @Composable
 fun getAppVersion(): String {
     val context = LocalContext.current
@@ -452,7 +559,7 @@ fun getAppVersion(): String {
         }
         packageInfo.versionName ?: "1.0.0"
     } catch (e: Exception) {
-        "Desconocida"
+        stringResource(R.string.unknown)
     }
 }
 
@@ -471,13 +578,13 @@ fun PreviewMyTopBarBackbutton() {
 @Preview
 @Composable
 fun PreviewWideOption() {
-    WideOption(Icons.Filled.Settings, "Configuració",onClick = {})
+    WideOption(Icons.Filled.Settings, "Configuració", onClick = {})
 }
 
 @Preview
 @Composable
 fun PreviewWideOptionSecondary() {
-    WideOption(Icons.Filled.Settings, "Configuració", secondaryText = "Test",onClick = {})
+    WideOption(Icons.Filled.Settings, "Configuració", secondaryText = "Test", onClick = {})
 }
 
 @Preview
@@ -489,7 +596,7 @@ fun PreviewWideSquaredOption() {
 @Preview
 @Composable
 fun PreviewLogOutPopUp() {
-    PopUp (show = true, title = "Title", text = "Text", acceptText = "Accept", cancelText = "Cancel", onAccept = {}, onDismiss = {})
+    PopUp(show = true, title = "Title", text = "Text", acceptText = "Accept", cancelText = "Cancel", onAccept = {}, onDismiss = {})
 }
 
 @Preview

@@ -40,9 +40,19 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import java.util.Calendar
 
+/**
+ * Pantalla de l'àlbum fotogràfic associat a un viatge concret.
+ *
+ * Mostra una graella d'imatges del viatge. Amb un clic es visualitza la imatge
+ * a pantalla completa, i amb un clic llarg apareix un diàleg de confirmació per eliminar-la.
+ *
+ * @param navController Controlador de navegació per moure's entre pantalles.
+ * @param tripId Identificador del viatge del qual es mostren les fotos.
+ */
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun AlbumScreen(navController: NavController, tripId: Int) {
+
     // Mock-up data
     val mockData = remember(tripId) {
         when (tripId) {
@@ -54,7 +64,7 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
                 listOf(
                     Image(id = 1, tripId = tripId, imageId = R.drawable.ny, dateUploaded = Calendar.getInstance().time),
                 )
-            else -> // KYOTO
+            else -> // KYOTO (per defecte)
                 listOf(
                     Image(id = 1, tripId = tripId, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
                     Image(id = 2, tripId = tripId, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
@@ -64,16 +74,19 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
         }
     }
 
-    // Mock-up data
-
     val context = LocalContext.current
+
+    // Imatge seleccionada per mostrar en el visor a pantalla completa
     var selectedImage by remember { mutableStateOf<Image?>(null) }
+
+    // Controla la visibilitat del diàleg de confirmació d'eliminació
     var showPopUp by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.album), onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) },
         floatingActionButton = {
+            // Botó per pujar noves imatges (funcionalitat pendent d'implementar)
             FloatingActionButton(onClick = {
                 Toast.makeText(
                     context,
@@ -85,6 +98,8 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             }
         }
     ) { innerPadding ->
+
+        // Diàleg de confirmació per eliminar una imatge
         PopUp(
             show = showPopUp,
             title = stringResource(R.string.deleteImage),
@@ -94,6 +109,7 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             onDismiss = { showPopUp = false }
         )
 
+        // Graella de 3 columnes amb les imatges del viatge
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             contentPadding = innerPadding,
@@ -108,8 +124,8 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
                     modifier = Modifier
                         .aspectRatio(1f)
                         .combinedClickable(
-                            onClick = { selectedImage = img },
-                            onLongClick = { showPopUp = true }
+                            onClick = { selectedImage = img },       // Obre el visor
+                            onLongClick = { showPopUp = true }      // Demana confirmació per eliminar
                         ),
                     contentScale = ContentScale.Crop
                 )
@@ -117,6 +133,7 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
         }
     }
 
+    // Visor d'imatge a pantalla completa; es tanca en fer clic sobre la imatge
     selectedImage?.let { img ->
         Dialog(
             onDismissRequest = { selectedImage = null },

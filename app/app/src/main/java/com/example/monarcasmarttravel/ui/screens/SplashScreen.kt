@@ -31,10 +31,24 @@ import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.getAppVersion
 import kotlinx.coroutines.delay
 
+/**
+ * Pantalla de càrrega inicial de l'aplicació (splash screen).
+ *
+ * Mostra el logotip, el nom de l'app i una barra de progrés animada que avança de 0 a 1
+ * en increments de 0,01 cada 15 ms (~1,5 segons en total). Quan la barra arriba al final,
+ * s'invoca [onTimeout] per navegar a la pantalla de login.
+ *
+ * La versió de l'app es mostra a la cantonada inferior dreta.
+ *
+ * @param onTimeout Acció a executar quan la càrrega finalitza.
+ */
 @Composable
 fun SplashScreen(onTimeout: () -> Unit) {
+
+    // Progrés de la barra de càrrega, entre 0.0 i 1.0
     var progress by remember { mutableStateOf(0f) }
 
+    // Efecte llançat una sola vegada: incrementa el progrés fins a 1 i crida onTimeout
     LaunchedEffect(Unit) {
         while (progress < 1f) {
             progress += 0.01f
@@ -68,6 +82,7 @@ fun SplashScreen(onTimeout: () -> Unit) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            // Barra de progrés animada amb cantonades arrodonides
             LinearProgressIndicator(
                 progress = { progress },
                 modifier = Modifier
@@ -79,6 +94,7 @@ fun SplashScreen(onTimeout: () -> Unit) {
             )
         }
 
+        // Versió de l'app a la cantonada inferior dreta
         Text(
             text = "V.${getAppVersion()}",
             style = MaterialTheme.typography.labelLarge,

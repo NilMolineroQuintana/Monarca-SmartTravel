@@ -39,7 +39,6 @@
     <string name="plan_hotel">Allotjament</string>
     <string name="plan_restaurant">Restaurant</string>
     <string name="plan_location">Lloc d\'interès</string>
-    <string name="plan_parking">Aparcament</string>
 
     <string name="origin">Origen</string>
     <string name="destination">Destí</string>
@@ -53,7 +52,6 @@
     <string name="hotel_name">Nom allotjament</string>
     <string name="restaurant_name">Nom del restaurant</string>
     <string name="location_name">Nom del lloc d\'interès</string>
-    <string name="parking_name">Nom del parking</string>
     <string name="flight_num">Número de vol</string>
     <string name="boat_num">Identificador de vaixell</string>
     <string name="train_num">Identificador de tren</string>
@@ -107,5 +105,6 @@
     <string name="i_agree_with">"Estic d'acord amb els "</string>
     <string name="most_popular">Els més populars</string>
     <string name="more">Més</string>
+    <string name="unknown">Desconocida</string>
 
 </resources>

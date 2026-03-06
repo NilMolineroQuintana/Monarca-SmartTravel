@@ -21,37 +21,59 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.WideOptionAction
 
+/**
+ * Pantalla de selecció del tipus de pla a afegir a l'itinerari.
+ *
+ * Mostra dues seccions: els plans més habituals (transport) i altres opcions
+ * (allotjament, restaurant, lloc). En seleccionar un tipus, navega a [PlanScreen]
+ * amb la ruta corresponent.
+ *
+ * @param navController Controlador de navegació.
+ */
 @Composable
 fun PlanOptionsScreen(navController: NavController) {
 
-    val PopularPlans = listOf(PlanType.FLIGHT, PlanType.BOAT, PlanType.TRAIN,)
-    val MorePlans = listOf(PlanType.HOTEL, PlanType.RESTAURANT, PlanType.LOCATION)
+    // Plans de transport, considerats els més freqüents
+    val popularPlans = listOf(PlanType.FLIGHT, PlanType.BOAT, PlanType.TRAIN)
+
+    // Resta de tipus de plans disponibles
+    val morePlans = listOf(PlanType.HOTEL, PlanType.RESTAURANT, PlanType.LOCATION)
 
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.add_plan), onBackClick = { navController.popBackStack() }) }
     ) { innerPadding ->
-        LazyColumn (
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = AppDimensions.PaddingMedium)
         ) {
-            item { Text(
-                text = stringResource(R.string.most_popular),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 10.dp)
-            )
+            // Secció de plans populars
+            item {
+                Text(
+                    text = stringResource(R.string.most_popular),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
             }
 
             val mod = Modifier.padding(vertical = 4.dp)
 
-            items(PopularPlans) { plan ->
-                WideOption(plan.icon, stringResource(id = plan.titleRes), action = WideOptionAction.None, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
+            items(popularPlans) { plan ->
+                // Cada opció navega a la pantalla de formulari del tipus de pla corresponent
+                WideOption(
+                    ico = plan.icon,
+                    text = stringResource(id = plan.titleRes),
+                    action = WideOptionAction.None,
+                    modifier = mod,
+                    onClick = { navController.navigate("plan/${plan.route}") }
+                )
             }
 
+            // Secció amb la resta d'opcions de pla
             item {
-                Text (
+                Text(
                     text = stringResource(R.string.more),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
@@ -59,8 +81,14 @@ fun PlanOptionsScreen(navController: NavController) {
                 )
             }
 
-            items(MorePlans) { plan ->
-                WideOption(plan.icon, stringResource(id = plan.titleRes), action = WideOptionAction.None, modifier = mod, onClick = { navController.navigate("plan/${plan.route}") })
+            items(morePlans) { plan ->
+                WideOption(
+                    ico = plan.icon,
+                    text = stringResource(id = plan.titleRes),
+                    action = WideOptionAction.None,
+                    modifier = mod,
+                    onClick = { navController.navigate("plan/${plan.route}") }
+                )
             }
         }
     }

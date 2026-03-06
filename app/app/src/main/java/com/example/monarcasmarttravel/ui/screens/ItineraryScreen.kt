@@ -63,13 +63,18 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.TopBarAction
-import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+/**
+ * Enum que representa els tipus de plans que es poden afegir a un itinerari.
+ *
+ * Cada tipus té associat: el recurs de text del títol, la icona, la ruta de navegació,
+ * i els colors de fons i icona per a la targeta de l'itinerari.
+ */
 enum class PlanType(
     val titleRes: Int,
     val icon: ImageVector,
@@ -121,12 +126,21 @@ enum class PlanType(
     )
 }
 
-
+/**
+ * Pantalla de l'itinerari d'un viatge concret.
+ *
+ * Mostra una capçalera amb la imatge del destí, estadístiques del viatge (pressupost i
+ * nombre d'activitats) i la llista de plans agrupats per dia. Des d'aquí es pot navegar
+ * a l'àlbum o afegir nous plans.
+ *
+ * @param navController Controlador de navegació.
+ * @param tripId Identificador del viatge a mostrar.
+ */
 @Composable
 fun ItineraryScreen(navController: NavController, tripId: Int) {
     val calendar = Calendar.getInstance()
 
-    // 1. Lògica de selecció de dades (Maquetat)
+    // Selecció de les dades simulades segons el viatge (tripId)
     val (destinationName, headerImg, dateIn, dateOut, mockData) = remember(tripId) {
         when (tripId) {
             2 -> { // PARÍS
@@ -201,7 +215,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 )
                 TripItineraryInfo("Nova York", R.drawable.ny, dIn, dOut, items)
             }
-            else -> { // KYOTO
+            else -> { // KYOTO (per defecte)
                 val dIn = calendar.apply { set(2026, Calendar.MARCH, 23, 10, 30) }.time
                 val dOut = calendar.apply { set(2026, Calendar.MARCH, 30, 15, 0) }.time
 
@@ -290,51 +304,64 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
         }
     }
 
+    // Plans ordenats per data i agrupats per dia (clau = "dilluns, 23 març 2026")
     val groupedData = mockData
         .sortedBy { it.getInDate() }
         .groupBy { it.formatDateKey(it.getInDate()!!) }
 
     val numItems = mockData.size
 
+    // Controla la visibilitat del diàleg de confirmació d'eliminació del viatge
     var showPopUp by remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { MyTopBar(
-            onBackClick = { navController.popBackStack() },
-            menuItems = listOf(
-                TopBarAction(
-                    stringResource(R.string.deleteTrip),
-                    onClick = {
-                        showPopUp = true
-                    }
+        topBar = {
+            MyTopBar(
+                onBackClick = { navController.popBackStack() },
+                menuItems = listOf(
+                    TopBarAction(
+                        stringResource(R.string.deleteTrip),
+                        onClick = { showPopUp = true }
                     ),
-            ))
-            },
+                )
+            )
+        },
         bottomBar = { MyBottomBar(navController) },
         floatingActionButton = {
             Column(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
             ) {
-                SmallFloatingActionButton (onClick = { navController.navigate("album/$tripId") }) {
+                // Botó petit per accedir a l'àlbum de fotos del viatge
+                SmallFloatingActionButton(onClick = { navController.navigate("album/$tripId") }) {
                     Icon(imageVector = Icons.Filled.PhotoAlbum, contentDescription = null)
                 }
+                // Botó principal per afegir un nou pla a l'itinerari
                 FloatingActionButton(onClick = { navController.navigate("plan") }) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = null)
                 }
             }
         }
     ) { innerPadding ->
-        PopUp(show = showPopUp, title = stringResource(R.string.deleteTrip), text = stringResource(R.string.popUp_deleteTrip_text), onAccept = { showPopUp = false }, onDismiss = { showPopUp = false })
-        LazyColumn (
+        PopUp(
+            show = showPopUp,
+            title = stringResource(R.string.deleteTrip),
+            text = stringResource(R.string.popUp_deleteTrip_text),
+            onAccept = { showPopUp = false },
+            onDismiss = { showPopUp = false }
+        )
+
+        LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // Capçalera amb la imatge de fons del destí
             item {
                 Header(destinationName, dateIn, dateOut, headerImg)
             }
 
             if (numItems == 0) {
+                // Missatge i botó quan no hi ha cap pla afegit
                 item {
                     Text(
                         text = stringResource(R.string.no_plans),
@@ -344,7 +371,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                     )
                 }
                 item {
-                    TextButton (
+                    TextButton(
                         onClick = { navController.navigate("plan") },
                         colors = ButtonDefaults.textButtonColors(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -358,10 +385,13 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                     }
                 }
             } else {
+                // Estadístiques del viatge (pressupost total i nombre de plans)
                 item {
                     ItineraryStatsComponent(mockData.sumOf { it.price }, numItems)
                     Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
                 }
+
+                // Iteració per cada grup de dia i els seus plans
                 groupedData.forEach { (date, itemsDelDia) ->
                     item {
                         DivisorComponent(date)
@@ -389,6 +419,10 @@ data class TripItineraryInfo(
     val plans: List<ItineraryItem>
 )
 
+/**
+ * Capçalera visual de l'itinerari amb la imatge del destí com a fons desenfocada,
+ * un degradat fosc a la part inferior, i el nom del destí amb les dates del viatge.
+ */
 @Composable
 fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int) {
     Box(
@@ -405,6 +439,8 @@ fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int) {
                 .matchParentSize()
                 .blur(radius = 3.dp)
         )
+
+        // Degradat vertical per millorar la llegibilitat del text sobre la imatge
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -418,6 +454,7 @@ fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int) {
                     )
                 )
         )
+
         Column(
             modifier = Modifier
                 .padding(start = AppDimensions.PaddingMedium, bottom = AppDimensions.PaddingSmall)
@@ -426,8 +463,7 @@ fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int) {
                 text = stringResource(R.string.trip_to, destination),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
-                modifier = Modifier
+                color = Color.White
             )
             val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
             val tripLength = TimeUnit.MILLISECONDS.toDays(endDate.time - startDate.time)
@@ -445,11 +481,14 @@ fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int) {
     }
 }
 
+/**
+ * Component que mostra les estadístiques globals del viatge:
+ * pressupost total i nombre total de plans afegits.
+ */
 @Composable
 fun ItineraryStatsComponent(budget: Double, items: Int) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         StatItem(
@@ -465,6 +504,9 @@ fun ItineraryStatsComponent(budget: Double, items: Int) {
     }
 }
 
+/**
+ * Element individual d'estadística amb un valor destacat i una etiqueta descriptiva.
+ */
 @Composable
 private fun StatItem(
     label: String,
@@ -492,6 +534,10 @@ private fun StatItem(
     }
 }
 
+/**
+ * Separador visual entre grups de plans del mateix dia.
+ * Mostra la data formatada dins d'una píndola de color primari.
+ */
 @Composable
 fun DivisorComponent(date: String) {
     Surface(
@@ -502,10 +548,9 @@ fun DivisorComponent(date: String) {
             .height(24.dp)
             .padding(horizontal = AppDimensions.PaddingMedium)
     ) {
-        Box (
+        Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             Text(
                 text = date,
@@ -515,6 +560,21 @@ fun DivisorComponent(date: String) {
     }
 }
 
+/**
+ * Component visual base per a un element de l'itinerari.
+ *
+ * Mostra la icona del tipus de pla, l'hora d'entrada, el títol, text secundari
+ * i un text terciari (normalment el preu). Amb clic llarg s'activa [onLongClick].
+ *
+ * @param ico Icona del tipus de pla.
+ * @param color Color de la icona.
+ * @param background Color de fons del contenidor de la icona.
+ * @param enterTime Hora d'entrada o sortida formatada (HH:mm).
+ * @param title Text principal (nom del lloc o ruta de transport).
+ * @param secondaryText Text secundari (adreça o número de vol/tren/vaixell).
+ * @param tertiaryText Text terciari, normalment el preu. Opcional.
+ * @param onLongClick Acció en fer clic llarg sobre l'element.
+ */
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun ItineraryItemComponent(
@@ -542,13 +602,14 @@ fun ItineraryItemComponent(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
-            modifier = Modifier.padding(horizontal =  AppDimensions.PaddingMedium, vertical = AppDimensions.PaddingSmall)
+            modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium, vertical = AppDimensions.PaddingSmall)
         ) {
             Text(
                 text = enterTime,
                 style = MaterialTheme.typography.labelLarge
             )
 
+            // Contenidor de la icona amb color de fons personalitzat per tipus de pla
             Surface(
                 modifier = Modifier.size(40.dp),
                 shape = RoundedCornerShape(12.dp),
@@ -562,18 +623,17 @@ fun ItineraryItemComponent(
                 )
             }
 
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
+                // Títol amb efecte de desplaçament horitzontal si és massa llarg
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 1, // Forzamos a que sea una sola línea
+                    maxLines = 1,
                     modifier = Modifier.basicMarquee(
-                        iterations = Int.MAX_VALUE, // Para que sea un bucle infinito
+                        iterations = Int.MAX_VALUE,
                         repeatDelayMillis = 1000,
-                        initialDelayMillis = 5000   // Tiempo de espera la primera vez que aparece
+                        initialDelayMillis = 5000
                     )
                 )
                 Text(text = secondaryText, style = MaterialTheme.typography.bodySmall)
@@ -588,12 +648,18 @@ fun ItineraryItemComponent(
     }
 }
 
+/**
+ * Sobrecàrrega de [ItineraryItemComponent] que accepta directament un [ItineraryItem]
+ * i decideix el format de visualització segons el tipus de pla (transport o allotjament/lloc).
+ * Inclou el diàleg de confirmació per eliminar el pla.
+ */
 @Composable
 fun ItineraryItemComponent(item: ItineraryItem) {
     var showPopUp by remember { mutableStateOf(false) }
 
     when (item.type.route) {
-        "flight","boat","train" -> ItineraryItemComponent(
+        // Transport: mostra origen → destí i número de vehicle
+        "flight", "boat", "train" -> ItineraryItemComponent(
             item.type.icon,
             item.type.iconColor,
             item.type.backgroundColor,
@@ -603,7 +669,8 @@ fun ItineraryItemComponent(item: ItineraryItem) {
             tertiaryText = "${item.price}€",
             onLongClick = { showPopUp = true }
         )
-        "hotel","location","restaurant" -> ItineraryItemComponent(
+        // Allotjament / punt d'interès: mostra nom i adreça
+        "hotel", "location", "restaurant" -> ItineraryItemComponent(
             item.type.icon,
             item.type.iconColor,
             item.type.backgroundColor,
@@ -615,17 +682,24 @@ fun ItineraryItemComponent(item: ItineraryItem) {
         )
     }
 
-    PopUp(show = showPopUp, title = stringResource(R.string.delete_plan), text = stringResource(R.string.delete_plan_description), acceptText = stringResource(R.string.delete), onAccept = { showPopUp = false }, onDismiss = { showPopUp = false })
+    PopUp(
+        show = showPopUp,
+        title = stringResource(R.string.delete_plan),
+        text = stringResource(R.string.delete_plan_description),
+        acceptText = stringResource(R.string.delete),
+        onAccept = { showPopUp = false },
+        onDismiss = { showPopUp = false }
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ItineraryPreview() {
-    ItineraryScreen(rememberNavController(),1)
+    ItineraryScreen(rememberNavController(), 1)
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun AlbumScreenPreview() {
-    AlbumScreen(rememberNavController(),3)
+    AlbumScreen(rememberNavController(), 3)
 }
