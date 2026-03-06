@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.getAppVersion
@@ -42,11 +44,10 @@ fun SplashScreen(onTimeout: () -> Unit) {
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
+            modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -65,13 +66,6 @@ fun SplashScreen(onTimeout: () -> Unit) {
                 fontWeight = FontWeight.Bold
             )
 
-            Text(
-                text = stringResource(R.string.version, getAppVersion()),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
-            )
-
             Spacer(modifier = Modifier.height(32.dp))
 
             LinearProgressIndicator(
@@ -84,5 +78,21 @@ fun SplashScreen(onTimeout: () -> Unit) {
                 strokeCap = StrokeCap.Round
             )
         }
+
+        Text(
+            text = "V.${getAppVersion()}",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.secondary,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SplashScreenPreview() {
+    SplashScreen(onTimeout = {})
 }
