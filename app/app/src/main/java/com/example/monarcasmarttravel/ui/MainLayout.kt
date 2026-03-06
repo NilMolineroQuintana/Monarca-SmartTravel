@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowCircleRight
@@ -31,6 +32,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Luggage
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,6 +42,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -63,6 +67,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -564,6 +571,74 @@ fun WideOption(
             }
         }
     }
+}
+
+/**
+ * Camp de text amb contorn reutilitzable per a formularis de l'aplicació.
+ *
+ * Adapta el seu comportament segons si és un camp de contrasenya ([isPassword]),
+ * mostrant en aquest cas un botó per alternar la visibilitat. Suporta validació
+ * visual mitjançant [isError] i [errorMessage].
+ *
+ * @param value Valor actual del camp de text.
+ * @param onValueChange Callback invocat quan l'usuari modifica el contingut.
+ * @param label Etiqueta flotant que descriu el camp.
+ * @param placeholder Text d'exemple mostrat quan el camp és buit.
+ * @param leadingIcon Icona mostrada a l'esquerra del camp.
+ * @param modifier Modifier opcional addicional.
+ * @param isPassword Si és true, oculta el text i afegeix el botó de visibilitat.
+ * @param isError Si és true, aplica l'estil d'error al camp.
+ * @param errorMessage Missatge d'error mostrat sota el camp. Si és null, no es mostra res.
+ * @param keyboardType Tipus de teclat mostrat en focar el camp.
+ */
+@Composable
+fun AppTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String,
+    leadingIcon: ImageVector,
+    modifier: Modifier = Modifier,
+    isPassword: Boolean = false,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    keyboardType: KeyboardType = KeyboardType.Text,
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        placeholder = { Text(placeholder) },
+        leadingIcon = {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
+        trailingIcon = if (isPassword) {
+            {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (passwordVisible) "Amagar contrasenya" else "Mostrar contrasenya"
+                    )
+                }
+            }
+        } else null,
+        visualTransformation = if (isPassword && !passwordVisible)
+            PasswordVisualTransformation() else VisualTransformation.None,
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        isError = isError,
+        supportingText = errorMessage?.let {
+            { Text(text = it, color = MaterialTheme.colorScheme.error) }
+        },
+        shape = RoundedCornerShape(12.dp)
+    )
 }
 
 /**

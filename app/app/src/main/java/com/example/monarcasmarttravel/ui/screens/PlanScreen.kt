@@ -8,12 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.ConfirmationNumber
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,21 +35,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
+import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.MyTopBar
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-/**
- * Pantalla de formulari per afegir un nou pla a l'itinerari.
- *
- * Els camps mostrats s'adapten dinàmicament segons el tipus de pla ([ruta]):
- * - Transport (flight, boat, train): origen, destí, companyia, número i data de sortida.
- * - Allotjament/POI (hotel, restaurant, location): nom, adreça i dates d'entrada/sortida.
- *
- * @param navController Controlador de navegació.
- * @param ruta Tipus de pla seleccionat (p. ex. "flight", "hotel", "restaurant"...).
- */
 @Composable
 fun PlanScreen(navController: NavController, ruta: String?) {
 
@@ -109,19 +107,21 @@ fun PlanScreen(navController: NavController, ruta: String?) {
             // Camps exclusius per a plans que no són transport
             if (ruta !in transports) {
                 item {
-                    TextField(
+                    AppTextField(
                         value = locationName,
                         onValueChange = { locationName = it },
-                        label = { Text(labelName) },
-                        modifier = Modifier.fillMaxWidth()
+                        label = labelName,
+                        placeholder = labelName,
+                        leadingIcon = Icons.Default.Place,
                     )
                 }
                 item {
-                    TextField(
+                    AppTextField(
                         value = address,
                         onValueChange = { address = it },
-                        label = { Text(stringResource(R.string.direccio)) },
-                        modifier = Modifier.fillMaxWidth()
+                        label = stringResource(R.string.direccio),
+                        placeholder = stringResource(R.string.direccio),
+                        leadingIcon = Icons.Default.Home,
                     )
                 }
             }
@@ -129,35 +129,39 @@ fun PlanScreen(navController: NavController, ruta: String?) {
             // Camps exclusius per a plans de transport
             if (ruta in transports) {
                 item {
-                    TextField(
+                    AppTextField(
                         value = locationName,
                         onValueChange = { locationName = it },
-                        label = { Text(stringResource(R.string.origin)) },
-                        modifier = Modifier.fillMaxWidth()
+                        label = stringResource(R.string.origin),
+                        placeholder = stringResource(R.string.origin),
+                        leadingIcon = Icons.Default.LocationOn,
                     )
                 }
                 item {
-                    TextField(
+                    AppTextField(
                         value = destination,
                         onValueChange = { destination = it },
-                        label = { Text(stringResource(R.string.destination)) },
-                        modifier = Modifier.fillMaxWidth()
+                        label = stringResource(R.string.destination),
+                        placeholder = stringResource(R.string.destination),
+                        leadingIcon = Icons.Default.Flag,
                     )
                 }
                 item {
-                    TextField(
+                    AppTextField(
                         value = company,
                         onValueChange = { company = it },
-                        label = { Text(stringResource(R.string.company)) },
-                        modifier = Modifier.fillMaxWidth()
+                        label = stringResource(R.string.company),
+                        placeholder = stringResource(R.string.company),
+                        leadingIcon = Icons.Default.Business,
                     )
                 }
                 item {
-                    TextField(
+                    AppTextField(
                         value = transportNumber,
                         onValueChange = { transportNumber = it },
-                        label = { Text(transportName) },
-                        modifier = Modifier.fillMaxWidth()
+                        label = transportName,
+                        placeholder = transportName,
+                        leadingIcon = Icons.Default.ConfirmationNumber,
                     )
                 }
             }
@@ -168,17 +172,21 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    TextField(
+                    AppTextField(
                         value = checkInDate,
                         onValueChange = { checkInDate = it },
-                        label = { Text(stringResource(R.string.data_de_entrada)) },
+                        label = stringResource(R.string.data_de_entrada),
+                        placeholder = "dd/MM/yyyy",
+                        leadingIcon = Icons.Default.CalendarToday,
                         modifier = Modifier.weight(1f)
                     )
                     if (ruta !in excludeCheckOut) {
-                        TextField(
+                        AppTextField(
                             value = checkOutDate,
                             onValueChange = { checkOutDate = it },
-                            label = { Text(stringResource(R.string.data_de_sortida)) },
+                            label = stringResource(R.string.data_de_sortida),
+                            placeholder = "dd/MM/yyyy",
+                            leadingIcon = Icons.Default.CalendarToday,
                             modifier = Modifier.weight(1f)
                         )
                     }

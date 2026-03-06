@@ -13,20 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,21 +34,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.ui.AppDimensions
+import com.example.monarcasmarttravel.ui.AppTextField
 
 @Composable
 fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("exemple@correu.com") }
     var password by remember { mutableStateOf("1234") }
     var rememberTerms by remember { mutableStateOf(false) }
-    var passwordVisible by remember { mutableStateOf(false) }
 
     val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,}\$".toRegex()
     val isEmailValid = email.matches(emailPattern) || email.isEmpty()
@@ -97,58 +90,26 @@ fun LoginScreen(navController: NavController) {
             )
 
             // formulari
-            OutlinedTextField(
+            AppTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text(stringResource(R.string.email)) },
-                placeholder = { Text("exemple@correu.com") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                label = stringResource(R.string.email),
+                placeholder = "exemple@correu.com",
+                leadingIcon = Icons.Default.Email,
                 isError = !isEmailValid,
-                supportingText = {
-                    if (!isEmailValid) {
-                        Text(
-                            text = "Correu electrònic invàlid",
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(12.dp)
+                errorMessage = if (!isEmailValid) "Correu electrònic invàlid" else null,
+                keyboardType = KeyboardType.Email
             )
 
-            OutlinedTextField(
+            AppTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text(stringResource(R.string.password)) },
-                placeholder = { Text("Contrasenya") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(
-                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (passwordVisible) "Amagar contrasenya" else "Mostrar contrasenya"
-                        )
-                    }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                shape = RoundedCornerShape(12.dp)
+                label = stringResource(R.string.password),
+                placeholder = "Contrasenya",
+                leadingIcon = Icons.Default.Lock,
+                isPassword = true,
+                keyboardType = KeyboardType.Password,
+                modifier = Modifier.padding(top = AppDimensions.PaddingSmall)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
