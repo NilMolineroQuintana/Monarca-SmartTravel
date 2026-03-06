@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Colores Primarios -->
+    <!-- Colors primaris -->
     <color name="magenta_rose">#AF4B7C</color>
     <color name="royal_purple">#7A578D</color>
 
-    <!-- Colores de Acento -->
+    <!-- Colors d'accent -->
     <color name="peachy_pink">#FFBFBB</color>
     <color name="mauve_accent">#814674</color>
     <color name="soft_taupe">#A89284</color>
 
-    <!-- Neutrales -->
+    <!-- Colors neutres -->
     <color name="pure_white">#FFFFFF</color>
     <color name="cream_white">#FBF8F6</color>
     <color name="light_beige">#F5F0ED</color>
@@ -17,7 +17,7 @@
     <color name="dark_charcoal">#3D3D3D</color>
     <color name="rich_black">#1F1F1F</color>
 
-    <!-- Funcionales -->
+    <!-- Colors funcionals -->
     <color name="forest_green">#2F7C4F</color>
     <color name="golden_amber">#E59400</color>
     <color name="crimson_red">#D32F2F</color>
