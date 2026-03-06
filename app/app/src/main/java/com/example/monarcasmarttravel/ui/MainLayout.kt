@@ -307,7 +307,7 @@ fun TripCard(
     val dateIn = trip.dateIn
     val dateOut = trip.dateOut
     val place = trip.destination
-    val remainingDays = trip.getDaysUntilStart();
+    val remainingDays = trip.getDaysUntilStart()
 
     // Text d'estat dinàmic segons la proximitat del viatge
     val dateStatus = when {
@@ -317,7 +317,16 @@ fun TripCard(
         else -> "Viatge realitzat"
     }
 
-    val headerColor = if (showNextTitle) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+    val hasImage = trip.imageResId != null
+
+    val headerColor = if (hasImage) {
+        Color.White
+    } else {
+        if (showNextTitle) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+    }
+
+    val textColor = if (hasImage) Color.White else MaterialTheme.colorScheme.onSurface
+    val secondaryTextColor = if (hasImage) Color.White.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onSurfaceVariant
 
     val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
     val dateRange = "${dateFormat.format(dateIn)} - ${dateFormat.format(dateOut)}"
@@ -326,10 +335,12 @@ fun TripCard(
         shape = RoundedCornerShape(16.dp),
         onClick = onClick,
         colors = CardDefaults.cardColors(
-            containerColor = if (showNextTitle)
+            containerColor = if (showNextTitle && !hasImage)
                 MaterialTheme.colorScheme.primaryContainer
-            else
+            else if (!hasImage)
                 MaterialTheme.colorScheme.surfaceVariant
+            else
+                Color.Transparent
         ),
         modifier = modifier.fillMaxWidth()
     ) {
@@ -344,8 +355,8 @@ fun TripCard(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .matchParentSize()
-                        .blur(radius = 3.dp)
+                        .fillMaxSize()
+                        .blur(radius = 2.dp)
                 )
 
                 Box(
@@ -354,14 +365,14 @@ fun TripCard(
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.Black.copy(alpha = 0.3f),
-                                    Color.Black.copy(alpha = 0.7f)
+                                    Color.Black.copy(alpha = 0.4f),
+                                    Color.Black.copy(alpha = 0.75f)
                                 )
                             )
                         )
                 )
             } else {
-                // Si no hi ha imatge, mostra el fons de color com abans
+                // Fons de color si no hi ha imatge
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -378,10 +389,11 @@ fun TripCard(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -389,8 +401,7 @@ fun TripCard(
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.ExtraBold),
                         color = headerColor
                     )
-                    Spacer(modifier = Modifier.weight(1f))
-                    // Icona d'avió si el viatge és futur; de verificació si ja ha passat
+                    Spacer(modifier = Modifier.width(8.dp))
                     Icon(
                         imageVector = if (remainingDays >= 0) Icons.Filled.FlightTakeoff else Icons.Filled.CheckCircle,
                         contentDescription = null,
@@ -399,30 +410,38 @@ fun TripCard(
                     )
                 }
 
-                Text(
-                    text = place,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = dateRange,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(text = "•", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    // Color vermell si el viatge és en menys de 7 dies
-                    Text(
-                        text = "Estancia de ${trip.getTripDuration()} dies",
-                        style = MaterialTheme.typography.bodyMedium,
+                        text = place,
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        color = if (remainingDays in 0..7 && remainingDays >= 0) Color.Red else headerColor
+                        color = textColor
                     )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = dateRange,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = secondaryTextColor
+                        )
+                        Text(text = "•", color = secondaryTextColor)
+                        // Color vermell si el viatge és en menys de 7 dies
+                        Text(
+                            text = "Estada de ${trip.getTripDuration()} dies",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = if (hasImage) {
+                                Color.White
+                            } else {
+                                if (remainingDays in 0..7 && remainingDays >= 0) Color.Red else headerColor
+                            }
+                        )
+                    }
                 }
             }
         }
