@@ -20,19 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.Trip
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.TripCard
 import java.util.Calendar
-import java.util.Date
-
-data class MockTrip(
-    val id: Int,
-    val destination: String,
-    val dateIn: Date,
-    val dateOut: Date
-)
 
 @Composable
 fun TripsScreen(navController: NavController) {
@@ -63,9 +56,9 @@ fun TripsScreen(navController: NavController) {
         val out3 = calendar.time
 
         listOf(
-            MockTrip(1, labelKyoto, in1, out1),
-            MockTrip(2, labelParis, in2, out2),
-            MockTrip(3, labelNY, in3, out3),
+            Trip(1, labelKyoto, in1, out1, R.drawable.kyoto),
+            Trip(2, labelParis, in2, out2, R.drawable.paris),
+            Trip(3, labelNY, in3, out3, R.drawable.newyork),
         )
     }
 
@@ -98,10 +91,7 @@ fun TripsScreen(navController: NavController) {
             ) {
                 itemsIndexed(mockTrips) { index, trip ->
                     TripCard(
-                        showNextTitle = (index == 0),
-                        place = trip.destination,
-                        dateIn = trip.dateIn,
-                        dateOut = trip.dateOut,
+                        trip = trip,
                         onClick = { navController.navigate("itinerary/${trip.id}") }
                     )
                 }
