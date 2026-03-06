@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.Trip
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.TripCard
 import com.example.monarcasmarttravel.ui.WideOption
@@ -52,9 +53,13 @@ fun HomeScreen(navController: NavController) {
             val dateOut = calendar.time
 
             TripCard(
-                place = stringResource(R.string.kyoto),
-                dateIn = dateIn,
-                dateOut = dateOut,
+                trip = Trip(
+                    id = 1,
+                    destination = stringResource(R.string.kyoto),
+                    dateIn = dateIn,
+                    dateOut = dateOut,
+                    imageResId = R.drawable.kyoto
+                ),
                 onClick = { navController.navigate("itinerary/1") }
             )
 
