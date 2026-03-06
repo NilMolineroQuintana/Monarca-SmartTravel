@@ -300,7 +300,6 @@ private fun CustomNavItem(
 @Composable
 fun TripCard(
     trip: Trip,
-    showNextTitle: Boolean = true,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -322,7 +321,7 @@ fun TripCard(
     val headerColor = if (hasImage) {
         Color.White
     } else {
-        if (showNextTitle) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+        MaterialTheme.colorScheme.primary
     }
 
     val textColor = if (hasImage) Color.White else MaterialTheme.colorScheme.onSurface
@@ -335,7 +334,7 @@ fun TripCard(
         shape = RoundedCornerShape(16.dp),
         onClick = onClick,
         colors = CardDefaults.cardColors(
-            containerColor = if (showNextTitle && !hasImage)
+            containerColor = if (!hasImage)
                 MaterialTheme.colorScheme.primaryContainer
             else if (!hasImage)
                 MaterialTheme.colorScheme.surfaceVariant
@@ -376,12 +375,7 @@ fun TripCard(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(
-                            if (showNextTitle)
-                                MaterialTheme.colorScheme.primaryContainer
-                            else
-                                MaterialTheme.colorScheme.surfaceVariant
-                        )
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                 )
             }
 
