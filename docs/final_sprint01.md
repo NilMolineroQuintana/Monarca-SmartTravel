@@ -10,33 +10,33 @@ The practically all of the sprint goals were achieved. All core screens are impl
 
 ## 2. Tasks completed
 
-| ID | Completed | Comments |
-|:----:|:-----------:|---------|
-| T1.1 | Yes | It took us a bit more time than expected but we consider it a good name. |
-| T1.2 | Yes | |
-| T1.3 | Yes | Easy to choose from. |
-| T2.1 | Yes | Easy to create using Mermaid |
-| T2.2 | Yes | |
-| T3.1 | Yes | Finally we obtained a good result with all the experimentation we did when implementing them. |
-| T3.1.1 | Yes | |
-| T3.1.2 | Yes | |
-| T3.1.3 | Yes | It was the hardest from my tasks to implement. |
-| T3.1.4 | Yes | It went through many iterations to get to this Style. |
-| T3.1.5 | No | We didn't implemented as it wasn't specified directlly as a necessity on the PDF (we could add it in the next sprints). |
-| T3.1.6 | Yes | |
-| T3.1.7 | Yes | Straightforward to implement, although handling the different behaviours between the login screen and the preferences screen required some extra consideration. |
-| T3.1.8 | Yes | Quick to implement. The animated progress bar was added as a visual enhancement beyond the initial requirements. |
-| T3.1.9 | Yes | |
-| T3.2 | Yes | Pretty straightforward to implement. |
-| T3.4 | Yes | |
-| T3.4.1 | Yes | Pretty straightforward to implement not many elements to consider. |
-| T3.4.2 | Yes | Straightforward. Just copy the original one.  |
-| T3.4.3 | Yes | |
-| T3.4.4 | Yes | |
-| T3.4.5 | Yes | The most challenging part was finding the right balance between reducing redundancy and keeping the data model clean. |
-| T3.4.6 | Yes | Pretty straightforward to implement not many elements to consider. |
-| T3.4.7 | Yes | |
-| T3.4.8 | Yes | Straightforward. Just copy the original one. |
+|   ID   | Completed | Comments                                                                                                                                                        |
+|:------:|:---------:|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|  T1.1  |    Yes    | It took us a bit more time than expected but we consider it a good name to represent peace and migration.                                                       |
+|  T1.2  |    Yes    | Also finding a logo that represents the monarca butterfly and trips trying to also be modern and minimal design was not easy.                                   |
+|  T1.3  |    Yes    | Easy to choose using the most compatible and stable version.                                                                                                    |
+|  T2.1  |    Yes    | Easy to create using Mermaid.                                                                                                                                   |
+|  T2.2  |    Yes    |                                                                                                                                                                 |
+|  T3.1  |    Yes    | Finally we obtained a good result with all the experimentation we did when implementing them.                                                                   |
+| T3.1.1 |    Yes    | Added quick actions to make common actions faster.                                                                                                              |
+| T3.1.2 |    Yes    | Trip list features dynamic cards with countdowns already implemented.                                                                                           |
+| T3.1.3 |    Yes    | It was the hardest from my tasks to implement.                                                                                                                  |
+| T3.1.4 |    Yes    | It went through many iterations to get to this Style.                                                                                                           |
+| T3.1.5 |    No     | We didn't implemented as it wasn't specified directly as a necessity on the PDF (we could add it in the next sprints).                                          |
+| T3.1.6 |    Yes    |                                                                                                                                                                 |
+| T3.1.7 |    Yes    | Straightforward to implement, although handling the different behaviours between the login screen and the preferences screen required some extra consideration. |
+| T3.1.8 |    Yes    | Quick to implement. The animated progress bar was added as a visual enhancement beyond the initial requirements.                                                |
+| T3.1.9 |    Yes    | Example login data for faster testing                                                                                                                           |
+|  T3.2  |    Yes    | Pretty straightforward to implement.                                                                                                                            |
+|  T3.4  |    Yes    | Because all functions implementation was not required it was more easy than we thought                                                                          |
+| T3.4.1 |    Yes    | Pretty straightforward to implement not many elements to consider.                                                                                              |
+| T3.4.2 |    Yes    | Straightforward. Just copy the original one.                                                                                                                    |
+| T3.4.3 |    Yes    | Not used yet.                                                                                                                                                   |
+| T3.4.4 |    Yes    | Some functions already implemented                                                                                                                              |
+| T3.4.5 |    Yes    | The most challenging part was finding the right balance between reducing redundancy and keeping the data model clean.                                           |
+| T3.4.6 |    Yes    | Pretty straightforward to implement not many elements to consider.                                                                                              |
+| T3.4.7 |    Yes    | We made a template but it doesn't seem like there will be time to use it.                                                                                       |
+| T3.4.8 |    Yes    | Straightforward. Just copy the original one.                                                                                                                    |
 
 ---
 
@@ -65,7 +65,6 @@ The User Profile screen (T3.1.5) was consciously skipped as it is not explicitly
 
 ## 5. Team Self-Assessment (0-10)
 
-Score:
-Justification:
+**Score:** 10
 
----
+**Justification:** We followed the initial plan and also working on the other member parts, successfully navigating the learning curve of Kotlin and Jetpack Compose. Clear communication allowed us to meet our sprint goals and implement a functional, consistent UI across all implemented screens.
