@@ -1,22 +1,22 @@
-# 📐 Diseño Arquitectónico de Monarca Smart Travel
+# 📐 Architectural Design — Monarca Smart Travel
 
-## 🏛️ Arquitectura General
+## 🏛️ General Architecture
 
-Monarca Smart Travel segueix una arquitectura **MVVM (Model-View-ViewModel)** per a una millor separació de responsabilitats i escalabilitat.
+Monarca Smart Travel follows an **MVVM (Model-View-ViewModel)** architecture for better separation of concerns and scalability.
 
-- **`ui/`** — Conté totes les pantalles i components visuals (View). Construïts íntegrament amb **Jetpack Compose** i el sistema de disseny **Material 3**, amb suport per a mode clar i fosc. Els components reutilitzables com `MyTopBar`, `MyBottomBar`, `TripCard` o `PopUp` es centralitzen a `MainLayout.kt`.
-- **`domain/`** — Conté els models de dades i la lògica de negoci (Model). Aquesta capa és completament independent de frameworks, la qual cosa facilita els tests i la futura integració amb repositoris reals.
+- **`ui/`** — Contains all screens and visual components (View). Built entirely with **Jetpack Compose** and the **Material 3** design system, with support for both light and dark mode. Reusable components such as `MyTopBar`, `MyBottomBar`, `TripCard` and `PopUp` are centralised in `MainLayout.kt`.
+- **`domain/`** — Contains data models and business logic (Model). This layer is completely framework-independent, which facilitates testing and future integration with real repositories.
 
-La navegació es gestiona amb **Jetpack Navigation Compose** des de `MainActivity`, amb un únic `NavHost` que centralitza totes les rutes. Les pantalles principals s'agrupen en tres seccions accessibles des de la barra inferior: **Inici**, **Viatges** i **Preferències**.
+Navigation is managed with **Jetpack Navigation Compose** from `MainActivity`, using a single `NavHost` that centralises all routes. The main screens are grouped into three sections accessible from the bottom navigation bar: **Home**, **Trips** and **Preferences**.
 
-## 📊 Model de Dades: Creat complet per a futurs Sprints
+## 📊 Data Model: Designed in full for future Sprints
 
-El model de domini s'ha dissenyat pensant en l'escalabilitat. Totes les classes inclouen les funcions de negoci amb `@TODO` per implementar en sprints posteriors, seguint el contracte definit des del primer sprint.
+The domain model has been designed with scalability in mind. All classes include business functions annotated with `@TODO` to be implemented in later sprints, following the contract defined from the very first sprint.
 
-Les decisions principals del model són:
-- **`User` i `Authentication` separats** — per mantenir les dades de perfil separades de les credencials sensibles (SRP).
-- **`ItineraryItem` unificat** — una sola classe amb camps opcionals cobreix tots els tipus de pla (transport i allotjament), simplificant la persistència futura.
-- **`PlanType` com a enum amb metadades** — cada tipus de pla porta associada la seva icona, colors i ruta, evitant taules de correspondències disperses a la UI.
-- **`AIRecommendations`** — preparat des del Sprint 01 per anticipar la funcionalitat d'IA del producte.
+The key design decisions are:
+- **`User` and `Authentication` are separate** — to keep profile data separate from sensitive credentials (SRP).
+- **Unified `ItineraryItem`** — a single class with optional fields covers all plan types (transport and accommodation), simplifying future persistence.
+- **`PlanType` as an enum with metadata** — each plan type carries its icon, colours and route, avoiding scattered mapping tables in the UI.
+- **`AIRecommendations`** — prepared from Sprint 01 to anticipate the product's AI feature.
 
 ![Domain Model](domain-model.png)
