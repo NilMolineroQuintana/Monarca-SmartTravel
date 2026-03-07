@@ -17,9 +17,33 @@ data class Trip(
     val destination: String,
     val dateIn: Date,
     val dateOut: Date,
-    val imageResId: Int? = null
-    //val userId: Int
+    val imageResId: Int? = null,
+    val userId: Int
 ) {
+    /**
+     * Crea un nou viatge al sistema
+     * Pendent d'implementar
+     */
+    fun createTrip() {
+        // @TODO Implement create trip
+    }
+
+    /**
+     * Elimina un viatge del sistema
+     * Pendent d'implementar
+     */
+    fun deleteTrip() {
+        // @TODO Implement delete trip
+    }
+
+    /**
+     * Actualitza un viatge existent del sistema
+     * Pendent d'implementar
+     */
+    fun updateTrip() {
+        // @TODO Implement update trip
+    }
+
     /**
      * Calcula la durada total del viatge en dies.
      */

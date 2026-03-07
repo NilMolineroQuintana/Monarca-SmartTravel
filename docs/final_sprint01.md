@@ -15,8 +15,8 @@ The practically all of the sprint goals were achieved. All core screens are impl
 | T1.1 | Yes | It took us a bit more time than expected but we consider it a good name. |
 | T1.2 | Yes | |
 | T1.3 | Yes | Easy to choose from. |
-| T2.1 | No | |
-| T2.2 | No | |
+| T2.1 | Yes | Easy to create using Mermaid |
+| T2.2 | Yes | |
 | T3.1 | Yes | Finally we obtained a good result with all the experimentation we did when implementing them. |
 | T3.1.1 | Yes | |
 | T3.1.2 | Yes | |
@@ -28,14 +28,14 @@ The practically all of the sprint goals were achieved. All core screens are impl
 | T3.1.8 | Yes | Quick to implement. The animated progress bar was added as a visual enhancement beyond the initial requirements. |
 | T3.1.9 | Yes | |
 | T3.2 | Yes | Pretty straightforward to implement. |
-| T3.4 | No | |
+| T3.4 | Yes | |
 | T3.4.1 | Yes | Pretty straightforward to implement not many elements to consider. |
 | T3.4.2 | Yes | Straightforward. Just copy the original one.  |
-| T3.4.3 | No | |
-| T3.4.4 | No | |
+| T3.4.3 | Yes | |
+| T3.4.4 | Yes | |
 | T3.4.5 | Yes | The most challenging part was finding the right balance between reducing redundancy and keeping the data model clean. |
 | T3.4.6 | Yes | Pretty straightforward to implement not many elements to consider. |
-| T3.4.7 | No | |
+| T3.4.7 | Yes | |
 | T3.4.8 | Yes | Straightforward. Just copy the original one. |
 
 ---
