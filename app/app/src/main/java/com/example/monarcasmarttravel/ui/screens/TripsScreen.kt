@@ -69,9 +69,9 @@ fun TripsScreen(navController: NavController) {
         val out3 = calendar.time
 
         listOf(
-            Trip(1, labelKyoto, in1, out1, R.drawable.kyoto),
-            Trip(2, labelParis, in2, out2, R.drawable.paris),
-            Trip(3, labelNY, in3, out3, R.drawable.newyork),
+            Trip(1, labelKyoto, in1, out1, R.drawable.kyoto, 1),
+            Trip(2, labelParis, in2, out2, R.drawable.paris,1),
+            Trip(3, labelNY, in3, out3, R.drawable.newyork,1),
         )
     }
 

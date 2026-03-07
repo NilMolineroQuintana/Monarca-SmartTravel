@@ -68,7 +68,8 @@ fun HomeScreen(navController: NavController) {
                     destination = stringResource(R.string.kyoto),
                     dateIn = dateIn,
                     dateOut = dateOut,
-                    imageResId = R.drawable.kyoto
+                    imageResId = R.drawable.kyoto,
+                    userId = 1
                 ),
                 onClick = { navController.navigate("itinerary/1") }
             )
