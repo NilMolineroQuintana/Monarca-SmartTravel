@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ConfirmationNumber
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -70,6 +72,9 @@ fun PlanScreen(navController: NavController, ruta: String?) {
     var address by rememberSaveable { mutableStateOf("") }
     var company by rememberSaveable { mutableStateOf("") }
     var transportNumber by rememberSaveable { mutableStateOf("") }
+    var price by rememberSaveable { mutableStateOf("") }
+
+    // Tipus de pla a mostrar
 
     // Tipus que es consideren transport (no mostren camp de nom ni adreça)
     val transports = listOf("train", "boat", "flight")
@@ -145,40 +150,50 @@ fun PlanScreen(navController: NavController, ruta: String?) {
             // Camps exclusius per a plans de transport
             if (ruta in transports) {
                 item {
-                    AppTextField(
-                        value = locationName,
-                        onValueChange = { locationName = it },
-                        label = stringResource(R.string.origin),
-                        placeholder = stringResource(R.string.origin),
-                        leadingIcon = Icons.Default.LocationOn,
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        AppTextField(
+                            value = locationName,
+                            onValueChange = { locationName = it },
+                            label = stringResource(R.string.origin),
+                            placeholder = stringResource(R.string.origin),
+                            leadingIcon = Icons.Default.LocationOn,
+                            modifier = Modifier.weight(1f)
+                        )
+                        AppTextField(
+                            value = destination,
+                            onValueChange = { destination = it },
+                            label = stringResource(R.string.destination),
+                            placeholder = stringResource(R.string.destination),
+                            leadingIcon = Icons.Default.Flag,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
                 item {
-                    AppTextField(
-                        value = destination,
-                        onValueChange = { destination = it },
-                        label = stringResource(R.string.destination),
-                        placeholder = stringResource(R.string.destination),
-                        leadingIcon = Icons.Default.Flag,
-                    )
-                }
-                item {
-                    AppTextField(
-                        value = company,
-                        onValueChange = { company = it },
-                        label = stringResource(R.string.company),
-                        placeholder = stringResource(R.string.company),
-                        leadingIcon = Icons.Default.Business,
-                    )
-                }
-                item {
-                    AppTextField(
-                        value = transportNumber,
-                        onValueChange = { transportNumber = it },
-                        label = transportName,
-                        placeholder = transportName,
-                        leadingIcon = Icons.Default.ConfirmationNumber,
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        AppTextField(
+                            value = company,
+                            onValueChange = { company = it },
+                            label = stringResource(R.string.company),
+                            placeholder = stringResource(R.string.company),
+                            leadingIcon = Icons.Default.Business,
+                            modifier = Modifier.weight(1f)
+                        )
+                        AppTextField(
+                            value = transportNumber,
+                            onValueChange = { transportNumber = it },
+                            label = transportName,
+                            placeholder = transportName,
+                            leadingIcon = Icons.Default.ConfirmationNumber,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
 
@@ -207,6 +222,17 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                         )
                     }
                 }
+            }
+
+            // Camp per al preu
+            item {
+                AppTextField(
+                    value = price,
+                    onValueChange = { price = it },
+                    label = stringResource(R.string.price),
+                    placeholder = "Preu",
+                    leadingIcon = Icons.Default.AttachMoney
+                )
             }
 
             // Botó per confirmar i afegir el pla; torna a la pantalla anterior

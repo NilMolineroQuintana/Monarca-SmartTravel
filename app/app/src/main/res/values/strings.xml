@@ -52,9 +52,9 @@
     <string name="hotel_name">Nom allotjament</string>
     <string name="restaurant_name">Nom del restaurant</string>
     <string name="location_name">Nom del lloc d\'interès</string>
-    <string name="flight_num">Número de vol</string>
-    <string name="boat_num">Identificador de vaixell</string>
-    <string name="train_num">Identificador de tren</string>
+    <string name="flight_num">Nº de vol</string>
+    <string name="boat_num">Nº de vaixell</string>
+    <string name="train_num">Nº de tren</string>
 
     <string name="trip_to">Viatge a %1$s</string>
     <string name="add_plan">Afegir plan</string>
@@ -106,5 +106,6 @@
     <string name="most_popular">Els més populars</string>
     <string name="more">Més</string>
     <string name="unknown">Desconocida</string>
+    <string name="price">Preu</string>
 
 </resources>

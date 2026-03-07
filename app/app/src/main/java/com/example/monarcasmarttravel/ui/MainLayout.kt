@@ -595,7 +595,7 @@ fun WideOption(
  * @param isPassword Si és true, oculta el text i afegeix el botó de visibilitat.
  * @param isError Si és true, aplica l'estil d'error al camp.
  * @param errorMessage Missatge d'error mostrat sota el camp. Si és null, no es mostra res.
- * @param keyboardType Tipus de teclat mostrat en focar el camp.
+ * @param keyboardType Tipus de teclat mostrat enfocar el camp.
  */
 @Composable
 fun AppTextField(
