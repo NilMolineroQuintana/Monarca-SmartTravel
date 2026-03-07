@@ -187,8 +187,14 @@ fun MyBottomBar(navController: NavController) {
     val currentRoute = navBackStackEntry?.destination?.route
     val isDark = isSystemInDarkTheme()
 
+    // Extreu la ruta base sense paràmetres
+    val baseRoute = currentRoute
+        ?.substringBefore("?")  // Elimina paràmetres opcionals (?param=value)
+        ?.substringBefore("{")  // Elimina paràmetres obligatoris ({param})
+        ?: ""
+
     // Rutes que pertanyen a la secció de viatges
-    val tripChilds = listOf("trips", "itinerary/{tripId}", "plan", "plan/{route}", "album/{tripId}")
+    val tripChilds = listOf("trips", "itinerary", "plan", "album", "createTrip")
 
     // Rutes que pertanyen a la secció de perfil/preferències
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
@@ -217,19 +223,19 @@ fun MyBottomBar(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             CustomNavItem(
-                selected = currentRoute == "home",
+                selected = baseRoute == "home",
                 icon = Icons.Default.Home,
                 label = stringResource(R.string.bottom_menu_home),
                 onClick = { if (currentRoute != "home") navController.navigate("home") }
             )
             CustomNavItem(
-                selected = currentRoute in tripChilds,
+                selected = baseRoute in tripChilds,
                 icon = Icons.Default.Luggage,
                 label = stringResource(R.string.bottom_menu_trips),
                 onClick = { if (currentRoute != "trips") navController.navigate("trips") }
             )
             CustomNavItem(
-                selected = currentRoute in profileChilds,
+                selected = baseRoute in profileChilds,
                 icon = Icons.Default.Settings,
                 label = stringResource(R.string.preferences_text),
                 onClick = { if (currentRoute != "profile") navController.navigate("profile") }
