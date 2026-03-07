@@ -43,6 +43,21 @@ import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 
+/**
+ * Pantalla d'inici de sessió de l'aplicació.
+ *
+ * Mostra el logotip, el nom de l'app i un formulari amb els camps de correu electrònic
+ * i contrasenya. L'usuari ha d'acceptar els termes i condicions per poder iniciar sessió.
+ *
+ * La validació del correu es fa en temps real mitjançant una expressió regular.
+ * El botó d'inici de sessió només s'activa quan el formulari és vàlid:
+ * correu correcte, contrasenya no buida i termes acceptats.
+ *
+ * Des d'aquí es pot navegar a [TermsAndConditionsScreen] per llegir les condicions,
+ * i a [HomeScreen] en completar l'inici de sessió correctament.
+ *
+ * @param navController Controlador de navegació.
+ */
 @Composable
 fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("exemple@correu.com") }

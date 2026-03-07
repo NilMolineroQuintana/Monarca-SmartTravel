@@ -31,6 +31,16 @@ import com.example.monarcasmarttravel.ui.TripCard
 import com.example.monarcasmarttravel.ui.WideOption
 import java.util.Calendar
 
+/**
+ * Pantalla principal de l'aplicació.
+ *
+ * Mostra una capçalera amb el logotip i el nom de l'app, la targeta del pròxim viatge
+ * planificat i una secció d'accions ràpides per crear nous viatges.
+ *
+ * Actua com a punt d'entrada principal un cop l'usuari ha iniciat sessió.
+ *
+ * @param navController Controlador de navegació.
+ */
 @Composable
 fun HomeScreen(navController: NavController) {
     Scaffold(
@@ -68,6 +78,12 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
+/**
+ * Secció de capçalera de la pantalla principal.
+ *
+ * Mostra el logotip de l'aplicació, el nom de l'app i un subtítol de benvinguda.
+ * Dissenyada per ocupar la part superior de [HomeScreen].
+ */
 @Composable
 fun HeaderSection() {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -100,6 +116,14 @@ fun HeaderSection() {
     }
 }
 
+/**
+ * Secció d'accions ràpides de la pantalla principal.
+ *
+ * Mostra un títol i una llista d'opcions que permeten a l'usuari accedir ràpidament
+ * a les funcionalitats principals de l'app, com ara crear un nou viatge.
+ *
+ * @param navController Controlador de navegació per gestionar les accions de cada opció.
+ */
 @Composable
 fun QuickActionsSection(navController: NavController) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -119,14 +143,6 @@ fun QuickActionsSection(navController: NavController) {
                 navController.navigate("createTrip")
             }
         )
-        /*
-        WideOption(
-            ico = Icons.Filled.Explore,
-            text = "Explorar destinos",
-            secondaryText = "Inspírate con lugares populares",
-            onClick = { navController.navigate("itinerary") }
-        )
-        */
     }
 }
 

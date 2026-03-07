@@ -41,6 +41,22 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+/**
+ * Pantalla de formulari per afegir un nou pla a l'itinerari.
+ *
+ * Els camps del formulari s'adapten dinàmicament segons el tipus de pla indicat per [ruta]:
+ * - **Transport** (flight, boat, train): mostra origen, destí, companyia, número de transport
+ *   i data de sortida.
+ * - **Allotjament / Punt d'interès** (hotel, restaurant, location): mostra nom, adreça,
+ *   data d'entrada i, en el cas d'hotels, data de sortida.
+ *
+ * Els estats del formulari es preserven en rotació de pantalla mitjançant [rememberSaveable].
+ * En confirmar, navega de tornada a la pantalla anterior.
+ *
+ * @param navController Controlador de navegació.
+ * @param ruta Tipus de pla a afegir. Valors possibles: "flight", "boat", "train",
+ *             "hotel", "restaurant", "location".
+ */
 @Composable
 fun PlanScreen(navController: NavController, ruta: String?) {
 

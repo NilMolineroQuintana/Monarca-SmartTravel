@@ -27,6 +27,19 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.TripCard
 import java.util.Calendar
 
+/**
+ * Pantalla que mostra la llista de tots els viatges de l'usuari.
+ *
+ * Presenta els viatges en forma de targetes ([TripCard]) ordenades per data.
+ * Cada targeta mostra el destí, el rang de dates i l'estat del viatge,
+ * i en prémer-la navega a l'itinerari corresponent.
+ *
+ * Un botó flotant (+) permet crear un nou viatge navegant a [CreateTripScreen].
+ *
+ * Les dades actuals són simulades (mock-up) fins que s'implementi la capa de dades.
+ *
+ * @param navController Controlador de navegació.
+ */
 @Composable
 fun TripsScreen(navController: NavController) {
     val labelKyoto = stringResource(R.string.kyoto)
@@ -89,7 +102,7 @@ fun TripsScreen(navController: NavController) {
                     bottom = AppDimensions.PaddingLarge
                 )
             ) {
-                items(mockTrips) {trip ->
+                items(mockTrips) { trip ->
                     TripCard(
                         trip = trip,
                         onClick = { navController.navigate("itinerary/${trip.id}") }

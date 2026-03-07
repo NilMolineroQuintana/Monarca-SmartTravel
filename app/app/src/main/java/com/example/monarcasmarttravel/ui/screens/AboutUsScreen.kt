@@ -30,6 +30,16 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.getAppVersion
 
+/**
+ * Pantalla d'informació sobre l'aplicació i l'equip de desenvolupament.
+ *
+ * Mostra el logotip, el nom de l'app i la versió actual, una breu descripció
+ * del projecte i el llistat dels membres de l'equip.
+ *
+ * Accessible des de la pantalla de preferències ([ProfileScreen]).
+ *
+ * @param navController Controlador de navegació.
+ */
 @Composable
 fun AboutUsScreen(navController: NavController) {
     Scaffold(
@@ -49,6 +59,7 @@ fun AboutUsScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingLarge)
         ) {
 
+            // Bloc superior: logotip, nom i versió de l'app
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
@@ -73,6 +84,7 @@ fun AboutUsScreen(navController: NavController) {
                 )
             }
 
+            // Bloc de descripció del projecte
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)
@@ -89,6 +101,7 @@ fun AboutUsScreen(navController: NavController) {
                 )
             }
 
+            // Bloc amb els membres de l'equip de desenvolupament
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall)

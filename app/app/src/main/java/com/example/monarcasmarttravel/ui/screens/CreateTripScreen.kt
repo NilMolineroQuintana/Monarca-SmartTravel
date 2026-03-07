@@ -35,12 +35,24 @@ import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyTopBar
 
+/**
+ * Pantalla per crear un nou viatge.
+ *
+ * Presenta un formulari amb tres camps: destí, data d'inici i data de fi.
+ * El botó de creació només s'activa quan tots els camps estan emplenats.
+ *
+ * Un cop confirmat, navega a [TripsScreen] on el nou viatge hauria d'aparèixer
+ * a la llista (pendent d'integrar amb la capa de dades).
+ *
+ * @param navController Controlador de navegació.
+ */
 @Composable
 fun CreateTripScreen(navController: NavController) {
     var destination by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf("") }
     var endDate by remember { mutableStateOf("") }
 
+    // El formulari només és vàlid quan tots tres camps tenen contingut
     val isFormValid = destination.isNotEmpty() && startDate.isNotEmpty() && endDate.isNotEmpty()
 
     Scaffold(
@@ -65,6 +77,7 @@ fun CreateTripScreen(navController: NavController) {
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
+            // Camp de destinació
             OutlinedTextField(
                 value = destination,
                 onValueChange = { destination = it },
@@ -82,6 +95,7 @@ fun CreateTripScreen(navController: NavController) {
                 shape = RoundedCornerShape(12.dp)
             )
 
+            // Camps de data d'inici i fi en la mateixa fila
             Row(
                 horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
                 modifier = Modifier.fillMaxWidth()
@@ -123,10 +137,9 @@ fun CreateTripScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // Botó de creació; desactivat fins que el formulari sigui vàlid
             Button(
-                onClick = {
-                    navController.navigate("trips")
-                },
+                onClick = { navController.navigate("trips") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
