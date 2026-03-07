@@ -6,13 +6,11 @@ package com.example.monarcasmarttravel.domain
  * @param userId Identificador únic de l'usuari.
  * @param name Nom visible de l'usuari.
  * @param email Adreça de correu electrònic, usada per a l'autenticació.
- * @param password Contrasenya de l'usuari.
  */
 data class User(
     val userId: String,
     val name: String,
     val email: String,
-    val password: String
 ) {
     /**
      * Registra un nou usuari al sistema.

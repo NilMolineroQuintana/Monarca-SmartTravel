@@ -188,7 +188,7 @@ fun MyBottomBar(navController: NavController) {
     val isDark = isSystemInDarkTheme()
 
     // Rutes que pertanyen a la secció de viatges
-    val tripChilds = listOf("trips", "itinerary", "plan", "album")
+    val tripChilds = listOf("trips", "itinerary/{tripId}", "plan", "plan/{route}", "album/{tripId}")
 
     // Rutes que pertanyen a la secció de perfil/preferències
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")

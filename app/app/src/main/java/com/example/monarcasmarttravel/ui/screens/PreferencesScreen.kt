@@ -59,7 +59,7 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
 fun ProfileScreen(navController: NavController) {
 
     // Mock-up data
-    val usr: User = User("1", "Dummy", "dummy@gmail.com", "123456")
+    val usr: User = User("1", "Dummy", "dummy@gmail.com")
     val prefe: Preferences = Preferences(usr.userId, false, stringResource(R.string.language_catalan), "Dark")
 
     // Determina si el tema és fosc a partir de les preferències
