@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.monarcasmarttravel.data.repository.PreferencesRepository
 import com.example.monarcasmarttravel.ui.screens.AboutUsScreen
 import com.example.monarcasmarttravel.ui.screens.AlbumScreen
 import com.example.monarcasmarttravel.ui.screens.CreateTripScreen
@@ -34,8 +35,13 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val prefsRepository = PreferencesRepository(this)
+
         setContent {
-            MonarcaSmartTravelTheme {
+            val isDarkMode = prefsRepository.isDarkMode
+
+            MonarcaSmartTravelTheme (darkTheme = isDarkMode) {
                 AppNavigation()
             }
         }

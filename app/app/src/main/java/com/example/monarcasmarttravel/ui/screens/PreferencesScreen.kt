@@ -32,12 +32,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.data.repository.PreferencesRepository
 import com.example.monarcasmarttravel.domain.Preferences
 import com.example.monarcasmarttravel.domain.User
 import com.example.monarcasmarttravel.ui.AppDimensions
@@ -57,24 +59,19 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
  */
 @Composable
 fun ProfileScreen(navController: NavController) {
+    val context = LocalContext.current
 
-    // Mock-up data
-    val usr: User = User("1", "Dummy", "dummy@gmail.com")
-    val prefe: Preferences = Preferences(usr.userId, false, stringResource(R.string.language_catalan), "Dark")
-
-    // Determina si el tema és fosc a partir de les preferències
-    val dark: Boolean = prefe.theme == "Dark"
+    val prefsRepository = remember { PreferencesRepository(context) }
 
     // Controla la visibilitat del diàleg de confirmació de tancament de sessió
     var showLogOutPopUp by remember { mutableStateOf(false) }
 
     // Estat del selector d'idioma
-    var selectedLanguage by remember { mutableStateOf(prefe.preferredLanguage) }
     var langMenuExpanded by remember { mutableStateOf(false) }
 
-    // Estats dels interruptors de tema i notificacions
-    var darkMode by remember { mutableStateOf(dark) }
-    var notifications by remember { mutableStateOf(prefe.notificationEnabled) }
+    var darkMode by remember { mutableStateOf(prefsRepository.isDarkMode) }
+    var selectedLanguage by remember { mutableStateOf(prefsRepository.language) }
+    var notifications by remember { mutableStateOf(prefsRepository.notifications) }
 
     // Color transparent per als botons de les opcions (sense fons propi)
     val buttonsColor = Color.Transparent
@@ -118,7 +115,11 @@ fun ProfileScreen(navController: NavController) {
                             ),
                             isExpanded = langMenuExpanded,
                             onDismiss = { langMenuExpanded = false },
-                            onOptionSelected = { selectedLanguage = it }
+                            onOptionSelected = {
+                                selectedLanguage = it
+                                prefsRepository.language = it
+                                langMenuExpanded = false
+                            }
                         )
                     )
                 }
@@ -133,7 +134,10 @@ fun ProfileScreen(navController: NavController) {
                         secondaryText = stringResource(R.string.preferences_theme_description),
                         rounded = false,
                         color = buttonsColor,
-                        action = WideOptionAction.Toggle(darkMode) { darkMode = it },
+                        action = WideOptionAction.Toggle(darkMode) {
+                            darkMode = it
+                            prefsRepository.isDarkMode = it
+                        },
                         onClick = { darkMode = !darkMode }
                     )
                     HorizontalDivider(thickness = 1.dp)
@@ -143,7 +147,10 @@ fun ProfileScreen(navController: NavController) {
                         secondaryText = stringResource(R.string.preferences_notifications_description),
                         rounded = false,
                         color = buttonsColor,
-                        action = WideOptionAction.Toggle(notifications) { notifications = it },
+                        action = WideOptionAction.Toggle(notifications) {
+                            notifications = it
+                            prefsRepository.notifications = it
+                        },
                         onClick = { notifications = !notifications }
                     )
                 }

@@ -12,7 +12,7 @@ The main objective of Sprint 02 is to implement the core logic of the Travel Pla
 |  T1.1  | Implement inMemory CRUD operations for trips (addTrip, editTrip, deleteTrip) following MVVM pattern                                                   |   TO ASSIGN   |       4        |   High   |
 |  T1.2  | Implement inMemory CRUD operations for itinerary/activity items (addActivity, updateActivity, deleteActivity) following MVVM pattern                  |   TO ASSIGN   |       4        |   High   |
 |  T1.3  | Ensure proper data validation (future dates, required fields, DatePickers in all date fields)                                                         |   TO ASSIGN   |       3        |   High   |
-|  T1.4  | Implement user settings persistence using SharedPreferences (username, date of birth, dark mode, language)                                            |   TO ASSIGN   |       3        |   High   |
+|  T1.4  | Implement user settings persistence using SharedPreferences (username, date of birth, dark mode, language)                                            |   Nil   |       2        |   High   |
 |  T1.5  | Implement multi-language support (minimum 3 languages: ca, es, en)                                                                                    |   TO ASSIGN   |       2        |   High   |
 |  T2.1  | Structure the itinerary interaction flow: Menu → Travel → Itinerary (CRUD)                                                                            |   TO ASSIGN   |       2        |   High   |
 |  T2.2  | Implement a basic UI flow for adding and modifying trip details and itinerary                                                                         |   TO ASSIGN   |       3        |   High   |
