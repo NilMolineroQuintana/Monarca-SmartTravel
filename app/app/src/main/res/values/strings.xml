@@ -120,5 +120,10 @@
     <string name="preferences_birthdate_popup_title">Data de naixement</string>
 
     <string name="select_date">Selecciona una data</string>
+    <string name="estada_dies">Estada de %1$d dies</string>
+    <string name="falten_dies">Falten %1$d dies</string>
+    <string name="dema_viatge">Demà comença el viatge!</string>
+    <string name="avui_viatge">Comença avui!</string>
+    <string name="viatge_realitzat">Viatge realitzat</string>
 
 </resources>

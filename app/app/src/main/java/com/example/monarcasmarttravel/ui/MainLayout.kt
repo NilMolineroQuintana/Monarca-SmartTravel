@@ -328,10 +328,10 @@ fun TripCard(
 
     // Text d'estat dinàmic segons la proximitat del viatge
     val dateStatus = when {
-        remainingDays > 1 -> "Falten $remainingDays dies"
-        remainingDays == 1L -> "Demà comença el viatge!"
-        remainingDays == 0L -> "Comença avui!"
-        else -> "Viatge realitzat"
+        remainingDays > 1 -> stringResource(R.string.falten_dies, remainingDays)
+        remainingDays == 1L -> stringResource(R.string.dema_viatge)
+        remainingDays == 0L -> stringResource(R.string.avui_viatge)
+        else -> stringResource(R.string.viatge_realitzat)
     }
 
     val hasImage = trip.imageResId != null
@@ -444,7 +444,7 @@ fun TripCard(
                         Text(text = "•", color = secondaryTextColor)
                         // Color vermell si el viatge és en menys de 7 dies
                         Text(
-                            text = "Estada de ${trip.getTripDuration()} dies",
+                            text = stringResource(R.string.estada_dies, trip.getTripDuration()),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = if (hasImage) {
