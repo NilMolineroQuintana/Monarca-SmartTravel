@@ -1,6 +1,7 @@
-package com.example.monarcasmarttravel.ui.screens
+package com.example.monarcasmarttravel.ui.screens.trip
 
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,7 +35,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.domain.Image
+import com.example.monarcasmarttravel.domain.model.Image
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
@@ -49,7 +50,7 @@ import java.util.Calendar
  * @param navController Controlador de navegació per moure's entre pantalles.
  * @param tripId Identificador del viatge del qual es mostren les fotos.
  */
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AlbumScreen(navController: NavController, tripId: Int) {
 

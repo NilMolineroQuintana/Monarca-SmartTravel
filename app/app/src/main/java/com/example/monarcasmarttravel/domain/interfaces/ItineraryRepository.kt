@@ -1,4 +1,6 @@
-package com.example.monarcasmarttravel.domain
+package com.example.monarcasmarttravel.domain.interfaces
+
+import com.example.monarcasmarttravel.domain.model.ItineraryItem
 
 interface ItineraryItemRepository {
     suspend fun getItemsByTrip(tripId: Int): List<ItineraryItem>

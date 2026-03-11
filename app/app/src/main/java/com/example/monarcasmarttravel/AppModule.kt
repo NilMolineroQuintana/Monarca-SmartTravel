@@ -1,7 +1,7 @@
 package com.example.monarcasmarttravel
 
 import com.example.monarcasmarttravel.data.repository.ItineraryItemRepositoryImpl
-import com.example.monarcasmarttravel.domain.ItineraryItemRepository
+import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

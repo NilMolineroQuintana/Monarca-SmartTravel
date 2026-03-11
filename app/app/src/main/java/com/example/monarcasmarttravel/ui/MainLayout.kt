@@ -80,7 +80,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.domain.Trip
+import com.example.monarcasmarttravel.domain.model.Trip
 import java.text.SimpleDateFormat
 import java.util.Locale
 

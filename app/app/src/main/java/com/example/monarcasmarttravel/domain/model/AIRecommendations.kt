@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.domain
+package com.example.monarcasmarttravel.domain.model
 
 import java.util.Date
 

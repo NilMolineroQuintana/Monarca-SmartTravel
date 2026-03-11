@@ -1,8 +1,8 @@
 package com.example.monarcasmarttravel.data.repository
 
 import com.example.monarcasmarttravel.data.fakeDB.FakeItineraryItemDataSource
-import com.example.monarcasmarttravel.domain.ItineraryItem
-import com.example.monarcasmarttravel.domain.ItineraryItemRepository
+import com.example.monarcasmarttravel.domain.model.ItineraryItem
+import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
 import javax.inject.Inject
 
 class ItineraryItemRepositoryImpl @Inject constructor() : ItineraryItemRepository {

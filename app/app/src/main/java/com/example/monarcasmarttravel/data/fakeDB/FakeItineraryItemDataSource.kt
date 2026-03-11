@@ -1,7 +1,7 @@
 package com.example.monarcasmarttravel.data.fakeDB
 
-import com.example.monarcasmarttravel.domain.ItineraryItem
-import com.example.monarcasmarttravel.ui.screens.PlanType
+import com.example.monarcasmarttravel.domain.model.ItineraryItem
+import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import java.util.Calendar
 
 object FakeItineraryItemDataSource {

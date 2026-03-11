@@ -2,8 +2,8 @@ package com.example.monarcasmarttravel.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.monarcasmarttravel.domain.ItineraryItem
-import com.example.monarcasmarttravel.domain.ItineraryItemRepository
+import com.example.monarcasmarttravel.domain.model.ItineraryItem
+import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
