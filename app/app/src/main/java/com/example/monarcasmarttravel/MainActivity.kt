@@ -37,14 +37,14 @@ class MainActivity : ComponentActivity() {
         val prefsRepository = PreferencesRepository(this)
         LanguageChangeUtil().changeLanguage(this, prefsRepository.language)
 
+        ThemeState.isDarkMode = prefsRepository.isDarkMode
+
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
-            ThemeState.isDarkMode = prefsRepository.isDarkMode
-
-            MonarcaSmartTravelTheme (darkTheme = ThemeState.isDarkMode) {
+            MonarcaSmartTravelTheme(darkTheme = ThemeState.isDarkMode) {
                 AppNavigation()
             }
         }
@@ -69,7 +69,7 @@ fun AppNavigation() {
                     }
                 })
             }
-            composable ("login") {
+            composable("login") {
                 LoginScreen(navController)
             }
             composable("home") {
@@ -94,7 +94,6 @@ fun AppNavigation() {
                 )
             ) { backStackEntry ->
                 val isLoginScreen = backStackEntry.arguments?.getBoolean("isLoginScreen") ?: false
-
                 TermsAndConditionsScreen(navController, isLoginScreen)
             }
             composable(

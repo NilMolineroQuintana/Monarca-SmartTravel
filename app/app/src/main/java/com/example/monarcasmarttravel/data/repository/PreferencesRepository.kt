@@ -12,15 +12,15 @@ class PreferencesRepository(private val context: Context) {
 
     var username: String
         get() = preferences.getString("username", "") ?: ""
-        set(value) = preferences.edit().putString("username", value).apply()
+        set(value) { preferences.edit().putString("username", value).commit() }
 
     var dateOfBirth: String
         get() = preferences.getString("dateOfBirth", "") ?: ""
-        set(value) = preferences.edit().putString("dateOfBirth", value).apply()
+        set(value) { preferences.edit().putString("dateOfBirth", value).commit() }
 
     var isDarkMode: Boolean
         get() = preferences.getBoolean("darkMode", false)
-        set(value) = preferences.edit().putBoolean("darkMode", value).apply()
+        set(value) { preferences.edit().putBoolean("darkMode", value).commit() }
 
     var language: String
         get() {
@@ -31,12 +31,12 @@ class PreferencesRepository(private val context: Context) {
             val deviceLanguage = context.resources.configuration.locales[0].language
             val defaultLanguage = if (deviceLanguage in validLanguages) deviceLanguage else "en"
 
-            preferences.edit().putString("language", defaultLanguage).apply()
+            preferences.edit().putString("language", defaultLanguage).commit()
             return defaultLanguage
         }
-        set(value) = preferences.edit().putString("language", value).apply()
+        set(value) { preferences.edit().putString("language", value).commit() }
 
     var notifications: Boolean
         get() = preferences.getBoolean("notifications", true)
-        set(value) = preferences.edit().putBoolean("notifications", value).apply()
+        set(value) { preferences.edit().putBoolean("notifications", value).commit() }
 }

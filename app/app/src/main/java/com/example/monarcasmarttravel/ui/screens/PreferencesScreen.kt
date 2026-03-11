@@ -86,13 +86,13 @@ fun ProfileScreen(navController: NavController) {
     var langMenuExpanded by remember { mutableStateOf(false) }
 
     // ── Dades de compte ───────────────────────────────────────────────────────
-    var username by remember { mutableStateOf(prefsRepository.username) }
-    var dateOfBirth by remember { mutableStateOf(prefsRepository.dateOfBirth) }
+    var username by remember(prefsRepository) { mutableStateOf(prefsRepository.username) }
+    var dateOfBirth by remember(prefsRepository) { mutableStateOf(prefsRepository.dateOfBirth) }
 
     // ── Configuració ──────────────────────────────────────────────────────────
-    var selectedLanguage by remember { mutableStateOf(defaultLanguage) }
-    var darkMode by remember { mutableStateOf(prefsRepository.isDarkMode) }
-    var notifications by remember { mutableStateOf(prefsRepository.notifications) }
+    var selectedLanguage by remember(prefsRepository) { mutableStateOf(defaultLanguage) }
+    var darkMode by remember(prefsRepository) { mutableStateOf(prefsRepository.isDarkMode) }
+    var notifications by remember(prefsRepository) { mutableStateOf(prefsRepository.notifications) }
 
     val buttonsColor = Color.Transparent
 
@@ -194,8 +194,8 @@ fun ProfileScreen(navController: NavController) {
                             onDismiss = { langMenuExpanded = false },
                             onOptionSelected = {
                                 selectedLanguage = it
-                                prefsRepository.language = languageCodeMap[it] ?: "ca"  // guarda el código
-                                LanguageChangeUtil().changeLanguage(context, languageCodeMap[it] ?: "ca")  // ✅ aplica
+                                prefsRepository.language = languageCodeMap[it] ?: "ca"
+                                LanguageChangeUtil().changeLanguage(context, languageCodeMap[it] ?: "ca")
                                 langMenuExpanded = false
                             }
                         )
@@ -230,7 +230,11 @@ fun ProfileScreen(navController: NavController) {
                             notifications = it
                             prefsRepository.notifications = it
                         },
-                        onClick = { notifications = !notifications }
+                        onClick = {
+                            val newValue = !notifications
+                            notifications = newValue
+                            prefsRepository.notifications = newValue
+                        }
                     )
                 }
             }
@@ -325,7 +329,7 @@ fun ItemGroupPreview() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun MainPreview() {
+fun ProfileScreenPreview() {
     ProfileScreen(rememberNavController())
 }
 
