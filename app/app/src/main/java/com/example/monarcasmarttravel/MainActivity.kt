@@ -32,11 +32,13 @@ import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val prefsRepository = PreferencesRepository(this)
+        LanguageChangeUtil().changeLanguage(this, prefsRepository.language)
+
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val prefsRepository = PreferencesRepository(this)
 
         setContent {
             val isDarkMode = prefsRepository.isDarkMode

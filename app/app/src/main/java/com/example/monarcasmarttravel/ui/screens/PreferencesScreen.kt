@@ -40,10 +40,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.monarcasmarttravel.LanguageChangeUtil
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.data.repository.PreferencesRepository
-import com.example.monarcasmarttravel.domain.Preferences
-import com.example.monarcasmarttravel.domain.User
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.DatePickerPopUp
 import com.example.monarcasmarttravel.ui.EditTextPopUp
@@ -67,6 +66,16 @@ fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val prefsRepository = remember { PreferencesRepository(context) }
 
+    val languageCodeMap = mapOf(
+        stringResource(R.string.language_catalan) to "ca",
+        stringResource(R.string.language_spanish) to "es",
+        stringResource(R.string.language_english) to "en"
+    )
+
+    val codeToLanguageMap = languageCodeMap.entries.associate { (k, v) -> v to k }
+    val defaultLanguage = codeToLanguageMap[prefsRepository.language]
+        ?: stringResource(R.string.language_catalan)
+
     // ── Estat dels pop-ups ────────────────────────────────────────────────────
     var showLogOutPopUp by remember { mutableStateOf(false) }
     var showUsernamePopUp by remember { mutableStateOf(false) }
@@ -80,8 +89,8 @@ fun ProfileScreen(navController: NavController) {
     var dateOfBirth by remember { mutableStateOf(prefsRepository.dateOfBirth) }
 
     // ── Configuració ──────────────────────────────────────────────────────────
+    var selectedLanguage by remember { mutableStateOf(defaultLanguage) }
     var darkMode by remember { mutableStateOf(prefsRepository.isDarkMode) }
-    var selectedLanguage by remember { mutableStateOf(prefsRepository.language) }
     var notifications by remember { mutableStateOf(prefsRepository.notifications) }
 
     val buttonsColor = Color.Transparent
@@ -184,7 +193,8 @@ fun ProfileScreen(navController: NavController) {
                             onDismiss = { langMenuExpanded = false },
                             onOptionSelected = {
                                 selectedLanguage = it
-                                prefsRepository.language = it
+                                prefsRepository.language = languageCodeMap[it] ?: "ca"  // guarda el código
+                                LanguageChangeUtil().changeLanguage(context, languageCodeMap[it] ?: "ca")  // ✅ aplica
                                 langMenuExpanded = false
                             }
                         )
