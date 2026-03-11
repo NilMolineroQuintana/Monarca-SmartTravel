@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.data.fakeDB
 
+import android.util.Log
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import java.util.Calendar
@@ -161,8 +162,9 @@ object FakeItineraryItemDataSource {
         items.filter { it.tripId == tripId }
 
     fun addItem(item: ItineraryItem): Boolean {
-        val newItem = item.copy(id = nextId++) // ← ignora el id que venga, asigna el siguiente
+        val newItem = item.copy(id = nextId++)
         items.add(newItem)
+        Log.d("ItineraryItemDataSource", "Added item: $newItem")
         return true
     }
 

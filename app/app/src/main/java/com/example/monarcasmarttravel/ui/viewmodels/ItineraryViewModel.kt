@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
@@ -40,6 +41,7 @@ class ItineraryItemViewModel @Inject constructor(
     fun addItem(item: ItineraryItem) {
         viewModelScope.launch {
             val success = repository.addItineraryItem(item)
+            Log.d("ItineraryItemViewModel", "Added item: $item with status: $success")
             if (success) loadItemsByTrip(item.tripId)
         }
     }
