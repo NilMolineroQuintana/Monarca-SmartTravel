@@ -7,7 +7,6 @@ import javax.inject.Inject
 
 class ItineraryItemRepositoryImpl @Inject constructor() : ItineraryItemRepository {
 
-    // En vez de Firestore, usamos el FakeDataSource
     private val dataSource = FakeItineraryItemDataSource
 
     override suspend fun getItemsByTrip(tripId: Int): List<ItineraryItem> =

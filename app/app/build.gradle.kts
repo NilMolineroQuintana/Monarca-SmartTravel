@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.dagger:hilt-android:2.57.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     ksp("com.google.dagger:hilt-android-compiler:2.57.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
