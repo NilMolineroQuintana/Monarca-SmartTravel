@@ -29,6 +29,7 @@ import com.example.monarcasmarttravel.ui.screens.SplashScreen
 import com.example.monarcasmarttravel.ui.screens.TermsAndConditionsScreen
 import com.example.monarcasmarttravel.ui.screens.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
+import com.example.monarcasmarttravel.ui.theme.ThemeState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +42,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val isDarkMode = prefsRepository.isDarkMode
+            ThemeState.isDarkMode = prefsRepository.isDarkMode
 
-            MonarcaSmartTravelTheme (darkTheme = isDarkMode) {
+            MonarcaSmartTravelTheme (darkTheme = ThemeState.isDarkMode) {
                 AppNavigation()
             }
         }

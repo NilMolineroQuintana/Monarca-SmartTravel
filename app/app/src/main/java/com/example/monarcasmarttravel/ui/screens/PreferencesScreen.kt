@@ -51,6 +51,7 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.WideOptionAction
+import com.example.monarcasmarttravel.ui.theme.ThemeState
 
 /**
  * Pantalla de preferències de l'usuari.
@@ -209,8 +210,14 @@ fun ProfileScreen(navController: NavController) {
                         action = WideOptionAction.Toggle(darkMode) {
                             darkMode = it
                             prefsRepository.isDarkMode = it
+                            ThemeState.isDarkMode = it
                         },
-                        onClick = { darkMode = !darkMode }
+                        onClick = {
+                            val newValue = !darkMode
+                            darkMode = newValue
+                            prefsRepository.isDarkMode = newValue
+                            ThemeState.isDarkMode = newValue
+                        }
                     )
                     HorizontalDivider(thickness = 1.dp)
                     WideOption(
