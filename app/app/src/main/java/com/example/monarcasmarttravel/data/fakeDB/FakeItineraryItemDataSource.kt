@@ -6,6 +6,7 @@ import java.util.Calendar
 
 object FakeItineraryItemDataSource {
 
+    private var nextId = 20
     private val calendar = Calendar.getInstance()
 
     private val items = mutableListOf(
@@ -160,9 +161,11 @@ object FakeItineraryItemDataSource {
         items.filter { it.tripId == tripId }
 
     fun addItem(item: ItineraryItem): Boolean {
-        items.add(item)
+        val newItem = item.copy(id = nextId++) // ← ignora el id que venga, asigna el siguiente
+        items.add(newItem)
         return true
     }
+
 
     fun updateItem(item: ItineraryItem): Boolean {
         val index = items.indexOfFirst { it.id == item.id }

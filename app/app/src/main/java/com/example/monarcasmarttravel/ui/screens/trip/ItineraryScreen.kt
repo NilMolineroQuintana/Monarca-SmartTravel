@@ -207,7 +207,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                     Icon(imageVector = Icons.Filled.PhotoAlbum, contentDescription = null)
                 }
                 // Botó principal per afegir un nou pla a l'itinerari
-                FloatingActionButton(onClick = { navController.navigate("plan") }) {
+                FloatingActionButton(onClick = { navController.navigate("plan/$tripId") }) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = null)
                 }
             }
@@ -248,7 +248,6 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                     // ... resto del empty state
                 } else {
                     item {
-                        // ← usa items en vez de mockData
                         ItineraryStatsComponent(items.sumOf { it.price }, numItems)
                         Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
                     }

@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens.trip
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,13 +32,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /**
  * Pantalla de formulari per afegir un nou pla a l'itinerari.
@@ -59,7 +65,9 @@ import com.example.monarcasmarttravel.ui.MyTopBar
  *             "hotel", "restaurant", "location".
  */
 @Composable
-fun PlanScreen(navController: NavController, ruta: String?) {
+fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
+    Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
+    val viewModel: ItineraryItemViewModel = hiltViewModel()
 
     // Estats dels camps del formulari, persistents en rotació de pantalla
     var locationName by rememberSaveable { mutableStateOf("") }
@@ -238,7 +246,50 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                         containerColor = MaterialTheme.colorScheme.surfaceContainer
                     ),
                     shape = RoundedCornerShape(20.dp),
-                    onClick = { navController.popBackStack() },
+                    onClick = {
+                        val planType = PlanType.entries.find { it.route == ruta } ?: return@TextButton
+
+                        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+                        val defaultDate = dateTimeFormat.parse("23/03/2026 10:00")
+
+                        val parsedDate = if (checkInDate.isNotEmpty()) {
+                            runCatching { dateTimeFormat.parse("$checkInDate 10:00") }.getOrNull() ?: defaultDate
+                        } else {
+                            defaultDate
+                        }
+
+                        val newItem = if (ruta in transports) {
+                            ItineraryItem(
+                                id = 0,
+                                tripId = tripId,
+                                type = planType,
+                                price = price.toDoubleOrNull() ?: 0.0,
+                                origin = locationName,
+                                destination = destination,
+                                company = company,
+                                transportNumber = transportNumber,
+                                departureDate = parsedDate
+                            )
+                        } else {
+                            ItineraryItem(
+                                id = 0,
+                                tripId = tripId,
+                                type = planType,
+                                price = price.toDoubleOrNull() ?: 0.0,
+                                locationName = locationName,
+                                address = address,
+                                checkInDate = parsedDate
+                            )
+                        }
+
+                        viewModel.addItem(newItem)
+
+                        navController.navigate("itinerary/$tripId") {
+                            popUpTo("itinerary/$tripId") { inclusive = true }
+                        }
+                    },
                     modifier = Modifier.width(200.dp)
                 ) {
                     Text(stringResource(R.string.add))
@@ -251,11 +302,11 @@ fun PlanScreen(navController: NavController, ruta: String?) {
 @Preview(showBackground = true)
 @Composable
 fun HotelScreenPreview() {
-    PlanScreen(rememberNavController(), "hotel")
+    PlanScreen(rememberNavController(), "hotel", 1)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun RestaurantScreenPreview() {
-    PlanScreen(rememberNavController(), "flight")
+    PlanScreen(rememberNavController(), "flight", 1)
 }
