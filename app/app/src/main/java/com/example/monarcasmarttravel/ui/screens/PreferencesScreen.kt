@@ -40,7 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.monarcasmarttravel.LanguageChangeUtil
+import com.example.monarcasmarttravel.utils.LanguageChangeUtil
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.data.repository.PreferencesRepository
 import com.example.monarcasmarttravel.ui.AppDimensions

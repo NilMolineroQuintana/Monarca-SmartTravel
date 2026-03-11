@@ -30,7 +30,10 @@ import com.example.monarcasmarttravel.ui.screens.TermsAndConditionsScreen
 import com.example.monarcasmarttravel.ui.screens.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import com.example.monarcasmarttravel.ui.theme.ThemeState
+import com.example.monarcasmarttravel.utils.LanguageChangeUtil
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 

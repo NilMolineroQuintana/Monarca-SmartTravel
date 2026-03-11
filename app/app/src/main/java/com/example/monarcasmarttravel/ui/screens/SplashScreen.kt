@@ -50,7 +50,7 @@ fun SplashScreen(onTimeout: () -> Unit) {
 
     // Efecte llançat una sola vegada: incrementa el progrés fins a 1 i crida onTimeout
     LaunchedEffect(Unit) {
-        while (progress < 1f) {
+        repeat(100) {
             progress += 0.01f
             delay(15)
         }
