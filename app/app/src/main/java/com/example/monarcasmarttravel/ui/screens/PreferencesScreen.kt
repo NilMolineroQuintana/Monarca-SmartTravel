@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FormatPaint
@@ -43,6 +45,8 @@ import com.example.monarcasmarttravel.data.repository.PreferencesRepository
 import com.example.monarcasmarttravel.domain.Preferences
 import com.example.monarcasmarttravel.domain.User
 import com.example.monarcasmarttravel.ui.AppDimensions
+import com.example.monarcasmarttravel.ui.DatePickerPopUp
+import com.example.monarcasmarttravel.ui.EditTextPopUp
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
@@ -52,28 +56,34 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
 /**
  * Pantalla de preferències de l'usuari.
  *
- * Permet configurar l'idioma de l'aplicació, el tema (fosc/clar), les notificacions,
- * i accedir a la informació sobre l'app, els termes i condicions i tancar sessió.
+ * Permet configurar el nom d'usuari, la data de naixement, l'idioma de l'aplicació,
+ * el tema (fosc/clar), les notificacions, i accedir a la informació sobre l'app,
+ * els termes i condicions i tancar sessió.
  *
  * @param navController Controlador de navegació.
  */
 @Composable
 fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
-
     val prefsRepository = remember { PreferencesRepository(context) }
 
-    // Controla la visibilitat del diàleg de confirmació de tancament de sessió
+    // ── Estat dels pop-ups ────────────────────────────────────────────────────
     var showLogOutPopUp by remember { mutableStateOf(false) }
+    var showUsernamePopUp by remember { mutableStateOf(false) }
+    var showDatePickerPopUp by remember { mutableStateOf(false) }
 
-    // Estat del selector d'idioma
+    // ── Estat del selector d'idioma ───────────────────────────────────────────
     var langMenuExpanded by remember { mutableStateOf(false) }
 
+    // ── Dades de compte ───────────────────────────────────────────────────────
+    var username by remember { mutableStateOf(prefsRepository.username) }
+    var dateOfBirth by remember { mutableStateOf(prefsRepository.dateOfBirth) }
+
+    // ── Configuració ──────────────────────────────────────────────────────────
     var darkMode by remember { mutableStateOf(prefsRepository.isDarkMode) }
     var selectedLanguage by remember { mutableStateOf(prefsRepository.language) }
     var notifications by remember { mutableStateOf(prefsRepository.notifications) }
 
-    // Color transparent per als botons de les opcions (sense fons propi)
     val buttonsColor = Color.Transparent
 
     Scaffold(
@@ -81,13 +91,40 @@ fun ProfileScreen(navController: NavController) {
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
 
-        // Diàleg de confirmació per tancar la sessió
+        // ── Pop-up: tancar sessió ─────────────────────────────────────────────
         PopUp(
             show = showLogOutPopUp,
             title = stringResource(R.string.preferences_logOut_text),
             text = stringResource(R.string.logOut_popUp_text),
             onAccept = { navController.navigate("login") },
             onDismiss = { showLogOutPopUp = false }
+        )
+
+        // ── Pop-up: editar nom d'usuari ───────────────────────────────────────
+        EditTextPopUp(
+            show = showUsernamePopUp,
+            title = stringResource(R.string.preferences_username_popup_title),
+            label = stringResource(R.string.preferences_username_label),
+            placeholder = stringResource(R.string.preferences_username_placeholder),
+            initialValue = username,
+            onAccept = { newName ->
+                username = newName
+                prefsRepository.username = newName
+                showUsernamePopUp = false
+            },
+            onDismiss = { showUsernamePopUp = false }
+        )
+
+        // ── Pop-up: seleccionar data de naixement ─────────────────────────────
+        DatePickerPopUp(
+            show = showDatePickerPopUp,
+            title = stringResource(R.string.preferences_birthdate_popup_title),
+            onAccept = { newDate ->
+                dateOfBirth = newDate
+                prefsRepository.dateOfBirth = newDate
+                showDatePickerPopUp = false
+            },
+            onDismiss = { showDatePickerPopUp = false }
         )
 
         LazyColumn(
@@ -97,9 +134,39 @@ fun ProfileScreen(navController: NavController) {
                 .padding(horizontal = AppDimensions.PaddingMedium)
                 .fillMaxSize()
         ) {
-            // Grup: selecció d'idioma
+
+            // ── Grup: compte d'usuari ─────────────────────────────────────────
             item {
-                OptionGroup(title = stringResource(R.string.preferences_languageAndRegion)) {
+                OptionGroup(title = stringResource(R.string.preferences_account)) {
+                    WideOption(
+                        ico = Icons.Filled.Badge,
+                        text = stringResource(R.string.preferences_username_button),
+                        secondaryText = username.ifEmpty {
+                            stringResource(R.string.preferences_username_empty)
+                        },
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Arrow,
+                        onClick = { showUsernamePopUp = true }
+                    )
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(
+                        ico = Icons.Filled.CalendarMonth,
+                        text = stringResource(R.string.preferences_birthdate_button),
+                        secondaryText = dateOfBirth.ifEmpty {
+                            stringResource(R.string.preferences_birthdate_empty)
+                        },
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Arrow,
+                        onClick = { showDatePickerPopUp = true }
+                    )
+                }
+            }
+
+            // ── Grup: configuració de tema i notificacions ────────────────────
+            item {
+                OptionGroup(stringResource(R.string.config)) {
                     WideOption(
                         ico = Icons.Default.Flag,
                         text = stringResource(R.string.preferences_language_button),
@@ -122,12 +189,7 @@ fun ProfileScreen(navController: NavController) {
                             }
                         )
                     )
-                }
-            }
-
-            // Grup: configuració de tema i notificacions
-            item {
-                OptionGroup(stringResource(R.string.config)) {
+                    HorizontalDivider(thickness = 1.dp)
                     WideOption(
                         ico = Icons.Filled.FormatPaint,
                         text = stringResource(R.string.preferences_theme_button),
@@ -156,7 +218,7 @@ fun ProfileScreen(navController: NavController) {
                 }
             }
 
-            // Grup: altres opcions (sobre nosaltres, termes, tancar sessió)
+            // ── Grup: altres opcions ──────────────────────────────────────────
             item {
                 OptionGroup(title = stringResource(R.string.preferences_other)) {
                     HorizontalDivider(thickness = 1.dp)
@@ -227,9 +289,7 @@ fun OptionGroup(
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 8.dp)
             )
-
             HorizontalDivider(thickness = 1.dp)
-
             Column {
                 content()
             }

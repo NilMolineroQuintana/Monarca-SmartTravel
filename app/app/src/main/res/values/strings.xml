@@ -107,5 +107,18 @@
     <string name="more">Més</string>
     <string name="unknown">Desconocida</string>
     <string name="price">Preu</string>
+    <string name="preferences_account">Compte</string>
+
+    <string name="preferences_username_button">Nom d\'usuari</string>
+    <string name="preferences_username_empty">No establert</string>
+    <string name="preferences_username_popup_title">Canvia el nom d\'usuari</string>
+    <string name="preferences_username_label">Nom d\'usuari</string>
+    <string name="preferences_username_placeholder">Ex: Joan García</string>
+
+    <string name="preferences_birthdate_button">Data de naixement</string>
+    <string name="preferences_birthdate_empty">No establerta</string>
+    <string name="preferences_birthdate_popup_title">Data de naixement</string>
+
+    <string name="select_date">Selecciona una data</string>
 
 </resources>

@@ -108,4 +108,18 @@
     <string name="more">Más</string>
     <string name="unknown">Desconocida</string>
     <string name="price">Precio</string>
+
+    <string name="preferences_account">Cuenta</string>
+
+    <string name="preferences_username_button">Nombre de usuario</string>
+    <string name="preferences_username_empty">No establecido</string>
+    <string name="preferences_username_popup_title">Cambiar nombre de usuario</string>
+    <string name="preferences_username_label">Nombre de usuario</string>
+    <string name="preferences_username_placeholder">Ej: Joan García</string>
+
+    <string name="preferences_birthdate_button">Fecha de nacimiento</string>
+    <string name="preferences_birthdate_empty">No establecida</string>
+    <string name="preferences_birthdate_popup_title">Fecha de nacimiento</string>
+
+    <string name="select_date">Selecciona una fecha</string>
 </resources>

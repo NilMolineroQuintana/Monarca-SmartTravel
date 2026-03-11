@@ -37,6 +37,8 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -47,6 +49,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -681,6 +684,146 @@ fun PopUp(
             },
             dismissButton = {
                 TextButton(onClick = onDismiss) { Text(text = cancelText) }
+            }
+        )
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  AFEGIR A MainLayout.kt
+// ═══════════════════════════════════════════════════════════════════════════
+//
+//  1. IMPORTS (afegir als ja existents):
+//
+//     import androidx.compose.material3.DatePicker
+//     import androidx.compose.material3.DatePickerDialog
+//     import androidx.compose.material3.ExperimentalMaterial3Api
+//     import androidx.compose.material3.rememberDatePickerState
+//
+// ═══════════════════════════════════════════════════════════════════════════
+//  2. COMPONENTS (afegir just abans de les @Preview finals de MainLayout.kt)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Diàleg emergent per editar un camp de text.
+ *
+ * Mostra un [AlertDialog] amb un [OutlinedTextField] perquè l'usuari pugui
+ * modificar un valor de text. El camp s'inicialitza amb [initialValue] cada
+ * vegada que el diàleg es torna a obrir.
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param title Títol del diàleg.
+ * @param label Etiqueta del camp de text.
+ * @param placeholder Text d'exemple mostrat quan el camp és buit.
+ * @param initialValue Valor inicial del camp de text.
+ * @param acceptText Text del botó de confirmació.
+ * @param cancelText Text del botó de cancel·lació.
+ * @param onAccept Acció invocada amb el nou valor (String) en confirmar.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@Composable
+fun EditTextPopUp(
+    show: Boolean,
+    title: String,
+    label: String,
+    placeholder: String = "",
+    initialValue: String = "",
+    acceptText: String = stringResource(R.string.accept),
+    cancelText: String = stringResource(R.string.cancel),
+    onAccept: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    var textValue by remember(initialValue) { mutableStateOf(initialValue) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            OutlinedTextField(
+                value = textValue,
+                onValueChange = { textValue = it },
+                label = { Text(label) },
+                placeholder = { Text(placeholder) },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onAccept(textValue.trim()) },
+                enabled = textValue.isNotBlank()
+            ) {
+                Text(acceptText)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(cancelText) }
+        }
+    )
+}
+
+/**
+ * Diàleg emergent amb un selector de data (DatePicker) de Material3.
+ *
+ * Component reutilitzable per seleccionar qualsevol data des de qualsevol
+ * punt de l'aplicació. La data triada es retorna com a [String] amb format
+ * "dd/MM/yyyy" al callback [onAccept].
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param title Títol mostrat a la capçalera del selector.
+ * @param initialDateMillis Data inicial en mil·lisegons (epoch UTC). Null = sense preselecció.
+ * @param acceptText Text del botó de confirmació.
+ * @param cancelText Text del botó de cancel·lació.
+ * @param onAccept Acció invocada amb la data seleccionada ("dd/MM/yyyy") en confirmar.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@Composable
+fun DatePickerPopUp(
+    show: Boolean,
+    title: String = stringResource(R.string.select_date),
+    initialDateMillis: Long? = null,
+    acceptText: String = stringResource(R.string.accept),
+    cancelText: String = stringResource(R.string.cancel),
+    onAccept: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDateMillis
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val millis = datePickerState.selectedDateMillis
+                    if (millis != null) {
+                        val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+                        onAccept(sdf.format(java.util.Date(millis)))
+                    }
+                },
+                enabled = datePickerState.selectedDateMillis != null
+            ) {
+                Text(acceptText)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(cancelText) }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState,
+            title = {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
+                )
             }
         )
     }
