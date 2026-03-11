@@ -26,6 +26,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
@@ -45,6 +47,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -828,6 +831,57 @@ fun DatePickerPopUp(
         )
     }
 }
+
+@Composable
+fun DateField(
+    value: String,
+    onDateSelected: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    initialDateMillis: Long? = null
+) {
+    var showPicker by remember { mutableStateOf(false) }
+
+    DatePickerPopUp(
+        show = showPicker,
+        title = label,
+        initialDateMillis = initialDateMillis,
+        onAccept = { date ->
+            onDateSelected(date)
+            showPicker = false
+        },
+        onDismiss = { showPicker = false }
+    )
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = {},
+        label = { Text(label) },
+        placeholder = { Text("dd/MM/yyyy") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.CalendarToday,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
+        readOnly = true,
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier.clickable { showPicker = true },
+        // Desactivem la interacció nativa del TextField per forçar sempre el click extern
+        enabled = false,
+        colors = OutlinedTextFieldDefaults.colors(
+            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledBorderColor = MaterialTheme.colorScheme.outline,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.primary,
+            disabledTrailingIconColor = MaterialTheme.colorScheme.primary,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    )
+}
+
 
 /**
  * Obté la versió de l'aplicació instal·lada al dispositiu a partir del PackageManager.

@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Business
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Home
@@ -24,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -38,10 +36,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
+import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 /**
  * Pantalla de formulari per afegir un nou pla a l'itinerari.
@@ -51,6 +47,9 @@ import java.util.Locale
  *   i data de sortida.
  * - **Allotjament / Punt d'interès** (hotel, restaurant, location): mostra nom, adreça,
  *   data d'entrada i, en el cas d'hotels, data de sortida.
+ *
+ * Els camps de data utilitzen [DateField], que obre un DatePicker natiu de Material3
+ * en ser premuts i no permeten entrada manual de text.
  *
  * Els estats del formulari es preserven en rotació de pantalla mitjançant [rememberSaveable].
  * En confirmar, navega de tornada a la pantalla anterior.
@@ -62,25 +61,21 @@ import java.util.Locale
 @Composable
 fun PlanScreen(navController: NavController, ruta: String?) {
 
-    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
-
     // Estats dels camps del formulari, persistents en rotació de pantalla
     var locationName by rememberSaveable { mutableStateOf("") }
     var destination by rememberSaveable { mutableStateOf("") }
-    var checkInDate by rememberSaveable { mutableStateOf(date) }
-    var checkOutDate by rememberSaveable { mutableStateOf(date) }
+    var checkInDate by rememberSaveable { mutableStateOf("") }
+    // var checkOutDate by rememberSaveable { mutableStateOf("") }
     var address by rememberSaveable { mutableStateOf("") }
     var company by rememberSaveable { mutableStateOf("") }
     var transportNumber by rememberSaveable { mutableStateOf("") }
     var price by rememberSaveable { mutableStateOf("") }
 
-    // Tipus de pla a mostrar
-
     // Tipus que es consideren transport (no mostren camp de nom ni adreça)
     val transports = listOf("train", "boat", "flight")
 
     // Tipus pels quals no té sentit mostrar la data de sortida
-    val excludeCheckOut = listOf("train", "boat", "flight", "location", "restaurant")
+    // val excludeCheckOut = listOf("train", "boat", "flight", "location", "restaurant")
 
     // Títol de la pantalla segons el tipus de pla
     val titleName = when (ruta) {
@@ -106,7 +101,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
         "flight" -> stringResource(R.string.flight_num)
         "boat" -> stringResource(R.string.boat_num)
         "train" -> stringResource(R.string.train_num)
-        else -> "Identificador"
+        else -> ""
     }
 
     Scaffold(
@@ -117,15 +112,17 @@ fun PlanScreen(navController: NavController, ruta: String?) {
             )
         }
     ) { innerPadding ->
+
         LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
-                .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = AppDimensions.PaddingMedium)
+                .fillMaxSize()
         ) {
-            // Camps exclusius per a plans que no són transport
+
+            // Camp de nom (només per a plans no-transport)
             if (ruta !in transports) {
                 item {
                     AppTextField(
@@ -133,7 +130,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                         onValueChange = { locationName = it },
                         label = labelName,
                         placeholder = labelName,
-                        leadingIcon = Icons.Default.Place,
+                        leadingIcon = Icons.Default.Home
                     )
                 }
                 item {
@@ -142,7 +139,7 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                         onValueChange = { address = it },
                         label = stringResource(R.string.direccio),
                         placeholder = stringResource(R.string.direccio),
-                        leadingIcon = Icons.Default.Home,
+                        leadingIcon = Icons.Default.Place
                     )
                 }
             }
@@ -197,30 +194,29 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                 }
             }
 
-            // Camp(s) de data: sempre es mostra entrada; sortida s'oculta per a certs tipus
+            // Camp(s) de data: sempre es mostra entrada; sortida s'oculta per a certs tipus.
+            // S'utilitza DateField, que obre un DatePickerPopUp i no permet entrada manual.
             item {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    AppTextField(
+                    DateField(
                         value = checkInDate,
-                        onValueChange = { checkInDate = it },
+                        onDateSelected = { checkInDate = it },
                         label = stringResource(R.string.data_de_entrada),
-                        placeholder = "dd/MM/yyyy",
-                        leadingIcon = Icons.Default.CalendarToday,
                         modifier = Modifier.weight(1f)
                     )
+                    /*
                     if (ruta !in excludeCheckOut) {
-                        AppTextField(
+                        DateField(
                             value = checkOutDate,
-                            onValueChange = { checkOutDate = it },
+                            onDateSelected = { checkOutDate = it },
                             label = stringResource(R.string.data_de_sortida),
-                            placeholder = "dd/MM/yyyy",
-                            leadingIcon = Icons.Default.CalendarToday,
                             modifier = Modifier.weight(1f)
                         )
                     }
+                    */
                 }
             }
 
