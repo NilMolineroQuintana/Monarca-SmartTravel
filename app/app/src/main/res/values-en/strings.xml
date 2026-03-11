@@ -127,4 +127,7 @@
     <string name="dema_viatge">Trip starts tomorrow!</string>
     <string name="avui_viatge">Starts today!</string>
     <string name="viatge_realitzat">Trip completed</string>
+    <string name="next">Next</string>
+    <string name="select_time">Select time</string>
+    <string name="back">Back</string>
 </resources>

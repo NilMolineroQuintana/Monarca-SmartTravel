@@ -249,16 +249,9 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
                     onClick = {
                         val planType = PlanType.entries.find { it.route == ruta } ?: return@TextButton
 
-                        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                         val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-
                         val defaultDate = dateTimeFormat.parse("23/03/2026 10:00")
-
-                        val parsedDate = if (checkInDate.isNotEmpty()) {
-                            runCatching { dateTimeFormat.parse("$checkInDate 10:00") }.getOrNull() ?: defaultDate
-                        } else {
-                            defaultDate
-                        }
+                        val parsedDate = runCatching { dateTimeFormat.parse(checkInDate) }.getOrNull() ?: defaultDate
 
                         val newItem = if (ruta in transports) {
                             ItineraryItem(
