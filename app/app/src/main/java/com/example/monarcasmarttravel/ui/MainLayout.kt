@@ -198,8 +198,9 @@ fun MyBottomBar(navController: NavController) {
 
     // Extreu la ruta base sense paràmetres
     val baseRoute = currentRoute
-        ?.substringBefore("?")  // Elimina paràmetres opcionals (?param=value)
-        ?.substringBefore("{")  // Elimina paràmetres obligatoris ({param})
+        ?.substringBefore("?")
+        ?.substringBefore("{")
+        ?.trimEnd('/')
         ?: ""
 
     // Rutes que pertanyen a la secció de viatges
