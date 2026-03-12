@@ -10,7 +10,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -57,9 +56,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val context = LocalContext.current
 
-    val tripRepository = remember { TripRepository(context) }
+    val tripRepository = remember { TripRepository() }
     val tripViewModel  = remember { TripViewModel(tripRepository) }
 
     Surface(
