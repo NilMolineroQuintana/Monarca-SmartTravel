@@ -22,27 +22,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.domain.Trip
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.TripCard
 import com.example.monarcasmarttravel.ui.WideOption
-import java.util.Calendar
+import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
 
 /**
  * Pantalla principal de l'aplicació.
  *
- * Mostra una capçalera amb el logotip i el nom de l'app, la targeta del pròxim viatge
- * planificat i una secció d'accions ràpides per crear nous viatges.
- *
- * Actua com a punt d'entrada principal un cop l'usuari ha iniciat sessió.
+ * Mostra el viatge futur més proper obtingut del [TripViewModel].
+ * Si no hi ha cap viatge pròxim, la secció de la targeta no es renderitza.
  *
  * @param navController Controlador de navegació.
+ * @param viewModel ViewModel compartit per a la gestió de viatges.
  */
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    navController: NavController,
+    viewModel: TripViewModel
+) {
+    // Viatge futur més proper; null si no n'hi ha cap
+    val nextTrip = viewModel.getNextUpcomingTrip()
+
     Scaffold(
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
@@ -56,23 +61,13 @@ fun HomeScreen(navController: NavController) {
         ) {
             HeaderSection()
 
-            val calendar = Calendar.getInstance()
-            calendar.set(2026, Calendar.MARCH, 23)
-            val dateIn = calendar.time
-            calendar.set(2026, Calendar.MARCH, 30)
-            val dateOut = calendar.time
-
-            TripCard(
-                trip = Trip(
-                    id = 1,
-                    destination = stringResource(R.string.kyoto),
-                    dateIn = dateIn,
-                    dateOut = dateOut,
-                    imageResId = R.drawable.kyoto,
-                    userId = 1
-                ),
-                onClick = { navController.navigate("itinerary/1") }
-            )
+            // Mostra la targeta del pròxim viatge només si existeix
+            if (nextTrip != null) {
+                TripCard(
+                    trip = nextTrip,
+                    onClick = { navController.navigate("itinerary/${nextTrip.id}") }
+                )
+            }
 
             QuickActionsSection(navController)
         }
@@ -88,7 +83,7 @@ fun HomeScreen(navController: NavController) {
 @Composable
 fun HeaderSection() {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row() {
+        Row {
             Image(
                 painter = painterResource(id = R.drawable.logo_monarca),
                 contentDescription = null,
@@ -150,5 +145,5 @@ fun QuickActionsSection(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(rememberNavController())
+    HomeScreen(rememberNavController(), viewModel())
 }
