@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.ui.viewmodel
+package com.example.monarcasmarttravel.ui.viewmodels
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -6,19 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.data.repository.TripRepository
+import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import com.example.monarcasmarttravel.domain.model.Trip
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Date
+import javax.inject.Inject
 
 /**
  * ViewModel per a la pantalla de viatges.
  *
- * Construeix objectes [Trip] i crida els seus mètodes de domini
- * (createTrip, deleteTrip, updateTrip) en lloc d'accedir directament
- * al repositori. Segueix el patró MVVM: la UI mai toca ni el domini
- * ni el repositori directament.
+ * Anotació @HiltViewModel perquè Hilt gestioni el cicle de vida correctament,
+ * evitant la pèrdua d'estat en rotar la pantalla o navegar entre pantalles.
+ *
+ * Segueix el patró MVVM: la UI mai toca ni el domini ni el repositori directament.
+ * Flux: UI → TripViewModel → TripRepository (interfície) → TripRepositoryImpl → FakeTripDataSource
  */
-class TripViewModel(private val repository: TripRepository) : ViewModel() {
+@HiltViewModel
+class TripViewModel @Inject constructor(
+    private val repository: TripRepository
+) : ViewModel() {
 
     private val TAG = "TripViewModel"
 
@@ -45,19 +51,20 @@ class TripViewModel(private val repository: TripRepository) : ViewModel() {
                     lower.contains("japon") || lower.contains("japan") -> R.drawable.kyoto
             lower.contains("paris") || lower.contains("parís") ||
                     lower.contains("frança") || lower.contains("france") || lower.contains("francia") -> R.drawable.paris
-            lower.contains("new york") || lower.contains("nova york") || lower.contains("nova york") ||
+            lower.contains("new york") || lower.contains("nova york") ||
                     lower.contains("nyc") -> R.drawable.newyork
             else -> null
         }
     }
 
     /**
-     * Crea un nou viatge cridant [Trip.createTrip].
+     * Crea un nou viatge cridant [Trip.addTrip].
      * La imatge s'assigna automàticament si el destí coincideix
      * amb una foto disponible al projecte.
      */
     fun addTrip(
-        destination: String,
+        title: String,
+        description: String,
         dateIn: Date,
         dateOut: Date,
         userId: Int
@@ -65,20 +72,21 @@ class TripViewModel(private val repository: TripRepository) : ViewModel() {
         return try {
             val trip = Trip(
                 id = 0,
-                destination = destination.trim(),
+                title = title.trim(),
+                description = description,
                 dateIn = dateIn,
                 dateOut = dateOut,
-                imageResId = resolveImageForDestination(destination),
+                imageResId = resolveImageForDestination(title),
                 userId = userId
             )
-            trip.createTrip(repository)
+            trip.addTrip(repository)
             refreshTrips()
             errorMessage = null
-            Log.i(TAG, "addTrip: viatge creat -> destí=$destination")
+            Log.i(TAG, "addTrip: viatge creat -> destí=$title")
             true
         } catch (e: IllegalArgumentException) {
             errorMessage = e.message
-            Log.e(TAG, "addTrip: error -> ${e.message}")
+            Log.e(TAG, "addTrip: error de validació -> ${e.message}")
             false
         }
     }
@@ -105,14 +113,14 @@ class TripViewModel(private val repository: TripRepository) : ViewModel() {
     }
 
     /**
-     * Canvia la imatge d'un viatge cridant [Trip.updateTrip].
+     * Canvia la imatge d'un viatge cridant [Trip.editTrip].
      */
     fun changeTripImage(tripId: Int, newImageResId: Int?): Boolean {
         val trip = trips.find { it.id == tripId } ?: run {
             Log.w(TAG, "changeTripImage: viatge no trobat id=$tripId")
             return false
         }
-        val result = trip.updateTrip(repository, newImageResId)
+        val result = trip.editTrip(repository, newImageResId)
         return if (result != null) {
             refreshTrips()
             Log.i(TAG, "changeTripImage: imatge actualitzada -> id=$tripId")
@@ -122,6 +130,12 @@ class TripViewModel(private val repository: TripRepository) : ViewModel() {
             false
         }
     }
+
+    /**
+     * Retorna el trip amb l'ID indicat, o null si no existeix.
+     * Usat per [ItineraryScreen] per obtenir les dades reals del viatge.
+     */
+    fun getTripById(tripId: Int): Trip? = trips.find { it.id == tripId }
 
     fun getNextUpcomingTrip(): Trip? = repository.getNextUpcomingTrip()
 
