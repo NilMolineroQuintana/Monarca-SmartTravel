@@ -157,16 +157,17 @@ object FakeItineraryItemDataSource {
         ),
     )
 
-    private var nextId = items.size
-
+    private var nextId = (items.maxOfOrNull { it.id } ?: 0) + 1
 
     fun getItemsByTrip(tripId: Int): List<ItineraryItem> =
         items.filter { it.tripId == tripId }
 
     fun addItem(item: ItineraryItem): Boolean {
-        val newItem = item.copy(id = nextId++)
+        val newItem = item.copy(id = nextId)
+        nextId++
+
         items.add(newItem)
-        Log.d("ItineraryItemDataSource", "Added item: $newItem")
+        Log.d("ItineraryItemDataSource", "Added item with ID: ${newItem.id}")
         return true
     }
 
