@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.monarcasmarttravel.data.repository.PreferencesRepository
+import com.example.monarcasmarttravel.data.repository.TripRepository
 import com.example.monarcasmarttravel.ui.screens.AboutUsScreen
 import com.example.monarcasmarttravel.ui.screens.AlbumScreen
 import com.example.monarcasmarttravel.ui.screens.CreateTripScreen
@@ -30,13 +33,13 @@ import com.example.monarcasmarttravel.ui.screens.TermsAndConditionsScreen
 import com.example.monarcasmarttravel.ui.screens.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import com.example.monarcasmarttravel.ui.theme.ThemeState
+import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         val prefsRepository = PreferencesRepository(this)
         LanguageChangeUtil().changeLanguage(this, prefsRepository.language)
-
         ThemeState.isDarkMode = prefsRepository.isDarkMode
 
         installSplashScreen()
@@ -54,6 +57,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val context = LocalContext.current
+
+    val tripRepository = remember { TripRepository(context) }
+    val tripViewModel  = remember { TripViewModel(tripRepository) }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -73,10 +81,10 @@ fun AppNavigation() {
                 LoginScreen(navController)
             }
             composable("home") {
-                HomeScreen(navController)
+                HomeScreen(navController, tripViewModel )
             }
             composable("trips") {
-                TripsScreen(navController)
+                TripsScreen(navController, tripViewModel)
             }
             composable("profile") {
                 ProfileScreen(navController)
@@ -101,7 +109,7 @@ fun AppNavigation() {
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
-                ItineraryScreen(navController, tripId)
+                ItineraryScreen(navController, tripId, tripViewModel)
             }
             composable("plan") {
                 PlanOptionsScreen(navController)
@@ -121,7 +129,7 @@ fun AppNavigation() {
                 PlanScreen(navController, ruta)
             }
             composable("createTrip") {
-                CreateTripScreen(navController)
+                CreateTripScreen(navController, tripViewModel)
             }
         }
     }

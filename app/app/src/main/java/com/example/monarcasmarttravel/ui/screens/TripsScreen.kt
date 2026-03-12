@@ -48,7 +48,7 @@ import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
 @Composable
 fun TripsScreen(
     navController: NavController,
-    viewModel: TripViewModel = viewModel()
+    viewModel: TripViewModel
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -126,5 +126,5 @@ fun TripsScreen(
 @Preview(showBackground = true)
 @Composable
 fun TripsScreenPreview() {
-    TripsScreen(rememberNavController())
+    TripsScreen(rememberNavController(), viewModel())
 }

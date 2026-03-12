@@ -54,6 +54,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
@@ -63,6 +64,7 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.TopBarAction
+import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -137,7 +139,7 @@ enum class PlanType(
  * @param tripId Identificador del viatge a mostrar.
  */
 @Composable
-fun ItineraryScreen(navController: NavController, tripId: Int) {
+fun ItineraryScreen(navController: NavController, tripId: Int, viewModel: TripViewModel) {
     val calendar = Calendar.getInstance()
 
     // Selecció de les dades simulades segons el viatge (tripId)
@@ -575,7 +577,6 @@ fun DivisorComponent(date: String) {
  * @param tertiaryText Text terciari, normalment el preu. Opcional.
  * @param onLongClick Acció en fer clic llarg sobre l'element.
  */
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun ItineraryItemComponent(
     ico: ImageVector,
@@ -695,7 +696,7 @@ fun ItineraryItemComponent(item: ItineraryItem) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ItineraryPreview() {
-    ItineraryScreen(rememberNavController(), 1)
+    ItineraryScreen(rememberNavController(), 1, viewModel())
 }
 
 @Preview(showBackground = true, showSystemUi = true)

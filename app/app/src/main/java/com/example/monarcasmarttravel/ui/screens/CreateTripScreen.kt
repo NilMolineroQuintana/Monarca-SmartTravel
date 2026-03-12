@@ -62,7 +62,7 @@ private const val DATE_FORMAT = "dd/MM/yyyy"
 @Composable
 fun CreateTripScreen(
     navController: NavController,
-    viewModel: TripViewModel = viewModel()
+    viewModel: TripViewModel
 ) {
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
@@ -197,5 +197,5 @@ fun CreateTripScreen(
 @Preview(showBackground = true)
 @Composable
 fun CreateTripScreenPreview() {
-    CreateTripScreen(rememberNavController())
+    CreateTripScreen(rememberNavController(), viewModel())
 }
