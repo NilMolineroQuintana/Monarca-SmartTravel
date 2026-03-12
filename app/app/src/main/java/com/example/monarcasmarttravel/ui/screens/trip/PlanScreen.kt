@@ -244,7 +244,7 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
                     ),
                     shape = RoundedCornerShape(20.dp),
                     onClick = {
-                        viewModel.addItem(
+                        val status = viewModel.addItem(
                             tripId = tripId,
                             ruta = ruta ?: return@TextButton,
                             locationName = locationName,
@@ -255,8 +255,10 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
                             price = price,
                             checkInDate = checkInDate
                         )
-                        navController.navigate("itinerary/$tripId") {
-                            popUpTo("itinerary/$tripId") { inclusive = true }
+                        if (status) {
+                            navController.navigate("itinerary/$tripId") {
+                                popUpTo("itinerary/$tripId") { inclusive = true }
+                            }
                         }
                     },
                     modifier = Modifier.width(200.dp)

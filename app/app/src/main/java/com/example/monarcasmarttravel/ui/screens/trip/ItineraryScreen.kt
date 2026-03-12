@@ -245,7 +245,6 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                             modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
                         )
                     }
-                    // ... resto del empty state
                 } else {
                     item {
                         ItineraryStatsComponent(items.sumOf { it.price }, numItems)
@@ -257,7 +256,10 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                             Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                         }
                         items(itemsDelDia) { plan ->
-                            ItineraryItemComponent(plan)
+                            ItineraryItemComponent(item = plan, onDelete = {
+                                viewModel.deleteItem(plan)
+                                viewModel.loadItemsByTrip(tripId)
+                            })
                             Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                         }
                     }
@@ -513,7 +515,7 @@ fun ItineraryItemComponent(
  * Inclou el diàleg de confirmació per eliminar el pla.
  */
 @Composable
-fun ItineraryItemComponent(item: ItineraryItem) {
+fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
     var showPopUp by remember { mutableStateOf(false) }
 
     when (item.type.route) {
@@ -546,7 +548,10 @@ fun ItineraryItemComponent(item: ItineraryItem) {
         title = stringResource(R.string.delete_plan),
         text = stringResource(R.string.delete_plan_description),
         acceptText = stringResource(R.string.delete),
-        onAccept = { showPopUp = false },
+        onAccept = {
+            onDelete()
+            showPopUp = false
+        },
         onDismiss = { showPopUp = false }
     )
 }

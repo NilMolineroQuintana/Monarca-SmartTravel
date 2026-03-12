@@ -22,6 +22,9 @@ class ItineraryItemRepositoryImpl @Inject constructor() : ItineraryItemRepositor
     override fun updateItineraryItem(item: ItineraryItem): Boolean =
         dataSource.updateItem(item)
 
-    override fun deleteItineraryItem(id: Int): Boolean =
-        dataSource.deleteItem(id)
+    override fun deleteItineraryItem(id: Int): Boolean {
+        val status = dataSource.deleteItem(id)
+        Log.d("ItineraryItemRepositoryImpl", "Deleted item with id: $id with status: $status")
+        return status
+    }
 }

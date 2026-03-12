@@ -7,7 +7,6 @@ import java.util.Calendar
 
 object FakeItineraryItemDataSource {
 
-    private var nextId = 20
     private val calendar = Calendar.getInstance()
 
     private val items = mutableListOf(
@@ -158,6 +157,9 @@ object FakeItineraryItemDataSource {
         ),
     )
 
+    private var nextId = items.size
+
+
     fun getItemsByTrip(tripId: Int): List<ItineraryItem> =
         items.filter { it.tripId == tripId }
 
@@ -176,6 +178,9 @@ object FakeItineraryItemDataSource {
         return true
     }
 
-    fun deleteItem(id: Int): Boolean =
-        items.removeIf { it.id == id }
+    fun deleteItem(id: Int): Boolean {
+        val status = items.removeIf { it.id == id }
+        Log.d("ItineraryItemDataSource", "Deleted item with id: $id with status: $status")
+        return status
+    }
 }

@@ -50,9 +50,9 @@ class ItineraryItemViewModel @Inject constructor(
         address: String,
         price: String,
         checkInDate: String
-    ) {
+    ) : Boolean {
         val transports = listOf("train", "boat", "flight")
-        val planType = PlanType.entries.find { it.route == ruta } ?: return
+        val planType = PlanType.entries.find { it.route == ruta } ?: return false
 
         val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         val defaultDate = dateTimeFormat.parse("23/03/2026 10:00")
@@ -82,16 +82,14 @@ class ItineraryItemViewModel @Inject constructor(
             )
         }
 
-        repository.addItineraryItem(newItem)
+        return repository.addItineraryItem(newItem)
     }
 
-    fun updateItem(item: ItineraryItem) {
-        val success = repository.updateItineraryItem(item)
-        if (success) loadItemsByTrip(item.tripId)
+    fun updateItem(item: ItineraryItem) : Boolean {
+        return repository.updateItineraryItem(item)
     }
 
-    fun deleteItem(item: ItineraryItem) {
-        val success = repository.deleteItineraryItem(item.id)
-        if (success) loadItemsByTrip(item.tripId)
+    fun deleteItem(item: ItineraryItem) : Boolean {
+        return repository.deleteItineraryItem(item.id)
     }
 }
