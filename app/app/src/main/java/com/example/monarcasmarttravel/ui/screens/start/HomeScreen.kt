@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
@@ -38,12 +38,12 @@ import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
  * Si no hi ha cap viatge pròxim, la secció de la targeta no es renderitza.
  *
  * @param navController Controlador de navegació.
- * @param viewModel ViewModel compartit per a la gestió de viatges.
+ * @param viewModel ViewModel gestionat per Hilt.
  */
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: TripViewModel
+    viewModel: TripViewModel = hiltViewModel()
 ) {
     // Viatge futur més proper; null si no n'hi ha cap
     val nextTrip = viewModel.getNextUpcomingTrip()
@@ -145,5 +145,5 @@ fun QuickActionsSection(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(rememberNavController(), viewModel())
+    HomeScreen(rememberNavController())
 }
