@@ -26,16 +26,16 @@ data class Trip(
      * Afegeix aquest viatge al sistema a través del [TripRepository].
      * @return El viatge creat amb l'ID assignat pel repositori.
      */
-    fun createTrip(): Trip {
-        return TripRepository.addTrip(this)
+    fun createTrip(repository: TripRepository): Trip {
+        return repository.addTrip(this)
     }
 
     /**
      * Elimina aquest viatge del sistema a través del [TripRepository].
      * @return true si s'ha eliminat correctament, false si no s'ha trobat.
      */
-    fun deleteTrip(): Boolean {
-        return TripRepository.deleteTrip(this.id)
+    fun deleteTrip(repository: TripRepository): Boolean {
+        return repository.deleteTrip(this.id)
     }
 
     /**
@@ -43,8 +43,8 @@ data class Trip(
      * @param newImageResId Nou recurs drawable, o null per treure la imatge.
      * @return El viatge actualitzat, o null si no s'ha trobat.
      */
-    fun updateTrip(newImageResId: Int?): Trip? {
-        return TripRepository.updateImage(this.id, newImageResId)
+    fun updateTrip(repository: TripRepository, newImageResId: Int?): Trip? {
+        return repository.updateImage(this.id, newImageResId)
     }
 
     /**

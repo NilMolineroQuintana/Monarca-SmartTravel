@@ -18,12 +18,12 @@ import java.util.Date
  * al repositori. Segueix el patró MVVM: la UI mai toca ni el domini
  * ni el repositori directament.
  */
-class TripViewModel : ViewModel() {
+class TripViewModel(private val repository: TripRepository) : ViewModel() {
 
     private val TAG = "TripViewModel"
 
     /** Llista observable. La UI es recomposa automàticament quan canvia. */
-    var trips by mutableStateOf(TripRepository.getAllTrips())
+    var trips by mutableStateOf(repository.getAllTrips())
         private set
 
     /** Missatge d'error per mostrar com a Snackbar a la UI. */
@@ -31,7 +31,7 @@ class TripViewModel : ViewModel() {
         private set
 
     private fun refreshTrips() {
-        trips = TripRepository.getAllTrips()
+        trips = repository.getAllTrips()
     }
 
     /**
@@ -71,7 +71,7 @@ class TripViewModel : ViewModel() {
                 imageResId = resolveImageForDestination(destination),
                 userId = userId
             )
-            trip.createTrip()
+            trip.createTrip(repository)
             refreshTrips()
             errorMessage = null
             Log.i(TAG, "addTrip: viatge creat -> destí=$destination")
@@ -92,7 +92,7 @@ class TripViewModel : ViewModel() {
             Log.w(TAG, "deleteTrip: viatge no trobat id=$tripId")
             return false
         }
-        val result = trip.deleteTrip()
+        val result = trip.deleteTrip(repository)
         if (result) {
             refreshTrips()
             errorMessage = null
@@ -112,7 +112,7 @@ class TripViewModel : ViewModel() {
             Log.w(TAG, "changeTripImage: viatge no trobat id=$tripId")
             return false
         }
-        val result = trip.updateTrip(newImageResId)
+        val result = trip.updateTrip(repository, newImageResId)
         return if (result != null) {
             refreshTrips()
             Log.i(TAG, "changeTripImage: imatge actualitzada -> id=$tripId")
@@ -122,6 +122,8 @@ class TripViewModel : ViewModel() {
             false
         }
     }
+
+    fun getNextUpcomingTrip(): Trip? = repository.getNextUpcomingTrip()
 
     fun clearError() {
         errorMessage = null
