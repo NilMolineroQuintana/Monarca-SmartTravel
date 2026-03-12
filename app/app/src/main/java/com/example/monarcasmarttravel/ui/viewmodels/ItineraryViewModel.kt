@@ -1,14 +1,16 @@
 package com.example.monarcasmarttravel.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
+import com.example.monarcasmarttravel.domain.model.ItineraryItem
+import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel  // ← Hilt gestiona la creación del ViewModel
@@ -38,25 +40,58 @@ class ItineraryItemViewModel @Inject constructor(
         }
     }
 
-    fun addItem(item: ItineraryItem) {
-        viewModelScope.launch {
-            val success = repository.addItineraryItem(item)
-            Log.d("ItineraryItemViewModel", "Added item: $item with status: $success")
-            if (success) loadItemsByTrip(item.tripId)
+    fun addItem(
+        tripId: Int,
+        ruta: String,
+        locationName: String,
+        destination: String,
+        company: String,
+        transportNumber: String,
+        address: String,
+        price: String,
+        checkInDate: String
+    ) {
+        val transports = listOf("train", "boat", "flight")
+        val planType = PlanType.entries.find { it.route == ruta } ?: return
+
+        val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val defaultDate = dateTimeFormat.parse("23/03/2026 10:00")
+        val parsedDate = runCatching { dateTimeFormat.parse(checkInDate) }.getOrNull() ?: defaultDate
+
+        val newItem = if (ruta in transports) {
+            ItineraryItem(
+                id = 0,
+                tripId = tripId,
+                type = planType,
+                price = price.toDoubleOrNull() ?: 0.0,
+                origin = locationName,
+                destination = destination,
+                company = company,
+                transportNumber = transportNumber,
+                departureDate = parsedDate
+            )
+        } else {
+            ItineraryItem(
+                id = 0,
+                tripId = tripId,
+                type = planType,
+                price = price.toDoubleOrNull() ?: 0.0,
+                locationName = locationName,
+                address = address,
+                checkInDate = parsedDate
+            )
         }
+
+        repository.addItineraryItem(newItem)
     }
 
     fun updateItem(item: ItineraryItem) {
-        viewModelScope.launch {
-            val success = repository.updateItineraryItem(item)
-            if (success) loadItemsByTrip(item.tripId)
-        }
+        val success = repository.updateItineraryItem(item)
+        if (success) loadItemsByTrip(item.tripId)
     }
 
     fun deleteItem(item: ItineraryItem) {
-        viewModelScope.launch {
-            val success = repository.deleteItineraryItem(item.id)
-            if (success) loadItemsByTrip(item.tripId)
-        }
+        val success = repository.deleteItineraryItem(item.id)
+        if (success) loadItemsByTrip(item.tripId)
     }
 }

@@ -36,14 +36,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 /**
  * Pantalla de formulari per afegir un nou pla a l'itinerari.
@@ -247,38 +244,17 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
                     ),
                     shape = RoundedCornerShape(20.dp),
                     onClick = {
-                        val planType = PlanType.entries.find { it.route == ruta } ?: return@TextButton
-
-                        val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                        val defaultDate = dateTimeFormat.parse("23/03/2026 10:00")
-                        val parsedDate = runCatching { dateTimeFormat.parse(checkInDate) }.getOrNull() ?: defaultDate
-
-                        val newItem = if (ruta in transports) {
-                            ItineraryItem(
-                                id = 0,
-                                tripId = tripId,
-                                type = planType,
-                                price = price.toDoubleOrNull() ?: 0.0,
-                                origin = locationName,
-                                destination = destination,
-                                company = company,
-                                transportNumber = transportNumber,
-                                departureDate = parsedDate
-                            )
-                        } else {
-                            ItineraryItem(
-                                id = 0,
-                                tripId = tripId,
-                                type = planType,
-                                price = price.toDoubleOrNull() ?: 0.0,
-                                locationName = locationName,
-                                address = address,
-                                checkInDate = parsedDate
-                            )
-                        }
-
-                        viewModel.addItem(newItem)
-
+                        viewModel.addItem(
+                            tripId = tripId,
+                            ruta = ruta ?: return@TextButton,
+                            locationName = locationName,
+                            destination = destination,
+                            company = company,
+                            transportNumber = transportNumber,
+                            address = address,
+                            price = price,
+                            checkInDate = checkInDate
+                        )
                         navController.navigate("itinerary/$tripId") {
                             popUpTo("itinerary/$tripId") { inclusive = true }
                         }
