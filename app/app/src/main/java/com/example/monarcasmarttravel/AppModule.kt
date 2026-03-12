@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.monarcasmarttravel.data.repository.ItineraryItemRepositoryImpl
 import com.example.monarcasmarttravel.data.repository.PreferencesManager
+import com.example.monarcasmarttravel.data.repository.TripRepositoryImpl
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
+import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
@@ -35,4 +37,9 @@ object AppModule {
     @Singleton
     fun provideItineraryItemRepository(): ItineraryItemRepository =
         ItineraryItemRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun provideTripRepository(): TripRepository =
+        TripRepositoryImpl()
 }

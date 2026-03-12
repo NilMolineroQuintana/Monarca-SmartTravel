@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
@@ -33,22 +33,22 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.TripCard
-import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 
 /**
  * Pantalla que mostra la llista de viatges de l'usuari.
  *
  * Observa el [TripViewModel]: qualsevol operació CRUD es reflecteix
- * automàticament gràcies a mutableStateOf. La llista comença buida;
- * l'usuari ha de crear els seus propis viatges.
+ * automàticament gràcies a mutableStateOf. La llista s'inicialitza amb
+ * el fake dataset del repositori.
  *
  * @param navController Controlador de navegació.
- * @param viewModel ViewModel compartit injectat per Compose.
+ * @param viewModel ViewModel gestionat per Hilt (cicle de vida correcte).
  */
 @Composable
 fun TripsScreen(
     navController: NavController,
-    viewModel: TripViewModel
+    viewModel: TripViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -126,5 +126,5 @@ fun TripsScreen(
 @Preview(showBackground = true)
 @Composable
 fun TripsScreenPreview() {
-    TripsScreen(rememberNavController(), viewModel())
+    TripsScreen(rememberNavController())
 }

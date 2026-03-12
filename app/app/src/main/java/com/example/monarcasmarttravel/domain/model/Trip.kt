@@ -1,6 +1,6 @@
 package com.example.monarcasmarttravel.domain.model
 
-import com.example.monarcasmarttravel.data.repository.TripRepository
+import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -8,7 +8,8 @@ import java.util.concurrent.TimeUnit
  * Model de dades que representa un viatge planificat per l'usuari.
  *
  * @param id Identificador únic del viatge.
- * @param destination Destinació principal del viatge (p. ex., "Kyoto, Japó").
+ * @param title Destinació principal del viatge (p. ex., "Kyoto, Japó").
+ * @param description Descripció del viatge.
  * @param dateIn Data d'inici del viatge.
  * @param dateOut Data de finalització del viatge.
  * @param imageResId Recurs drawable opcional associat al destí.
@@ -16,7 +17,8 @@ import java.util.concurrent.TimeUnit
  */
 data class Trip(
     val id: Int,
-    val destination: String,
+    val title: String,
+    val description: String,
     val dateIn: Date,
     val dateOut: Date,
     val imageResId: Int? = null,
@@ -26,8 +28,17 @@ data class Trip(
      * Afegeix aquest viatge al sistema a través del [TripRepository].
      * @return El viatge creat amb l'ID assignat pel repositori.
      */
-    fun createTrip(repository: TripRepository): Trip {
+    fun addTrip(repository: TripRepository): Trip {
         return repository.addTrip(this)
+    }
+
+    /**
+     * Actualitza la imatge d'aquest viatge a través del [TripRepository].
+     * @param newImageResId Nou recurs drawable, o null per treure la imatge.
+     * @return El viatge actualitzat, o null si no s'ha trobat.
+     */
+    fun editTrip(repository: TripRepository, newImageResId: Int?): Trip? {
+        return repository.updateImage(this.id, newImageResId)
     }
 
     /**
@@ -36,15 +47,6 @@ data class Trip(
      */
     fun deleteTrip(repository: TripRepository): Boolean {
         return repository.deleteTrip(this.id)
-    }
-
-    /**
-     * Actualitza la imatge d'aquest viatge a través del [TripRepository].
-     * @param newImageResId Nou recurs drawable, o null per treure la imatge.
-     * @return El viatge actualitzat, o null si no s'ha trobat.
-     */
-    fun updateTrip(repository: TripRepository, newImageResId: Int?): Trip? {
-        return repository.updateImage(this.id, newImageResId)
     }
 
     /**

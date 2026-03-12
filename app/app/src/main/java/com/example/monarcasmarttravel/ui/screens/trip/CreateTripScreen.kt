@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,14 +33,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
-import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -50,31 +51,38 @@ private const val DATE_FORMAT = "dd/MM/yyyy"
 /**
  * Pantalla per crear un nou viatge.
  *
- * La UI només comprova que els camps no estiguin buits per habilitar
- * el botó (feedback visual immediat). La validació real de les dades
- * (destinació en blanc, dates incoherents) la fa [Trip.createTrip] a
- * través del domini, i els errors pugen al ViewModel com a [errorMessage]
- * i es mostren com a Snackbar.
+ * La UI valida que tots els camps obligatoris tinguin contingut i que
+ * la data de fi sigui posterior a la d'inici, mostrant errors en línia
+ * abans d'habilitar el botó (validació capa UI, requerida pel lab).
+ *
+ * La validació de negoci final la fa el repositori a través del ViewModel,
+ * i els errors pugen com a [errorMessage] mostrats en un Snackbar.
  *
  * @param navController Controlador de navegació.
- * @param viewModel ViewModel compartit per a la gestió de viatges.
+ * @param viewModel ViewModel gestionat per Hilt.
  */
 @Composable
 fun CreateTripScreen(
     navController: NavController,
-    viewModel: TripViewModel
+    viewModel: TripViewModel = hiltViewModel()
 ) {
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
-    var destination   by remember { mutableStateOf("") }
+    var title       by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
     var startDateText by remember { mutableStateOf("") }
     var endDateText   by remember { mutableStateOf("") }
     var startDate     by remember { mutableStateOf<Date?>(null) }
     var endDate       by remember { mutableStateOf<Date?>(null) }
 
+    // Errors en línia per a cada camp (validació capa UI)
+    var titleError       by remember { mutableStateOf<String?>(null) }
+    var descriptionError by remember { mutableStateOf<String?>(null) }
+    var dateRangeError   by remember { mutableStateOf<String?>(null) }
+
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Mostra els errors del domini com a Snackbar
+    // Mostra els errors del domini/repositori com a Snackbar
     LaunchedEffect(viewModel.errorMessage) {
         viewModel.errorMessage?.let {
             snackbarHostState.showSnackbar(it)
@@ -82,10 +90,21 @@ fun CreateTripScreen(
         }
     }
 
-    // El botó s'habilita quan tots els camps tenen contingut
-    val isFormValid = destination.isNotBlank()
+    // Validació en línia de les dates: la fi ha de ser posterior a l'inici
+    LaunchedEffect(startDate, endDate) {
+        if (startDate != null && endDate != null && !endDate!!.after(startDate)) {
+            dateRangeError = "La data de fi ha de ser posterior a la d'inici."
+        } else {
+            dateRangeError = null
+        }
+    }
+
+    // El botó s'habilita només quan tots els camps són vàlids (validació capa UI)
+    val isFormValid = title.isNotBlank()
+            && description.isNotBlank()
             && startDate != null
             && endDate != null
+            && dateRangeError == null
 
     Scaffold(
         topBar = {
@@ -97,7 +116,6 @@ fun CreateTripScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -110,10 +128,14 @@ fun CreateTripScreen(
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
-            // ── Camp destinació ──────────────────────────────────────────────
+            // ── Camp títol ───────────────────────────────────────────────────
             OutlinedTextField(
-                value = destination,
-                onValueChange = { destination = it },
+                value = title,
+                onValueChange = {
+                    title = it
+                    // Neteja l'error quan l'usuari comença a escriure
+                    if (it.isNotBlank()) titleError = null
+                },
                 label = { Text(stringResource(R.string.destination)) },
                 placeholder = { Text(stringResource(R.string.example_destination)) },
                 leadingIcon = {
@@ -122,6 +144,35 @@ fun CreateTripScreen(
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
+                },
+                isError = titleError != null,
+                supportingText = {
+                    if (titleError != null) Text(titleError!!, color = MaterialTheme.colorScheme.error)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            // ── Camp descripció ──────────────────────────────────────────────
+            OutlinedTextField(
+                value = description,
+                onValueChange = {
+                    description = it
+                    if (it.isNotBlank()) descriptionError = null
+                },
+                label = { Text(stringResource(R.string.description)) },
+                placeholder = { Text(stringResource(R.string.description_example, title)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                isError = descriptionError != null,
+                supportingText = {
+                    if (descriptionError != null) Text(descriptionError!!, color = MaterialTheme.colorScheme.error)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -155,20 +206,42 @@ fun CreateTripScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // Missatge d'error en línia per al rang de dates (validació capa UI)
+            if (dateRangeError != null) {
+                Text(
+                    text = dateRangeError!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // ── Botó de crear ────────────────────────────────────────────────
             Button(
                 onClick = {
-                    // La validació la fa Trip.createTrip()
+                    // Marcar camps buits amb error (validació capa UI)
+                    var hasError = false
+                    if (title.isBlank()) {
+                        titleError = "La destinació no pot estar buida."
+                        hasError = true
+                    }
+                    if (description.isBlank()) {
+                        descriptionError = "La descripció no pot estar buida."
+                        hasError = true
+                    }
+                    if (hasError) return@Button
+
                     val success = viewModel.addTrip(
-                        destination = destination.trim(),
+                        title = title.trim(),
+                        description = description,
                         dateIn = startDate!!,
                         dateOut = endDate!!,
                         userId = 1 // TODO: substituir per l'ID de l'usuari autenticat
                     )
                     if (success) {
-                        Log.i(TAG, "Viatge creat correctament -> destí=$destination")
+                        Log.i(TAG, "Viatge creat correctament -> destí=$title")
                         navController.navigate("trips") {
                             popUpTo("trips") { inclusive = true }
                         }
@@ -197,5 +270,5 @@ fun CreateTripScreen(
 @Preview(showBackground = true)
 @Composable
 fun CreateTripScreenPreview() {
-    CreateTripScreen(rememberNavController(), viewModel())
+    CreateTripScreen(rememberNavController())
 }

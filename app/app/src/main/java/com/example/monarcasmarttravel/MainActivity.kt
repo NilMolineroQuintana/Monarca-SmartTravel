@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
@@ -17,7 +16,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.monarcasmarttravel.data.repository.PreferencesManager
-import com.example.monarcasmarttravel.data.repository.TripRepository
 import com.example.monarcasmarttravel.ui.screens.preferences.AboutUsScreen
 import com.example.monarcasmarttravel.ui.screens.preferences.ProfileScreen
 import com.example.monarcasmarttravel.ui.screens.preferences.TermsAndConditionsScreen
@@ -32,7 +30,6 @@ import com.example.monarcasmarttravel.ui.screens.trip.PlanScreen
 import com.example.monarcasmarttravel.ui.screens.trip.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import com.example.monarcasmarttravel.ui.theme.ThemeState
-import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -56,12 +53,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Navegació principal de l'aplicació.
+ *
+ * El [TripViewModel] ja no es crea manualment amb remember{}: ara Hilt
+ * l'injecta a cada pantalla via hiltViewModel(), garantint que el cicle
+ * de vida sigui correcte i que l'estat no es perdi en rotar la pantalla.
+ */
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-
-    val tripRepository = remember { TripRepository() }
-    val tripViewModel = remember { TripViewModel(tripRepository) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -82,10 +83,10 @@ fun AppNavigation() {
                 LoginScreen(navController)
             }
             composable("home") {
-                HomeScreen(navController, tripViewModel)
+                HomeScreen(navController)
             }
             composable("trips") {
-                TripsScreen(navController, tripViewModel)
+                TripsScreen(navController)
             }
             composable("profile") {
                 ProfileScreen(navController)
@@ -110,9 +111,8 @@ fun AppNavigation() {
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
-                ItineraryScreen(navController, tripId, tripViewModel)
+                ItineraryScreen(navController, tripId)
             }
-
             composable(
                 route = "album/{tripId}",
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
@@ -120,7 +120,6 @@ fun AppNavigation() {
                 val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
                 AlbumScreen(navController, tripId)
             }
-
             composable(
                 route = "plan/{tripId}",
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
@@ -128,7 +127,6 @@ fun AppNavigation() {
                 val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
                 PlanOptionsScreen(navController, tripId)
             }
-
             composable(
                 route = "plan/{route}/{tripId}",
                 arguments = listOf(
@@ -141,7 +139,7 @@ fun AppNavigation() {
                 PlanScreen(navController, ruta, tripId)
             }
             composable("createTrip") {
-                CreateTripScreen(navController, tripViewModel)
+                CreateTripScreen(navController)
             }
         }
     }
