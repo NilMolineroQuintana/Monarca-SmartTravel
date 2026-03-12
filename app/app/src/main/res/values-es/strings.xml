@@ -127,4 +127,10 @@
     <string name="dema_viatge">¡Mañana empieza el viaje!</string>
     <string name="avui_viatge">¡Empieza hoy!</string>
     <string name="viatge_realitzat">Viaje realizado</string>
+
+    <string name="no_trips">Ningún viaje creado todavía</string>
+    <string name="no_trips_hint">Pulsa el botón + para crear tu primer viaje</string>
+    <string name="error_empty_destination">El destino no puede estar vacío</string>
+    <string name="change_photo">Cambiar foto</string>
+    <string name="no_photo">Sin foto</string>
 </resources>

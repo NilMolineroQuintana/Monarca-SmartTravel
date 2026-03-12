@@ -126,4 +126,9 @@
     <string name="avui_viatge">Comença avui!</string>
     <string name="viatge_realitzat">Viatge realitzat</string>
 
+    <string name="no_trips">Cap viatge creat encara</string>
+    <string name="no_trips_hint">Prem el botó + per crear el teu primer viatge</string>
+    <string name="error_empty_destination">La destinació no pot estar buida</string>
+    <string name="change_photo">Canviar foto</string>
+    <string name="no_photo">Sense foto</string>
 </resources>

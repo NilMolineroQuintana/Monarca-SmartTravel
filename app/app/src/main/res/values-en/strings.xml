@@ -127,4 +127,10 @@
     <string name="dema_viatge">Trip starts tomorrow!</string>
     <string name="avui_viatge">Starts today!</string>
     <string name="viatge_realitzat">Trip completed</string>
+
+    <string name="no_trips">No trips created yet</string>
+    <string name="no_trips_hint">Tap the + button to create your first trip</string>
+    <string name="error_empty_destination">Destination cannot be empty</string>
+    <string name="change_photo">Change photo</string>
+    <string name="no_photo">No photo</string>
 </resources>
