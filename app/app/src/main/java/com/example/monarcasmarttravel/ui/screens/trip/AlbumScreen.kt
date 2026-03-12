@@ -57,6 +57,13 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
     // Mock-up data
     val mockData = remember(tripId) {
         when (tripId) {
+            1 -> // KYOTO
+                listOf(
+                    Image(id = 1, tripId = tripId, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 2, tripId = tripId, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 3, tripId = tripId, imageId = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
+                    Image(id = 4, tripId = tripId, imageId = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
+                )
             2 -> // PARÍS
                 listOf(
                     Image(id = 1, tripId = tripId, imageId = R.drawable.paris, dateUploaded = Calendar.getInstance().time),
@@ -65,13 +72,8 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
                 listOf(
                     Image(id = 1, tripId = tripId, imageId = R.drawable.newyork, dateUploaded = Calendar.getInstance().time),
                 )
-            else -> // KYOTO (per defecte)
-                listOf(
-                    Image(id = 1, tripId = tripId, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 2, tripId = tripId, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 3, tripId = tripId, imageId = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 4, tripId = tripId, imageId = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
-                )
+            else -> // Per defecte
+                listOf()
         }
     }
 
