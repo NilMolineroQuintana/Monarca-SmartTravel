@@ -14,7 +14,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel  // ← Hilt gestiona la creación del ViewModel
-class ItineraryItemViewModel @Inject constructor(
+class ItineraryViewModel @Inject constructor(
     private val repository: ItineraryRepository
 ) : ViewModel() {
 

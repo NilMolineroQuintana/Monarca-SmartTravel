@@ -66,7 +66,7 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.TopBarAction
-import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.ItineraryViewModel
 import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -142,7 +142,7 @@ enum class PlanType(
 @Composable
 fun ItineraryScreen(navController: NavController, tripId: Int) {
 
-    val itineraryViewModel: ItineraryItemViewModel = hiltViewModel()
+    val itineraryViewModel: ItineraryViewModel = hiltViewModel()
     val tripViewModel: TripViewModel = hiltViewModel()
 
     // Obté el viatge real del repositori a través del ViewModel

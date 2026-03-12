@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,7 +22,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -45,7 +43,7 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
-import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.ItineraryViewModel
 
 /**
  * Pantalla de formulari per afegir un nou pla a l'itinerari.
@@ -69,7 +67,7 @@ import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
 @Composable
 fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
     Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
-    val viewModel: ItineraryItemViewModel = hiltViewModel()
+    val viewModel: ItineraryViewModel = hiltViewModel()
 
     var showErrors by rememberSaveable { mutableStateOf(false) }
 
