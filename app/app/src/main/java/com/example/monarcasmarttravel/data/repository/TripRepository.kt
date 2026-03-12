@@ -1,62 +1,153 @@
 package com.example.monarcasmarttravel.data.repository
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.monarcasmarttravel.domain.Trip
+import org.json.JSONArray
+import org.json.JSONObject
+import java.util.Date
 
 /**
- * Repositori en memòria per a la gestió de viatges (Trips).
+ * Repositori de viatges amb persistència via SharedPreferences.
  *
- * Els mètodes públics criden els mètodes del domini [Trip] per mantenir
- * la lògica de negoci centralitzada al model. La llista interna és
- * l'única font de veritat mentre no hi hagi persistència externa.
+ * Classe que rep el context al constructor i usa propietats amb get/set.
  */
-object TripRepository {
+class TripRepository(private val context: Context) {
 
-    private val trips = mutableListOf<Trip>()
-    private var nextId = 1
+    private val preferences: SharedPreferences = context.getSharedPreferences(
+        "monarca_trips",
+        Context.MODE_PRIVATE
+    )
+
+    private var nextId: Int
+        get() = preferences.getInt("next_id", 1)
+        set(value) { preferences.edit().putInt("next_id", value).commit() }
 
     /**
-     * Retorna una còpia immutable de tots els viatges.
+     * Llista de viatges desats. Cada accés a get deserialitza des de
+     * SharedPreferences, igual que les altres propietats del repositori.
+     * El set serialitza i persisteix immediatament.
      */
-    fun getAllTrips(): List<Trip> = trips.toList()
+    private var tripList: List<Trip>
+        get() {
+            val json = preferences.getString("trips", null) ?: return emptyList()
+            val array = JSONArray(json)
+            val result = mutableListOf<Trip>()
+            for (i in 0 until array.length()) {
+                val obj = array.getJSONObject(i)
+                result.add(
+                    Trip(
+                        id          = obj.getInt("id"),
+                        destination = obj.getString("destination"),
+                        dateIn      = Date(obj.getLong("dateIn")),
+                        dateOut     = Date(obj.getLong("dateOut")),
+                        imageResId  = nameToResId(
+                            if (obj.isNull("imageName")) null
+                            else obj.getString("imageName")
+                        ),
+                        userId      = obj.getInt("userId")
+                    )
+                )
+            }
+            return result
+        }
+        set(value) {
+            val array = JSONArray()
+            value.forEach { trip ->
+                val obj = JSONObject().apply {
+                    put("id",          trip.id)
+                    put("destination", trip.destination)
+                    put("dateIn",      trip.dateIn.time)
+                    put("dateOut",     trip.dateOut.time)
+                    put("imageName",   resIdToName(trip.imageResId) ?: JSONObject.NULL)
+                    put("userId",      trip.userId)
+                }
+                array.put(obj)
+            }
+            preferences.edit().putString("trips", array.toString()).commit()
+        }
 
     /**
-     * Afegeix un viatge a la llista interna assignant-li un ID únic.
+     * Retorna una còpia immutable de tots els viatges desats.
+     */
+    fun getAllTrips(): List<Trip> = tripList
+
+    /**
+     * Afegeix un viatge assignant-li un ID únic i el persisteix.
      * Cridat des de [Trip.createTrip].
      * @throws IllegalArgumentException si les dades no són vàlides.
      */
     fun addTrip(trip: Trip): Trip {
         validateTrip(trip)
-        val newTrip = trip.copy(id = nextId++)
-        trips.add(newTrip)
+        val id = nextId
+        val newTrip = trip.copy(id = id)
+        tripList = tripList + newTrip
+        nextId = id + 1
         return newTrip
     }
 
     /**
-     * Elimina el viatge amb l'ID indicat.
+     * Elimina el viatge amb l'ID indicat i persisteix el canvi.
      * Cridat des de [Trip.deleteTrip].
      * @return true si s'ha eliminat, false si no s'ha trobat.
      */
     fun deleteTrip(tripId: Int): Boolean {
-        return trips.removeIf { it.id == tripId }
+        val current = tripList
+        val filtered = current.filter { it.id != tripId }
+        if (filtered.size == current.size) return false
+        tripList = filtered
+        return true
     }
 
     /**
-     * Actualitza només la imatge d'un viatge existent.
+     * Actualitza la imatge d'un viatge existent i persisteix el canvi.
      * Cridat des de [Trip.updateTrip].
      * @return El viatge actualitzat, o null si no s'ha trobat.
      */
     fun updateImage(tripId: Int, newImageResId: Int?): Trip? {
-        val index = trips.indexOfFirst { it.id == tripId }
+        val current = tripList.toMutableList()
+        val index = current.indexOfFirst { it.id == tripId }
         if (index == -1) return null
-        val updated = trips[index].copy(imageResId = newImageResId)
-        trips[index] = updated
+        val updated = current[index].copy(imageResId = newImageResId)
+        current[index] = updated
+        tripList = current
         return updated
     }
 
     /**
-     * Valida les dades d'un viatge.
-     * @throws IllegalArgumentException si destinació buida o dates invàlides.
+     * Retorna el viatge futur més proper (dateIn >= avui).
+     * Si no n'hi ha cap, retorna null.
      */
+    fun getNextUpcomingTrip(): Trip? {
+        val now = Date()
+        return tripList
+            .filter { it.dateIn >= now }
+            .minByOrNull { it.dateIn }
+    }
+
+    // ── Helpers de serialització d'imatges ───────────────────────────────────
+
+    /**
+     * Converteix un resId (Int) al nom del drawable.
+     */
+    private fun resIdToName(resId: Int?): String? {
+        if (resId == null) return null
+        return try {
+            context.resources.getResourceEntryName(resId)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Converteix el nom d'un drawable al resId actual.
+     */
+    private fun nameToResId(name: String?): Int? {
+        if (name == null) return null
+        val id = context.resources.getIdentifier(name, "drawable", context.packageName)
+        return if (id != 0) id else null
+    }
+
     private fun validateTrip(trip: Trip) {
         require(trip.destination.isNotBlank()) {
             "La destinació no pot estar buida."
