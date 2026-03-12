@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,8 +33,6 @@ import com.example.monarcasmarttravel.ui.screens.trip.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import com.example.monarcasmarttravel.ui.theme.ThemeState
 import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
-import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
-import com.example.monarcasmarttravel.utils.LanguageChangeUtil
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -65,7 +61,7 @@ fun AppNavigation() {
     val navController = rememberNavController()
 
     val tripRepository = remember { TripRepository() }
-    val tripViewModel  = remember { TripViewModel(tripRepository) }
+    val tripViewModel = remember { TripViewModel(tripRepository) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -86,7 +82,7 @@ fun AppNavigation() {
                 LoginScreen(navController)
             }
             composable("home") {
-                HomeScreen(navController, tripViewModel )
+                HomeScreen(navController, tripViewModel)
             }
             composable("trips") {
                 TripsScreen(navController, tripViewModel)

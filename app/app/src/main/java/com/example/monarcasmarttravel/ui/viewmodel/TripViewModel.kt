@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.data.repository.TripRepository
-import com.example.monarcasmarttravel.domain.Trip
+import com.example.monarcasmarttravel.domain.model.Trip
 import java.util.Date
 
 /**

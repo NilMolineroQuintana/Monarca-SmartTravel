@@ -1,6 +1,6 @@
 package com.example.monarcasmarttravel.data.repository
 
-import com.example.monarcasmarttravel.domain.Trip
+import com.example.monarcasmarttravel.domain.model.Trip
 import java.util.Date
 
 /**
