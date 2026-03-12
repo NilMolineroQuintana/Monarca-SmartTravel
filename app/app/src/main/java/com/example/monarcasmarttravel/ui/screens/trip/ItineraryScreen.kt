@@ -69,7 +69,6 @@ import com.example.monarcasmarttravel.ui.TopBarAction
 import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
 import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -134,48 +133,32 @@ enum class PlanType(
 /**
  * Pantalla de l'itinerari d'un viatge concret.
  *
- * Mostra una capçalera amb la imatge del destí, estadístiques del viatge (pressupost i
- * nombre d'activitats) i la llista de plans agrupats per dia. Des d'aquí es pot navegar
- * a l'àlbum o afegir nous plans.
+ * Obté les dades reals del viatge (títol, imatge, dates) des del [TripViewModel],
+ * en lloc d'usar dades hardcoded. Si el viatge no existeix, mostra un fallback.
  *
  * @param navController Controlador de navegació.
  * @param tripId Identificador del viatge a mostrar.
  */
 @Composable
 fun ItineraryScreen(navController: NavController, tripId: Int) {
-    val calendar = Calendar.getInstance()
 
-    val (destinationName, headerImg, dateIn, dateOut) = remember(tripId) {
-        when (tripId) {
-            2 -> TripItineraryInfo(
-                destination = "París",
-                imageRes = R.drawable.paris,
-                startDate = calendar.apply { set(2026, Calendar.MAY, 15, 8, 30) }.time,
-                endDate = calendar.apply { set(2026, Calendar.MAY, 22, 18, 0) }.time,
-            )
-            3 -> TripItineraryInfo(
-                destination = "Nova York",
-                imageRes = R.drawable.newyork,
-                startDate = calendar.apply { set(2026, Calendar.AUGUST, 10, 12, 0) }.time,
-                endDate = calendar.apply { set(2026, Calendar.AUGUST, 25, 11, 0) }.time,
-            )
-            else -> TripItineraryInfo(
-                destination = "Kyoto",
-                imageRes = R.drawable.kyoto_2,
-                startDate = calendar.apply { set(2026, Calendar.MARCH, 23, 10, 30) }.time,
-                endDate = calendar.apply { set(2026, Calendar.MARCH, 30, 15, 0) }.time,
-            )
-        }
-    }
-
-    val intineraryViewModel: ItineraryItemViewModel = hiltViewModel()
+    val itineraryViewModel: ItineraryItemViewModel = hiltViewModel()
     val tripViewModel: TripViewModel = hiltViewModel()
 
-    val items by intineraryViewModel.items.collectAsState()
-    val isLoading by intineraryViewModel.isLoading.collectAsState()
+    // Obté el viatge real del repositori a través del ViewModel
+    val trip = tripViewModel.getTripById(tripId)
+
+    // Fallback per si el viatge no s'ha trobat (no hauria de passar en condicions normals)
+    val destinationName = trip?.title ?: "Viatge"
+    val dateIn = trip?.dateIn ?: Date()
+    val dateOut = trip?.dateOut ?: Date()
+    val headerImg = trip?.imageResId ?: R.drawable.kyoto_2
+
+    val items by itineraryViewModel.items.collectAsState()
+    val isLoading by itineraryViewModel.isLoading.collectAsState()
 
     LaunchedEffect(tripId) {
-        intineraryViewModel.loadItemsByTrip(tripId)
+        itineraryViewModel.loadItemsByTrip(tripId)
     }
 
     val groupedData = items
@@ -215,11 +198,20 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
             }
         }
     ) { innerPadding ->
+
+        // PopUp de confirmació per eliminar el viatge
         PopUp(
             show = showPopUp,
             title = stringResource(R.string.deleteTrip),
             text = stringResource(R.string.popUp_deleteTrip_text),
-            onAccept = { tripViewModel.deleteTrip(tripId) },
+            onAccept = {
+                // Elimina el viatge via ViewModel i torna a la llista
+                tripViewModel.deleteTrip(tripId)
+                showPopUp = false
+                navController.navigate("trips") {
+                    popUpTo("trips") { inclusive = true }
+                }
+            },
             onDismiss = { showPopUp = false }
         )
 
@@ -259,8 +251,8 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                         }
                         items(itemsDelDia) { plan ->
                             ItineraryItemComponent(item = plan, onDelete = {
-                                intineraryViewModel.deleteItem(plan)
-                                intineraryViewModel.loadItemsByTrip(tripId)
+                                itineraryViewModel.deleteItem(plan)
+                                itineraryViewModel.loadItemsByTrip(tripId)
                             })
                             Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                         }
@@ -274,13 +266,6 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
         }
     }
 }
-
-data class TripItineraryInfo(
-    val destination: String,
-    val imageRes: Int,
-    val startDate: Date,
-    val endDate: Date,
-)
 
 /**
  * Capçalera visual de l'itinerari amb la imatge del destí com a fons desenfocada,
@@ -566,6 +551,6 @@ fun ItineraryPreview() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun AlbumScreenPreview() {
+fun AlbumScreenPreview2() {
     AlbumScreen(rememberNavController(), 3)
 }
