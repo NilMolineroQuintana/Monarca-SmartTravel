@@ -4,18 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.monarcasmarttravel.data.repository.PreferencesRepository
+import com.example.monarcasmarttravel.data.repository.PreferencesManager
 import com.example.monarcasmarttravel.ui.screens.preferences.AboutUsScreen
 import com.example.monarcasmarttravel.ui.screens.preferences.ProfileScreen
 import com.example.monarcasmarttravel.ui.screens.preferences.TermsAndConditionsScreen
@@ -30,22 +32,23 @@ import com.example.monarcasmarttravel.ui.screens.trip.PlanScreen
 import com.example.monarcasmarttravel.ui.screens.trip.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import com.example.monarcasmarttravel.ui.theme.ThemeState
+import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
 import com.example.monarcasmarttravel.utils.LanguageChangeUtil
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var preferencesManager: PreferencesManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        val prefsRepository = PreferencesRepository(this)
-        LanguageChangeUtil().changeLanguage(this, prefsRepository.language)
-
-        ThemeState.isDarkMode = prefsRepository.isDarkMode
-
         installSplashScreen()
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        ThemeState.isDarkMode = preferencesManager.isDarkMode
 
+        enableEdgeToEdge()
         setContent {
             MonarcaSmartTravelTheme(darkTheme = ThemeState.isDarkMode) {
                 AppNavigation()

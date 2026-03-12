@@ -1,20 +1,38 @@
 package com.example.monarcasmarttravel
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.example.monarcasmarttravel.data.repository.ItineraryItemRepositoryImpl
+import com.example.monarcasmarttravel.data.repository.PreferencesManager
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ItineraryItemModule {
+object AppModule {
 
-    @Binds
+    @Provides
     @Singleton
-    abstract fun bindItineraryItemRepository(
-        impl: ItineraryItemRepositoryImpl
-    ): ItineraryItemRepository
+    fun provideSharedPreferences(
+        @ApplicationContext context: Context
+    ): SharedPreferences =
+        context.getSharedPreferences("monarca_preferences", Context.MODE_PRIVATE)
+
+    @Provides
+    @Singleton
+    fun providePreferencesManager(
+        sharedPreferences: SharedPreferences,
+        @ApplicationContext context: Context
+    ): PreferencesManager =
+        PreferencesManager(sharedPreferences, context)
+
+    @Provides
+    @Singleton
+    fun provideItineraryItemRepository(): ItineraryItemRepository =
+        ItineraryItemRepositoryImpl()
 }
