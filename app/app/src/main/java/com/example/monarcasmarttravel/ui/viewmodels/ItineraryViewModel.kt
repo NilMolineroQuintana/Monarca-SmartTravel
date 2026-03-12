@@ -2,7 +2,7 @@ package com.example.monarcasmarttravel.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
+import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel  // ← Hilt gestiona la creación del ViewModel
 class ItineraryItemViewModel @Inject constructor(
-    private val repository: ItineraryItemRepository
+    private val repository: ItineraryRepository
 ) : ViewModel() {
 
     private val _items = MutableStateFlow<List<ItineraryItem>>(emptyList())

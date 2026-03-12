@@ -2,11 +2,11 @@ package com.example.monarcasmarttravel.data.repository
 
 import android.util.Log
 import com.example.monarcasmarttravel.data.fakeDB.FakeItineraryItemDataSource
-import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
+import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import javax.inject.Inject
 
-class ItineraryItemRepositoryImpl @Inject constructor() : ItineraryItemRepository {
+class ItineraryRepositoryImpl @Inject constructor() : ItineraryRepository {
 
     private val dataSource = FakeItineraryItemDataSource
 
@@ -15,7 +15,7 @@ class ItineraryItemRepositoryImpl @Inject constructor() : ItineraryItemRepositor
 
     override fun addItineraryItem(item: ItineraryItem): Boolean {
         val status = dataSource.addItem(item)
-        Log.d("ItineraryItemRepositoryImpl", "Added item: $item with status: $status")
+        Log.d("ItineraryRepositoryImpl", "Added item: $item with status: $status")
         return status
     }
 
@@ -24,7 +24,7 @@ class ItineraryItemRepositoryImpl @Inject constructor() : ItineraryItemRepositor
 
     override fun deleteItineraryItem(id: Int): Boolean {
         val status = dataSource.deleteItem(id)
-        Log.d("ItineraryItemRepositoryImpl", "Deleted item with id: $id with status: $status")
+        Log.d("ItineraryRepositoryImpl", "Deleted item with id: $id with status: $status")
         return status
     }
 }

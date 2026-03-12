@@ -2,10 +2,10 @@ package com.example.monarcasmarttravel
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.monarcasmarttravel.data.repository.ItineraryItemRepositoryImpl
+import com.example.monarcasmarttravel.data.repository.ItineraryRepositoryImpl
 import com.example.monarcasmarttravel.data.repository.PreferencesManager
 import com.example.monarcasmarttravel.data.repository.TripRepositoryImpl
-import com.example.monarcasmarttravel.domain.interfaces.ItineraryItemRepository
+import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import dagger.Module
 import dagger.Provides
@@ -35,8 +35,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideItineraryItemRepository(): ItineraryItemRepository =
-        ItineraryItemRepositoryImpl()
+    fun provideItineraryRepository(): ItineraryRepository =
+        ItineraryRepositoryImpl()
 
     @Provides
     @Singleton

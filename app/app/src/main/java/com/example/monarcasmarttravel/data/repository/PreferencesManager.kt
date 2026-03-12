@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class PreferencesManager @Inject constructor(
     private val preferences: SharedPreferences,
-    @ApplicationContext private val context: Context
+    private val context: Context
 ) {
 
     val languageChangeUtil by lazy {
