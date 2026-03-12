@@ -33,7 +33,7 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.TripCard
-import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 
 /**
  * Pantalla que mostra la llista de viatges de l'usuari.

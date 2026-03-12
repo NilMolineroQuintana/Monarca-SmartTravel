@@ -56,7 +56,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -68,7 +67,7 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.TopBarAction
 import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
-import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -143,7 +142,7 @@ enum class PlanType(
  * @param tripId Identificador del viatge a mostrar.
  */
 @Composable
-fun ItineraryScreen(navController: NavController, tripId: Int, viewModel: TripViewModel) {
+fun ItineraryScreen(navController: NavController, tripId: Int) {
     val calendar = Calendar.getInstance()
 
     val (destinationName, headerImg, dateIn, dateOut) = remember(tripId) {
@@ -169,13 +168,14 @@ fun ItineraryScreen(navController: NavController, tripId: Int, viewModel: TripVi
         }
     }
 
-    val viewModel: ItineraryItemViewModel = hiltViewModel()
+    val intineraryViewModel: ItineraryItemViewModel = hiltViewModel()
+    val tripViewModel: TripViewModel = hiltViewModel()
 
-    val items by viewModel.items.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val items by intineraryViewModel.items.collectAsState()
+    val isLoading by intineraryViewModel.isLoading.collectAsState()
 
     LaunchedEffect(tripId) {
-        viewModel.loadItemsByTrip(tripId)
+        intineraryViewModel.loadItemsByTrip(tripId)
     }
 
     val groupedData = items
@@ -219,7 +219,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int, viewModel: TripVi
             show = showPopUp,
             title = stringResource(R.string.deleteTrip),
             text = stringResource(R.string.popUp_deleteTrip_text),
-            onAccept = { showPopUp = false },
+            onAccept = { tripViewModel.deleteTrip(tripId) },
             onDismiss = { showPopUp = false }
         )
 
@@ -259,8 +259,8 @@ fun ItineraryScreen(navController: NavController, tripId: Int, viewModel: TripVi
                         }
                         items(itemsDelDia) { plan ->
                             ItineraryItemComponent(item = plan, onDelete = {
-                                viewModel.deleteItem(plan)
-                                viewModel.loadItemsByTrip(tripId)
+                                intineraryViewModel.deleteItem(plan)
+                                intineraryViewModel.loadItemsByTrip(tripId)
                             })
                             Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                         }
@@ -561,7 +561,7 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ItineraryPreview() {
-    ItineraryScreen(rememberNavController(), 1, viewModel())
+    ItineraryScreen(rememberNavController(), 1)
 }
 
 @Preview(showBackground = true, showSystemUi = true)

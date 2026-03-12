@@ -328,7 +328,7 @@ fun TripCard(
 ) {
     val dateIn = trip.dateIn
     val dateOut = trip.dateOut
-    val place = trip.destination
+    val place = trip.title
     val remainingDays = trip.getDaysUntilStart()
 
     // Text d'estat dinàmic segons la proximitat del viatge

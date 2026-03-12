@@ -32,7 +32,7 @@ import com.example.monarcasmarttravel.ui.screens.trip.PlanScreen
 import com.example.monarcasmarttravel.ui.screens.trip.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import com.example.monarcasmarttravel.ui.theme.ThemeState
-import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -110,7 +110,7 @@ fun AppNavigation() {
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
             ) { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
-                ItineraryScreen(navController, tripId, tripViewModel)
+                ItineraryScreen(navController, tripId)
             }
 
             composable(

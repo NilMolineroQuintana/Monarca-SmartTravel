@@ -29,7 +29,7 @@ import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.TripCard
 import com.example.monarcasmarttravel.ui.WideOption
-import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 
 /**
  * Pantalla principal de l'aplicació.
