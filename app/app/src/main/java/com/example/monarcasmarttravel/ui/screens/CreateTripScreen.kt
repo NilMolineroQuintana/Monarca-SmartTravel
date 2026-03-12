@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -18,8 +18,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,31 +32,60 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
+import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+private const val TAG = "CreateTripScreen"
+private const val DATE_FORMAT = "dd/MM/yyyy"
 
 /**
  * Pantalla per crear un nou viatge.
  *
- * Presenta un formulari amb tres camps: destí, data d'inici i data de fi.
- * El botó de creació només s'activa quan tots els camps estan emplenats.
- *
- * Un cop confirmat, navega a [TripsScreen] on el nou viatge hauria d'aparèixer
- * a la llista (pendent d'integrar amb la capa de dades).
+ * La UI només comprova que els camps no estiguin buits per habilitar
+ * el botó (feedback visual immediat). La validació real de les dades
+ * (destinació en blanc, dates incoherents) la fa [Trip.createTrip] a
+ * través del domini, i els errors pugen al ViewModel com a [errorMessage]
+ * i es mostren com a Snackbar.
  *
  * @param navController Controlador de navegació.
+ * @param viewModel ViewModel compartit per a la gestió de viatges.
  */
 @Composable
-fun CreateTripScreen(navController: NavController) {
-    var destination by remember { mutableStateOf("") }
-    var startDate by remember { mutableStateOf("") }
-    var endDate by remember { mutableStateOf("") }
+fun CreateTripScreen(
+    navController: NavController,
+    viewModel: TripViewModel = viewModel()
+) {
+    val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
-    // El formulari només és vàlid quan tots tres camps tenen contingut
-    val isFormValid = destination.isNotEmpty() && startDate.isNotEmpty() && endDate.isNotEmpty()
+    var destination   by remember { mutableStateOf("") }
+    var startDateText by remember { mutableStateOf("") }
+    var endDateText   by remember { mutableStateOf("") }
+    var startDate     by remember { mutableStateOf<Date?>(null) }
+    var endDate       by remember { mutableStateOf<Date?>(null) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Mostra els errors del domini com a Snackbar
+    LaunchedEffect(viewModel.errorMessage) {
+        viewModel.errorMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearError()
+        }
+    }
+
+    // El botó s'habilita quan tots els camps tenen contingut
+    val isFormValid = destination.isNotBlank()
+            && startDate != null
+            && endDate != null
 
     Scaffold(
         topBar = {
@@ -61,23 +93,24 @@ fun CreateTripScreen(navController: NavController) {
                 title = stringResource(R.string.new_trip),
                 onBackClick = { navController.popBackStack() }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Text(
                 text = stringResource(R.string.itinerary_details),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 4.dp)
             )
 
-            // Camp de destinació
+            // ── Camp destinació ──────────────────────────────────────────────
             OutlinedTextField(
                 value = destination,
                 onValueChange = { destination = it },
@@ -95,51 +128,52 @@ fun CreateTripScreen(navController: NavController) {
                 shape = RoundedCornerShape(12.dp)
             )
 
-            // Camps de data d'inici i fi en la mateixa fila
+            // ── Camps de data amb DateField (Material3 DatePicker) ───────────
             Row(
                 horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                OutlinedTextField(
-                    value = startDate,
-                    onValueChange = { startDate = it },
-                    label = { Text(stringResource(R.string.start_date)) },
-                    placeholder = { Text(stringResource(R.string.dd_mm_aaaa)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
+                DateField(
+                    value = startDateText,
+                    label = stringResource(R.string.start_date),
                     modifier = Modifier.weight(1f),
-                    singleLine = true,
-                    shape = RoundedCornerShape(12.dp)
+                    onDateSelected = { dateStr ->
+                        startDateText = dateStr
+                        startDate = runCatching { sdf.parse(dateStr) }.getOrNull()
+                        Log.d(TAG, "Data inici seleccionada: $dateStr")
+                    }
                 )
-
-                OutlinedTextField(
-                    value = endDate,
-                    onValueChange = { endDate = it },
-                    label = { Text(stringResource(R.string.final_date)) },
-                    placeholder = { Text(stringResource(R.string.dd_mm_aaaa)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
+                DateField(
+                    value = endDateText,
+                    label = stringResource(R.string.final_date),
                     modifier = Modifier.weight(1f),
-                    singleLine = true,
-                    shape = RoundedCornerShape(12.dp)
+                    onDateSelected = { dateStr ->
+                        endDateText = dateStr
+                        endDate = runCatching { sdf.parse(dateStr) }.getOrNull()
+                        Log.d(TAG, "Data fi seleccionada: $dateStr")
+                    }
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Botó de creació; desactivat fins que el formulari sigui vàlid
+            // ── Botó de crear ────────────────────────────────────────────────
             Button(
-                onClick = { navController.navigate("trips") },
+                onClick = {
+                    // La validació la fa Trip.createTrip()
+                    val success = viewModel.addTrip(
+                        destination = destination.trim(),
+                        dateIn = startDate!!,
+                        dateOut = endDate!!,
+                        userId = 1 // TODO: substituir per l'ID de l'usuari autenticat
+                    )
+                    if (success) {
+                        Log.i(TAG, "Viatge creat correctament -> destí=$destination")
+                        navController.navigate("trips") {
+                            popUpTo("trips") { inclusive = true }
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
