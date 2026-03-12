@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,19 +18,23 @@ import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,6 +70,8 @@ import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
 fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
     Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
     val viewModel: ItineraryItemViewModel = hiltViewModel()
+
+    var showErrors by rememberSaveable { mutableStateOf(false) }
 
     // Estats dels camps del formulari, persistents en rotació de pantalla
     var locationName by rememberSaveable { mutableStateOf("") }
@@ -107,6 +114,32 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
         "boat" -> stringResource(R.string.boat_num)
         "train" -> stringResource(R.string.train_num)
         else -> ""
+    }
+
+    val isFormValid by remember(
+        locationName, destination, checkInDate, address, company, transportNumber, price, ruta
+    ) {
+        derivedStateOf {
+            val commonFields = checkInDate.isNotBlank()
+
+            when (ruta) {
+                "flight", "boat", "train" -> {
+                    // Para transporte: Origen, Destino, Compañía y Número son obligatorios
+                    commonFields &&
+                            locationName.isNotBlank() &&
+                            destination.isNotBlank() &&
+                            company.isNotBlank() &&
+                            transportNumber.isNotBlank()
+                }
+                "hotel", "restaurant", "location" -> {
+                    // Para estancias: Nombre y Dirección son obligatorios
+                    commonFields &&
+                            locationName.isNotBlank() &&
+                            address.isNotBlank()
+                }
+                else -> false
+            }
+        }
     }
 
     Scaffold(
@@ -238,6 +271,42 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
 
             // Botó per confirmar i afegir el pla; torna a la pantalla anterior
             item {
+                Button(
+                    onClick = {
+                        val status = viewModel.addItem(
+                            tripId = tripId,
+                            ruta = ruta ?: return@Button,
+                            locationName = locationName,
+                            destination = destination,
+                            company = company,
+                            transportNumber = transportNumber,
+                            address = address,
+                            price = price,
+                            checkInDate = checkInDate
+                        )
+                        if (status) {
+                            navController.navigate("itinerary/$tripId") {
+                                popUpTo("itinerary/$tripId") { inclusive = true }
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    enabled = isFormValid,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.add_plan),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                /*
                 TextButton(
                     colors = ButtonDefaults.textButtonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -265,10 +334,14 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
                 ) {
                     Text(stringResource(R.string.add))
                 }
+
+                 */
             }
         }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
