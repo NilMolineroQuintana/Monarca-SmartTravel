@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.domain
 
+import com.example.monarcasmarttravel.data.repository.TripRepository
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit
  * @param destination Destinació principal del viatge (p. ex., "Kyoto, Japó").
  * @param dateIn Data d'inici del viatge.
  * @param dateOut Data de finalització del viatge.
+ * @param imageResId Recurs drawable opcional associat al destí.
  * @param userId Identificador únic del propietari del viatge.
  */
 data class Trip(
@@ -21,27 +23,28 @@ data class Trip(
     val userId: Int
 ) {
     /**
-     * Crea un nou viatge al sistema
-     * Pendent d'implementar
+     * Afegeix aquest viatge al sistema a través del [TripRepository].
+     * @return El viatge creat amb l'ID assignat pel repositori.
      */
-    fun createTrip() {
-        // @TODO Implement create trip
+    fun createTrip(): Trip {
+        return TripRepository.addTrip(this)
     }
 
     /**
-     * Elimina un viatge del sistema
-     * Pendent d'implementar
+     * Elimina aquest viatge del sistema a través del [TripRepository].
+     * @return true si s'ha eliminat correctament, false si no s'ha trobat.
      */
-    fun deleteTrip() {
-        // @TODO Implement delete trip
+    fun deleteTrip(): Boolean {
+        return TripRepository.deleteTrip(this.id)
     }
 
     /**
-     * Actualitza un viatge existent del sistema
-     * Pendent d'implementar
+     * Actualitza la imatge d'aquest viatge a través del [TripRepository].
+     * @param newImageResId Nou recurs drawable, o null per treure la imatge.
+     * @return El viatge actualitzat, o null si no s'ha trobat.
      */
-    fun updateTrip() {
-        // @TODO Implement update trip
+    fun updateTrip(newImageResId: Int?): Trip? {
+        return TripRepository.updateImage(this.id, newImageResId)
     }
 
     /**
