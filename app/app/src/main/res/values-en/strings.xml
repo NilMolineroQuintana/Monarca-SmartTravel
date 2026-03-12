@@ -136,4 +136,7 @@
     <string name="error_empty_destination">Destination cannot be empty</string>
     <string name="change_photo">Change photo</string>
     <string name="no_photo">No photo</string>
+
+    <string name="description">Description</string>
+    <string name="description_example">A trip with the family</string>
 </resources>

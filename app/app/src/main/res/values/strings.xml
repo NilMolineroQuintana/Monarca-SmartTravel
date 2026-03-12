@@ -134,4 +134,7 @@
     <string name="error_empty_destination">La destinació no pot estar buida</string>
     <string name="change_photo">Canviar foto</string>
     <string name="no_photo">Sense foto</string>
+
+    <string name="description">Descripció</string>
+    <string name="description_example">Un viatge amb la familia</string>
 </resources>
