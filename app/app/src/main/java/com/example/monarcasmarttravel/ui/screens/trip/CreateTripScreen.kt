@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.ui.screens
+package com.example.monarcasmarttravel.ui.screens.trip
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement

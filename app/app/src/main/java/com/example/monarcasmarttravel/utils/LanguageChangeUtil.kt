@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel
+package com.example.monarcasmarttravel.utils
 
 import android.app.LocaleManager
 import android.content.Context

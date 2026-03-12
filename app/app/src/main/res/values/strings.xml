@@ -125,6 +125,9 @@
     <string name="dema_viatge">Demà comença el viatge!</string>
     <string name="avui_viatge">Comença avui!</string>
     <string name="viatge_realitzat">Viatge realitzat</string>
+    <string name="next">Següent</string>
+    <string name="select_time">Selecciona l\'hora</string>
+    <string name="back">Enrere</string>
 
     <string name="no_trips">Cap viatge creat encara</string>
     <string name="no_trips_hint">Prem el botó + per crear el teu primer viatge</string>

@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.ui.screens
+package com.example.monarcasmarttravel.ui.screens.preferences
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,15 +34,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.monarcasmarttravel.LanguageChangeUtil
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.data.repository.PreferencesRepository
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.DatePickerPopUp
 import com.example.monarcasmarttravel.ui.EditTextPopUp
@@ -51,7 +49,7 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.WideOptionAction
-import com.example.monarcasmarttravel.ui.theme.ThemeState
+import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
 
 /**
  * Pantalla de preferències de l'usuari.
@@ -64,8 +62,7 @@ import com.example.monarcasmarttravel.ui.theme.ThemeState
  */
 @Composable
 fun ProfileScreen(navController: NavController) {
-    val context = LocalContext.current
-    val prefsRepository = remember { PreferencesRepository(context) }
+    val viewModel: PreferencesViewModel = hiltViewModel()
 
     val languageCodeMap = mapOf(
         stringResource(R.string.language_catalan) to "ca",
@@ -74,7 +71,7 @@ fun ProfileScreen(navController: NavController) {
     )
 
     val codeToLanguageMap = languageCodeMap.entries.associate { (k, v) -> v to k }
-    val defaultLanguage = codeToLanguageMap[prefsRepository.language]
+    val defaultLanguage = codeToLanguageMap[viewModel.language]
         ?: stringResource(R.string.language_catalan)
 
     // ── Estat dels pop-ups ────────────────────────────────────────────────────
@@ -85,14 +82,11 @@ fun ProfileScreen(navController: NavController) {
     // ── Estat del selector d'idioma ───────────────────────────────────────────
     var langMenuExpanded by remember { mutableStateOf(false) }
 
-    // ── Dades de compte ───────────────────────────────────────────────────────
-    var username by remember(prefsRepository) { mutableStateOf(prefsRepository.username) }
-    var dateOfBirth by remember(prefsRepository) { mutableStateOf(prefsRepository.dateOfBirth) }
-
-    // ── Configuració ──────────────────────────────────────────────────────────
-    var selectedLanguage by remember(prefsRepository) { mutableStateOf(defaultLanguage) }
-    var darkMode by remember(prefsRepository) { mutableStateOf(prefsRepository.isDarkMode) }
-    var notifications by remember(prefsRepository) { mutableStateOf(prefsRepository.notifications) }
+    var username by remember { mutableStateOf(viewModel.username) }
+    var dateOfBirth by remember { mutableStateOf(viewModel.dateOfBirth) }
+    var selectedLanguage by remember { mutableStateOf(codeToLanguageMap[viewModel.language] ?: defaultLanguage) }
+    var darkMode by remember { mutableStateOf(viewModel.isDarkMode) }
+    var notifications by remember { mutableStateOf(viewModel.notifications) }
 
     val buttonsColor = Color.Transparent
 
@@ -119,7 +113,7 @@ fun ProfileScreen(navController: NavController) {
             initialValue = username,
             onAccept = { newName ->
                 username = newName
-                prefsRepository.username = newName
+                viewModel.updateUsername(newName)
                 showUsernamePopUp = false
             },
             onDismiss = { showUsernamePopUp = false }
@@ -131,7 +125,7 @@ fun ProfileScreen(navController: NavController) {
             title = stringResource(R.string.preferences_birthdate_popup_title),
             onAccept = { newDate ->
                 dateOfBirth = newDate
-                prefsRepository.dateOfBirth = newDate
+                viewModel.updateDateOfBirth(newDate)
                 showDatePickerPopUp = false
             },
             onDismiss = { showDatePickerPopUp = false }
@@ -194,8 +188,7 @@ fun ProfileScreen(navController: NavController) {
                             onDismiss = { langMenuExpanded = false },
                             onOptionSelected = {
                                 selectedLanguage = it
-                                prefsRepository.language = languageCodeMap[it] ?: "ca"
-                                LanguageChangeUtil().changeLanguage(context, languageCodeMap[it] ?: "ca")
+                                viewModel.updateLanguage(languageCodeMap[it] ?: "ca")
                                 langMenuExpanded = false
                             }
                         )
@@ -209,14 +202,12 @@ fun ProfileScreen(navController: NavController) {
                         color = buttonsColor,
                         action = WideOptionAction.Toggle(darkMode) {
                             darkMode = it
-                            prefsRepository.isDarkMode = it
-                            ThemeState.isDarkMode = it
+                            viewModel.updateDarkMode(it)
                         },
                         onClick = {
                             val newValue = !darkMode
                             darkMode = newValue
-                            prefsRepository.isDarkMode = newValue
-                            ThemeState.isDarkMode = newValue
+                            viewModel.updateDarkMode(newValue)
                         }
                     )
                     HorizontalDivider(thickness = 1.dp)
@@ -228,12 +219,12 @@ fun ProfileScreen(navController: NavController) {
                         color = buttonsColor,
                         action = WideOptionAction.Toggle(notifications) {
                             notifications = it
-                            prefsRepository.notifications = it
+                            viewModel.updateNotifications(it)
                         },
                         onClick = {
                             val newValue = !notifications
                             notifications = newValue
-                            prefsRepository.notifications = newValue
+                            viewModel.updateNotifications(newValue)
                         }
                     )
                 }

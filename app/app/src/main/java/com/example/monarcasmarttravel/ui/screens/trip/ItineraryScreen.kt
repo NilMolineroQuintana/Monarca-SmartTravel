@@ -1,5 +1,6 @@
-package com.example.monarcasmarttravel.ui.screens
+package com.example.monarcasmarttravel.ui.screens.trip
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -27,7 +28,7 @@ import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.PhotoAlbum
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Train
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,8 +36,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,15 +57,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.domain.ItineraryItem
+import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.TopBarAction
+import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
 import com.example.monarcasmarttravel.ui.viewmodel.TripViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -142,178 +146,44 @@ enum class PlanType(
 fun ItineraryScreen(navController: NavController, tripId: Int, viewModel: TripViewModel) {
     val calendar = Calendar.getInstance()
 
-    // Selecció de les dades simulades segons el viatge (tripId)
-    val (destinationName, headerImg, dateIn, dateOut, mockData) = remember(tripId) {
+    val (destinationName, headerImg, dateIn, dateOut) = remember(tripId) {
         when (tripId) {
-            2 -> { // PARÍS
-                val dIn = calendar.apply { set(2026, Calendar.MAY, 15, 8, 30) }.time
-                val dOut = calendar.apply { set(2026, Calendar.MAY, 22, 18, 0) }.time
-
-                val items = listOf(
-                    ItineraryItem(
-                        id = 1, tripId = tripId, type = PlanType.FLIGHT,
-                        company = "Air France", transportNumber = "AF1024",
-                        origin = "Barcelona", destination = "Aeroport Charles de Gaulle",
-                        departureDate = dIn,
-                        price = 180.0
-                    ),
-                    ItineraryItem(
-                        id = 2, tripId = tripId, type = PlanType.HOTEL,
-                        locationName = "Pullman Paris Tour Eiffel",
-                        address = "18 Avenue de Suffren",
-                        checkInDate = dIn, checkOutDate = dOut,
-                        price = 1400.0
-                    ),
-                    ItineraryItem(
-                        id = 3, tripId = tripId, type = PlanType.LOCATION,
-                        locationName = "Museu del Louvre",
-                        address = "Rue de Rivoli, Paris",
-                        checkInDate = calendar.apply { set(2026, Calendar.MAY, 16, 10, 0) }.time,
-                        price = 17.0
-                    ),
-                    ItineraryItem(
-                        id = 4, tripId = tripId, type = PlanType.RESTAURANT,
-                        locationName = "Le Jules Verne",
-                        address = "Torre Eiffel, 2on Pis",
-                        checkInDate = calendar.apply { set(2026, Calendar.MAY, 16, 20, 0) }.time,
-                        price = 250.0
-                    )
-                )
-                TripItineraryInfo("París", R.drawable.paris, dIn, dOut, items)
-            }
-            3 -> { // NOVA YORK
-                val dIn = calendar.apply { set(2026, Calendar.AUGUST, 10, 12, 0) }.time
-                val dOut = calendar.apply { set(2026, Calendar.AUGUST, 25, 11, 0) }.time
-
-                val items = listOf(
-                    ItineraryItem(
-                        id = 1, tripId = tripId, type = PlanType.FLIGHT,
-                        company = "Delta Airlines", transportNumber = "DL201",
-                        origin = "Barcelona", destination = "Aeroport JFK",
-                        departureDate = dIn,
-                        price = 650.0
-                    ),
-                    ItineraryItem(
-                        id = 2, tripId = tripId, type = PlanType.HOTEL,
-                        locationName = "Marriott Marquis",
-                        address = "Times Square, NY",
-                        checkInDate = dIn, checkOutDate = dOut,
-                        price = 2800.0
-                    ),
-                    ItineraryItem(
-                        id = 3, tripId = tripId, type = PlanType.LOCATION,
-                        locationName = "Estàtua de la Llibertat",
-                        address = "Liberty Island",
-                        checkInDate = calendar.apply { set(2026, Calendar.AUGUST, 11, 9, 30) }.time,
-                        price = 25.0
-                    ),
-                    ItineraryItem(
-                        id = 4, tripId = tripId, type = PlanType.RESTAURANT,
-                        locationName = "Joe's Pizza",
-                        address = "Greenwich Village",
-                        checkInDate = calendar.apply { set(2026, Calendar.AUGUST, 11, 13, 0) }.time,
-                        price = 15.0
-                    )
-                )
-                TripItineraryInfo("Nova York", R.drawable.newyork, dIn, dOut, items)
-            }
-            else -> { // KYOTO (per defecte)
-                val dIn = calendar.apply { set(2026, Calendar.MARCH, 23, 10, 30) }.time
-                val dOut = calendar.apply { set(2026, Calendar.MARCH, 30, 15, 0) }.time
-
-                val items = listOf(
-                    ItineraryItem(
-                        id = 1, tripId = tripId, type = PlanType.FLIGHT,
-                        company = "Japan Airlines", transportNumber = "JL123",
-                        origin = "Barcelona", destination = "Aeroport de Narita",
-                        departureDate = dIn,
-                        price = 850.0
-                    ),
-                    ItineraryItem(
-                        id = 2, tripId = tripId, type = PlanType.HOTEL,
-                        locationName = "Shinjuku Granbell Hotel",
-                        address = "2-14-5 Kabukicho, Shinjuku-ku",
-                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 23, 15, 0) }.time,
-                        checkOutDate = calendar.apply { set(2026, Calendar.MARCH, 30, 11, 0) }.time,
-                        price = 1200.0
-                    ),
-                    ItineraryItem(
-                        id = 3, tripId = tripId, type = PlanType.LOCATION,
-                        locationName = "Temple Senso-ji",
-                        address = "2-3-1 Asakusa, Taito, Tòquio",
-                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 24, 10, 0) }.time,
-                        price = 0.0
-                    ),
-                    ItineraryItem(
-                        id = 4, tripId = tripId, type = PlanType.RESTAURANT,
-                        locationName = "Ichiran Ramen Shinjuku",
-                        address = "3-34-11 Shinjuku, Tòquio",
-                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 24, 19, 0) }.time,
-                        price = 15.0
-                    ),
-                    ItineraryItem(
-                        id = 5, tripId = tripId, type = PlanType.TRAIN,
-                        company = "JR Central", transportNumber = "Nozomi 215",
-                        origin = "Tòquio", destination = "Kyoto",
-                        departureDate = calendar.apply { set(2026, Calendar.MARCH, 25, 9, 30) }.time,
-                        price = 90.0
-                    ),
-                    ItineraryItem(
-                        id = 11, tripId = tripId, type = PlanType.BOAT,
-                        company = "JR West Ferry", transportNumber = "Miyajima Line",
-                        origin = "Hiroshima", destination = "Miyajima",
-                        departureDate = calendar.apply { set(2026, Calendar.MARCH, 26, 10, 0) }.time,
-                        price = 5.0
-                    ),
-                    ItineraryItem(
-                        id = 12, tripId = tripId, type = PlanType.TRAIN,
-                        company = "Odakyu Railways", transportNumber = "EXEα 30000",
-                        origin = "Shinjuku", destination = "Hakone",
-                        departureDate = calendar.apply { set(2026, Calendar.MARCH, 27, 8, 45) }.time,
-                        price = 22.0
-                    ),
-                    ItineraryItem(
-                        id = 6, tripId = tripId, type = PlanType.RESTAURANT,
-                        locationName = "Gion Karyo",
-                        address = "570-235 Gionmachi, Kyoto",
-                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 25, 20, 30) }.time,
-                        price = 120.5
-                    ),
-                    ItineraryItem(
-                        id = 7, tripId = tripId, type = PlanType.LOCATION,
-                        locationName = "Shibuya Sky Mirador",
-                        address = "2-24-12 Shibuya, Tòquio",
-                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 26, 12, 0) }.time,
-                        price = 25.0
-                    ),
-                    ItineraryItem(
-                        id = 8, tripId = tripId, type = PlanType.LOCATION,
-                        locationName = "Fushimi Inari Taisha",
-                        address = "68 Fukakusa Yabunouchicho, Kyoto",
-                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 27, 11, 0) }.time,
-                        price = 0.0
-                    ),
-                    ItineraryItem(
-                        id = 10, tripId = tripId, type = PlanType.LOCATION,
-                        locationName = "Parc dels Cérvols de Nara",
-                        address = "Nara, Japó",
-                        checkInDate = calendar.apply { set(2026, Calendar.MARCH, 29, 13, 0) }.time,
-                        price = 10.0
-                    ),
-                )
-                TripItineraryInfo("Kyoto", R.drawable.kyoto_2, dIn, dOut, items)
-            }
+            2 -> TripItineraryInfo(
+                destination = "París",
+                imageRes = R.drawable.paris,
+                startDate = calendar.apply { set(2026, Calendar.MAY, 15, 8, 30) }.time,
+                endDate = calendar.apply { set(2026, Calendar.MAY, 22, 18, 0) }.time,
+            )
+            3 -> TripItineraryInfo(
+                destination = "Nova York",
+                imageRes = R.drawable.newyork,
+                startDate = calendar.apply { set(2026, Calendar.AUGUST, 10, 12, 0) }.time,
+                endDate = calendar.apply { set(2026, Calendar.AUGUST, 25, 11, 0) }.time,
+            )
+            else -> TripItineraryInfo(
+                destination = "Kyoto",
+                imageRes = R.drawable.kyoto_2,
+                startDate = calendar.apply { set(2026, Calendar.MARCH, 23, 10, 30) }.time,
+                endDate = calendar.apply { set(2026, Calendar.MARCH, 30, 15, 0) }.time,
+            )
         }
     }
 
-    // Plans ordenats per data i agrupats per dia (clau = "dilluns, 23 març 2026")
-    val groupedData = mockData
+    val viewModel: ItineraryItemViewModel = hiltViewModel()
+
+    val items by viewModel.items.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
+    LaunchedEffect(tripId) {
+        viewModel.loadItemsByTrip(tripId)
+    }
+
+    val groupedData = items
         .sortedBy { it.getInDate() }
+        .filter { it.getInDate() != null }
         .groupBy { it.formatDateKey(it.getInDate()!!) }
 
-    val numItems = mockData.size
-
-    // Controla la visibilitat del diàleg de confirmació d'eliminació del viatge
+    val numItems = items.size
     var showPopUp by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -339,7 +209,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int, viewModel: TripVi
                     Icon(imageVector = Icons.Filled.PhotoAlbum, contentDescription = null)
                 }
                 // Botó principal per afegir un nou pla a l'itinerari
-                FloatingActionButton(onClick = { navController.navigate("plan") }) {
+                FloatingActionButton(onClick = { navController.navigate("plan/$tripId") }) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = null)
                 }
             }
@@ -353,61 +223,53 @@ fun ItineraryScreen(navController: NavController, tripId: Int, viewModel: TripVi
             onDismiss = { showPopUp = false }
         )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            // Capçalera amb la imatge de fons del destí
-            item {
-                Header(destinationName, dateIn, dateOut, headerImg)
+        // ← AQUÍ va el control de loading, dentro del Scaffold
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                item { Header(destinationName, dateIn, dateOut, headerImg) }
 
-            if (numItems == 0) {
-                // Missatge i botó quan no hi ha cap pla afegit
-                item {
-                    Text(
-                        text = stringResource(R.string.no_plans),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
-                    )
-                }
-                item {
-                    TextButton(
-                        onClick = { navController.navigate("plan") },
-                        colors = ButtonDefaults.textButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        ),
-                        modifier = Modifier.size(width = 200.dp, height = 50.dp)
-                    ) {
+                if (numItems == 0) {
+                    item {
                         Text(
-                            text = stringResource(R.string.add_new_plan),
-                            style = MaterialTheme.typography.bodyLarge
+                            text = stringResource(R.string.no_plans),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
                         )
                     }
-                }
-            } else {
-                // Estadístiques del viatge (pressupost total i nombre de plans)
-                item {
-                    ItineraryStatsComponent(mockData.sumOf { it.price }, numItems)
-                    Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
-                }
-
-                // Iteració per cada grup de dia i els seus plans
-                groupedData.forEach { (date, itemsDelDia) ->
+                } else {
                     item {
-                        DivisorComponent(date)
-                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
+                        ItineraryStatsComponent(items.sumOf { it.price }, numItems)
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
                     }
-                    items(itemsDelDia) { plan ->
-                        ItineraryItemComponent(plan)
-                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
+                    groupedData.forEach { (date, itemsDelDia) ->
+                        item {
+                            DivisorComponent(date)
+                            Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
+                        }
+                        items(itemsDelDia) { plan ->
+                            ItineraryItemComponent(item = plan, onDelete = {
+                                viewModel.deleteItem(plan)
+                                viewModel.loadItemsByTrip(tripId)
+                            })
+                            Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
+                        }
                     }
                 }
-            }
 
-            item {
-                Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
+                item {
+                    Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
+                }
             }
         }
     }
@@ -418,7 +280,6 @@ data class TripItineraryInfo(
     val imageRes: Int,
     val startDate: Date,
     val endDate: Date,
-    val plans: List<ItineraryItem>
 )
 
 /**
@@ -577,6 +438,7 @@ fun DivisorComponent(date: String) {
  * @param tertiaryText Text terciari, normalment el preu. Opcional.
  * @param onLongClick Acció en fer clic llarg sobre l'element.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItineraryItemComponent(
     ico: ImageVector,
@@ -655,7 +517,7 @@ fun ItineraryItemComponent(
  * Inclou el diàleg de confirmació per eliminar el pla.
  */
 @Composable
-fun ItineraryItemComponent(item: ItineraryItem) {
+fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
     var showPopUp by remember { mutableStateOf(false) }
 
     when (item.type.route) {
@@ -688,7 +550,10 @@ fun ItineraryItemComponent(item: ItineraryItem) {
         title = stringResource(R.string.delete_plan),
         text = stringResource(R.string.delete_plan_description),
         acceptText = stringResource(R.string.delete),
-        onAccept = { showPopUp = false },
+        onAccept = {
+            onDelete()
+            showPopUp = false
+        },
         onDismiss = { showPopUp = false }
     )
 }
