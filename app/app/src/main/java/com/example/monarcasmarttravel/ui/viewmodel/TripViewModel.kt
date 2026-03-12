@@ -13,8 +13,10 @@ import java.util.Date
 /**
  * ViewModel per a la pantalla de viatges.
  *
- * Exposa l'estat observable dels viatges i ofereix les operacions
- * addTrip, deleteTrip i changeTripImage delegant al [TripRepository].
+ * Construeix objectes [Trip] i crida els seus mètodes de domini
+ * (createTrip, deleteTrip, updateTrip) en lloc d'accedir directament
+ * al repositori. Segueix el patró MVVM: la UI mai toca ni el domini
+ * ni el repositori directament.
  */
 class TripViewModel : ViewModel() {
 
@@ -50,8 +52,9 @@ class TripViewModel : ViewModel() {
     }
 
     /**
-     * Afegeix un nou viatge. La imatge s'assigna automàticament
-     * si el destí coincideix amb una foto disponible.
+     * Crea un nou viatge cridant [Trip.createTrip].
+     * La imatge s'assigna automàticament si el destí coincideix
+     * amb una foto disponible al projecte.
      */
     fun addTrip(
         destination: String,
@@ -68,7 +71,7 @@ class TripViewModel : ViewModel() {
                 imageResId = resolveImageForDestination(destination),
                 userId = userId
             )
-            TripRepository.addTrip(trip)
+            trip.createTrip()
             refreshTrips()
             errorMessage = null
             Log.i(TAG, "addTrip: viatge creat -> destí=$destination")
@@ -80,38 +83,42 @@ class TripViewModel : ViewModel() {
         }
     }
 
-    /** Elimina el viatge amb l'ID indicat. */
+    /**
+     * Elimina un viatge cridant [Trip.deleteTrip].
+     */
     fun deleteTrip(tripId: Int): Boolean {
-        val result = TripRepository.deleteTrip(tripId)
+        val trip = trips.find { it.id == tripId } ?: run {
+            errorMessage = "No s'ha trobat el viatge a eliminar."
+            Log.w(TAG, "deleteTrip: viatge no trobat id=$tripId")
+            return false
+        }
+        val result = trip.deleteTrip()
         if (result) {
             refreshTrips()
             errorMessage = null
             Log.i(TAG, "deleteTrip: viatge eliminat -> id=$tripId")
         } else {
-            errorMessage = "No s'ha trobat el viatge a eliminar."
-            Log.w(TAG, "deleteTrip: viatge no trobat id=$tripId")
+            errorMessage = "No s'ha pogut eliminar el viatge."
+            Log.w(TAG, "deleteTrip: error en eliminar id=$tripId")
         }
         return result
     }
 
-    /** Canvia la imatge d'un viatge existent. */
+    /**
+     * Canvia la imatge d'un viatge cridant [Trip.updateTrip].
+     */
     fun changeTripImage(tripId: Int, newImageResId: Int?): Boolean {
-        val index = trips.indexOfFirst { it.id == tripId }
-        if (index == -1) {
+        val trip = trips.find { it.id == tripId } ?: run {
             Log.w(TAG, "changeTripImage: viatge no trobat id=$tripId")
             return false
         }
-        // Actualitza directament la llista interna del repositori via deleteTrip + addTrip
-        val original = trips[index]
-        TripRepository.deleteTrip(tripId)
-        return try {
-            val updated = original.copy(id = 0, imageResId = newImageResId)
-            TripRepository.addTrip(updated)
+        val result = trip.updateTrip(newImageResId)
+        return if (result != null) {
             refreshTrips()
             Log.i(TAG, "changeTripImage: imatge actualitzada -> id=$tripId")
             true
-        } catch (e: IllegalArgumentException) {
-            Log.e(TAG, "changeTripImage: error -> ${e.message}")
+        } else {
+            Log.w(TAG, "changeTripImage: error en actualitzar id=$tripId")
             false
         }
     }
