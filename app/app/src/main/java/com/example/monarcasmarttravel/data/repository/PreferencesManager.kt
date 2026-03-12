@@ -2,13 +2,20 @@ package com.example.monarcasmarttravel.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.monarcasmarttravel.utils.LanguageChangeUtil
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PreferencesRepository(private val context: Context) {
+@Singleton
+class PreferencesManager @Inject constructor(
+    private val preferences: SharedPreferences,
+    @ApplicationContext private val context: Context
+) {
 
-    private val preferences: SharedPreferences = context.getSharedPreferences(
-        "monarca_preferences",
-        Context.MODE_PRIVATE
-    )
+    val languageChangeUtil by lazy {
+        LanguageChangeUtil()
+    }
 
     var username: String
         get() = preferences.getString("username", "") ?: ""
@@ -19,7 +26,7 @@ class PreferencesRepository(private val context: Context) {
         set(value) { preferences.edit().putString("dateOfBirth", value).commit() }
 
     var isDarkMode: Boolean
-        get() = preferences.getBoolean("darkMode", false)
+        get() = preferences.getBoolean("darkMode", true)
         set(value) { preferences.edit().putBoolean("darkMode", value).commit() }
 
     var language: String
@@ -32,9 +39,14 @@ class PreferencesRepository(private val context: Context) {
             val defaultLanguage = if (deviceLanguage in validLanguages) deviceLanguage else "en"
 
             preferences.edit().putString("language", defaultLanguage).commit()
+
+            languageChangeUtil.changeLanguage(context, defaultLanguage)
             return defaultLanguage
         }
-        set(value) { preferences.edit().putString("language", value).commit() }
+        set(value) {
+            preferences.edit().putString("language", value).commit()
+            languageChangeUtil.changeLanguage(context, value)
+        }
 
     var notifications: Boolean
         get() = preferences.getBoolean("notifications", true)

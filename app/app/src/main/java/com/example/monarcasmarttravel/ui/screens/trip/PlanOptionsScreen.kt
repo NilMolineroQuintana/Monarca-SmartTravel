@@ -1,5 +1,6 @@
-package com.example.monarcasmarttravel.ui.screens
+package com.example.monarcasmarttravel.ui.screens.trip
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,8 +32,8 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
  * @param navController Controlador de navegació.
  */
 @Composable
-fun PlanOptionsScreen(navController: NavController) {
-
+fun PlanOptionsScreen(navController: NavController, tripId: Int) {
+    Log.d("PlanOptionsScreen", "tripId: $tripId")
     // Plans de transport, considerats els més freqüents
     val popularPlans = listOf(PlanType.FLIGHT, PlanType.BOAT, PlanType.TRAIN)
 
@@ -67,7 +68,7 @@ fun PlanOptionsScreen(navController: NavController) {
                     text = stringResource(id = plan.titleRes),
                     action = WideOptionAction.None,
                     modifier = mod,
-                    onClick = { navController.navigate("plan/${plan.route}") }
+                    onClick = { navController.navigate("plan/${plan.route}/$tripId") }
                 )
             }
 
@@ -87,7 +88,7 @@ fun PlanOptionsScreen(navController: NavController) {
                     text = stringResource(id = plan.titleRes),
                     action = WideOptionAction.None,
                     modifier = mod,
-                    onClick = { navController.navigate("plan/${plan.route}") }
+                    onClick = { navController.navigate("plan/${plan.route}/$tripId") }
                 )
             }
         }
@@ -97,5 +98,5 @@ fun PlanOptionsScreen(navController: NavController) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PlanScreenPreview() {
-    PlanOptionsScreen(rememberNavController())
+    PlanOptionsScreen(rememberNavController(), 1)
 }

@@ -1,5 +1,6 @@
-package com.example.monarcasmarttravel.ui.screens
+package com.example.monarcasmarttravel.ui.screens.trip
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
@@ -38,6 +40,7 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.viewmodels.ItineraryItemViewModel
 
 /**
  * Pantalla de formulari per afegir un nou pla a l'itinerari.
@@ -59,7 +62,9 @@ import com.example.monarcasmarttravel.ui.MyTopBar
  *             "hotel", "restaurant", "location".
  */
 @Composable
-fun PlanScreen(navController: NavController, ruta: String?) {
+fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
+    Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
+    val viewModel: ItineraryItemViewModel = hiltViewModel()
 
     // Estats dels camps del formulari, persistents en rotació de pantalla
     var locationName by rememberSaveable { mutableStateOf("") }
@@ -238,7 +243,24 @@ fun PlanScreen(navController: NavController, ruta: String?) {
                         containerColor = MaterialTheme.colorScheme.surfaceContainer
                     ),
                     shape = RoundedCornerShape(20.dp),
-                    onClick = { navController.popBackStack() },
+                    onClick = {
+                        val status = viewModel.addItem(
+                            tripId = tripId,
+                            ruta = ruta ?: return@TextButton,
+                            locationName = locationName,
+                            destination = destination,
+                            company = company,
+                            transportNumber = transportNumber,
+                            address = address,
+                            price = price,
+                            checkInDate = checkInDate
+                        )
+                        if (status) {
+                            navController.navigate("itinerary/$tripId") {
+                                popUpTo("itinerary/$tripId") { inclusive = true }
+                            }
+                        }
+                    },
                     modifier = Modifier.width(200.dp)
                 ) {
                     Text(stringResource(R.string.add))
@@ -251,11 +273,11 @@ fun PlanScreen(navController: NavController, ruta: String?) {
 @Preview(showBackground = true)
 @Composable
 fun HotelScreenPreview() {
-    PlanScreen(rememberNavController(), "hotel")
+    PlanScreen(rememberNavController(), "hotel", 1)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun RestaurantScreenPreview() {
-    PlanScreen(rememberNavController(), "flight")
+    PlanScreen(rememberNavController(), "flight", 1)
 }

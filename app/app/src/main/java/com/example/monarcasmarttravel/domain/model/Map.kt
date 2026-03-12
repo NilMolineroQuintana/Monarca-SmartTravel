@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.domain
+package com.example.monarcasmarttravel.domain.model
 
 /**
  * Classe que gestiona les funcionalitats relacionades amb el mapa interactiu.

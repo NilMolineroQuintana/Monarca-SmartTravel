@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.ui.screens
+package com.example.monarcasmarttravel.ui.screens.trip
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.domain.Trip
+import com.example.monarcasmarttravel.domain.model.Trip
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar

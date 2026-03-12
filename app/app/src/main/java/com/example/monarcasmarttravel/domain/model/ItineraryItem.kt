@@ -1,9 +1,9 @@
-package com.example.monarcasmarttravel.domain
+package com.example.monarcasmarttravel.domain.model
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.ui.screens.PlanType
+import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

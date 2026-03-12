@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.domain
+package com.example.monarcasmarttravel.domain.model
 
 /**
  * Model de dades que representa les credencials d'autenticació d'un usuari.

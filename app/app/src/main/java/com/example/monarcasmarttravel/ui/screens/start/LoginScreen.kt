@@ -1,4 +1,4 @@
-package com.example.monarcasmarttravel.ui.screens
+package com.example.monarcasmarttravel.ui.screens.start
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -53,7 +53,7 @@ import com.example.monarcasmarttravel.ui.AppTextField
  * El botó d'inici de sessió només s'activa quan el formulari és vàlid:
  * correu correcte, contrasenya no buida i termes acceptats.
  *
- * Des d'aquí es pot navegar a [TermsAndConditionsScreen] per llegir les condicions,
+ * Des d'aquí es pot navegar a [com.example.monarcasmarttravel.ui.screens.preferences.TermsAndConditionsScreen] per llegir les condicions,
  * i a [HomeScreen] en completar l'inici de sessió correctament.
  *
  * @param navController Controlador de navegació.

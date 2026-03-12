@@ -42,6 +42,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +52,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -80,8 +83,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.domain.Trip
+import com.example.monarcasmarttravel.domain.model.Trip
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 /** Dimensions globals reutilitzables per mantenir la consistència d'espaiat a tota l'app. */
@@ -194,8 +198,9 @@ fun MyBottomBar(navController: NavController) {
 
     // Extreu la ruta base sense paràmetres
     val baseRoute = currentRoute
-        ?.substringBefore("?")  // Elimina paràmetres opcionals (?param=value)
-        ?.substringBefore("{")  // Elimina paràmetres obligatoris ({param})
+        ?.substringBefore("?")
+        ?.substringBefore("{")
+        ?.trimEnd('/')
         ?: ""
 
     // Rutes que pertanyen a la secció de viatges
@@ -831,6 +836,85 @@ fun DatePickerPopUp(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateTimePickerPopUp(
+    show: Boolean,
+    title: String = stringResource(R.string.select_date),
+    initialDateMillis: Long? = null,
+    acceptText: String = stringResource(R.string.accept),
+    cancelText: String = stringResource(R.string.cancel),
+    onAccept: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    var step by remember { mutableStateOf(1) }
+    var selectedDateMillis by remember { mutableStateOf(initialDateMillis) }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDateMillis
+    )
+    val timePickerState = rememberTimePickerState(
+        initialHour = 10,
+        initialMinute = 0
+    )
+
+    if (step == 1) {
+        DatePickerDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        selectedDateMillis = datePickerState.selectedDateMillis
+                        step = 2
+                    },
+                    enabled = datePickerState.selectedDateMillis != null
+                ) { Text(stringResource(R.string.next)) }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) { Text(cancelText) }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                title = {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
+                    )
+                }
+            )
+        }
+    } else {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(stringResource(R.string.select_time)) },
+            text = {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    TimePicker(state = timePickerState)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    val millis = selectedDateMillis ?: return@TextButton
+                    val dateStr = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        .format(Date(millis))
+                    val timeStr = String.format("%02d:%02d", timePickerState.hour, timePickerState.minute)
+                    onAccept("$dateStr $timeStr")
+                }) { Text(acceptText) }
+            },
+            dismissButton = {
+                TextButton(onClick = { step = 1 }) { Text(stringResource(R.string.back)) }
+            }
+        )
+    }
+}
+
 @Composable
 fun DateField(
     value: String,
@@ -841,12 +925,12 @@ fun DateField(
 ) {
     var showPicker by remember { mutableStateOf(false) }
 
-    DatePickerPopUp(
+    DateTimePickerPopUp(
         show = showPicker,
         title = label,
         initialDateMillis = initialDateMillis,
-        onAccept = { date ->
-            onDateSelected(date)
+        onAccept = { dateTime ->
+            onDateSelected(dateTime)
             showPicker = false
         },
         onDismiss = { showPicker = false }
@@ -856,7 +940,7 @@ fun DateField(
         value = value,
         onValueChange = {},
         label = { Text(label) },
-        placeholder = { Text("dd/MM/yyyy") },
+        placeholder = { Text("dd/MM/yyyy HH:mm") },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.CalendarToday,
@@ -868,7 +952,6 @@ fun DateField(
         singleLine = true,
         shape = RoundedCornerShape(12.dp),
         modifier = modifier.clickable { showPicker = true },
-        // Desactivem la interacció nativa del TextField per forçar sempre el click extern
         enabled = false,
         colors = OutlinedTextFieldDefaults.colors(
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
