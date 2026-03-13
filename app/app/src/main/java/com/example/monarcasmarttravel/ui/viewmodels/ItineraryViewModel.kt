@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.screens.trip.PlanType
+import com.example.monarcasmarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -50,9 +51,9 @@ class ItineraryViewModel @Inject constructor(
         address: String,
         price: String,
         checkInDate: String
-    ) : Boolean {
+    ) : Int {
         val transports = listOf("train", "boat", "flight")
-        val planType = PlanType.entries.find { it.route == ruta } ?: return false
+        val planType = PlanType.entries.find { it.route == ruta } ?: return AppError.UNKNOWN.code
 
         val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         val defaultDate = dateTimeFormat.parse("23/03/2026 10:00")
@@ -85,11 +86,11 @@ class ItineraryViewModel @Inject constructor(
         return repository.addItineraryItem(newItem)
     }
 
-    fun updateItem(item: ItineraryItem) : Boolean {
+    fun updateItem(item: ItineraryItem) : Int {
         return repository.updateItineraryItem(item)
     }
 
-    fun deleteItem(item: ItineraryItem) : Boolean {
+    fun deleteItem(item: ItineraryItem) : Int {
         return repository.deleteItineraryItem(item.id)
     }
 }

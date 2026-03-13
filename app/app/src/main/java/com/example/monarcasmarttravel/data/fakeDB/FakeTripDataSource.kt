@@ -54,6 +54,8 @@ object FakeTripDataSource {
 
     fun getAllTrips(): List<Trip> = trips.toList()
 
+    fun getTripById(tripId: Int): Trip? = trips.find { it.id == tripId }
+
     fun addTrip(trip: Trip): Trip {
         val newTrip = trip.copy(id = nextId++)
         trips.add(newTrip)

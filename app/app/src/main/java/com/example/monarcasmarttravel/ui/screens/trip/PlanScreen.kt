@@ -1,6 +1,7 @@
 package com.example.monarcasmarttravel.ui.screens.trip
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +45,7 @@ import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.viewmodels.ItineraryViewModel
+import com.example.monarcasmarttravel.utils.AppError
 
 /**
  * Pantalla de formulari per afegir un nou pla a l'itinerari.
@@ -282,11 +284,7 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
                             price = price,
                             checkInDate = checkInDate
                         )
-                        if (status) {
-                            navController.navigate("itinerary/$tripId") {
-                                popUpTo("itinerary/$tripId") { inclusive = true }
-                            }
-                        }
+                        handleStatus(status, navController, tripId)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -339,6 +337,20 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
     }
 }
 
+
+fun handleStatus(status: Int, navController: NavController, tripId: Int) {
+    if (status == AppError.OK.code) {
+        navController.navigate("itinerary/$tripId") {
+            popUpTo("itinerary/$tripId") { inclusive = true }
+        }
+    } else {
+        Toast.makeText(
+            navController.context,
+            AppError.fromCode(status).message,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+}
 
 
 @Preview(showBackground = true)

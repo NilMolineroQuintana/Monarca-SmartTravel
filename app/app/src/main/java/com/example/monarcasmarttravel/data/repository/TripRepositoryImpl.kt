@@ -24,6 +24,9 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
 
     override fun getAllTrips(): List<Trip> = dataSource.getAllTrips()
 
+    override fun getTripById(tripId: Int): Trip? =
+        dataSource.getAllTrips().find { it.id == tripId }
+
     /**
      * Valida i afegeix un nou viatge.
      * @throws IllegalArgumentException si les dades no superen la validació.

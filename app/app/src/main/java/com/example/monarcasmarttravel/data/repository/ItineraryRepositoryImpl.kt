@@ -5,6 +5,8 @@ import com.example.monarcasmarttravel.data.fakeDB.FakeItineraryItemDataSource
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
+import com.example.monarcasmarttravel.utils.AppError
+import java.util.Date
 import javax.inject.Inject
 
 class ItineraryRepositoryImpl @Inject constructor(
@@ -16,18 +18,41 @@ class ItineraryRepositoryImpl @Inject constructor(
     override suspend fun getItemsByTrip(tripId: Int): List<ItineraryItem> =
         dataSource.getItemsByTrip(tripId)
 
-    override fun addItineraryItem(item: ItineraryItem): Boolean {
-        val status = dataSource.addItem(item)
+    override fun addItineraryItem(item: ItineraryItem): Int {
+        var status = validateItinerary(item)
+
+        Log.d("ItineraryRepositoryImpl", "Validation status: $status")
+
+        if (status != AppError.OK.code) {
+            return status
+        }
+
+        status = dataSource.addItem(item)
+
         Log.d("ItineraryRepositoryImpl", "Added item: $item with status: $status")
         return status
     }
 
-    override fun updateItineraryItem(item: ItineraryItem): Boolean =
+    override fun updateItineraryItem(item: ItineraryItem): Int =
         dataSource.updateItem(item)
 
-    override fun deleteItineraryItem(id: Int): Boolean {
+    override fun deleteItineraryItem(id: Int): Int {
         val status = dataSource.deleteItem(id)
         Log.d("ItineraryRepositoryImpl", "Deleted item with id: $id with status: $status")
         return status
+    }
+
+    private fun validateItinerary(item: ItineraryItem): Int {
+        val itemDate: Date = item.getInDate()
+            ?: return AppError.NON_EXISTING_DATE.code
+
+        val pertainingTrip = tripRepository.getTripById(item.tripId)
+            ?: return AppError.NON_EXISTING_TRIP.code
+
+        if (itemDate.before(pertainingTrip.dateIn) || itemDate.after(pertainingTrip.dateOut)) {
+            return AppError.ITEM_OUT_OF_RANGE.code
+        }
+
+        return AppError.OK.code
     }
 }

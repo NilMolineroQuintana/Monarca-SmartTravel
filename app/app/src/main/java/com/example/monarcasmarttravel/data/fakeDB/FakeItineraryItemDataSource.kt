@@ -3,6 +3,7 @@ package com.example.monarcasmarttravel.data.fakeDB
 import android.util.Log
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.screens.trip.PlanType
+import com.example.monarcasmarttravel.utils.AppError
 import java.util.Calendar
 
 object FakeItineraryItemDataSource {
@@ -162,25 +163,26 @@ object FakeItineraryItemDataSource {
     fun getItemsByTrip(tripId: Int): List<ItineraryItem> =
         items.filter { it.tripId == tripId }
 
-    fun addItem(item: ItineraryItem): Boolean {
+    fun addItem(item: ItineraryItem): Int {
         val newItem = item.copy(id = nextId)
         nextId++
 
         items.add(newItem)
         Log.d("ItineraryItemDataSource", "Added item with ID: ${newItem.id}")
-        return true
+        return AppError.OK.code
     }
 
 
-    fun updateItem(item: ItineraryItem): Boolean {
+    fun updateItem(item: ItineraryItem): Int {
         val index = items.indexOfFirst { it.id == item.id }
-        if (index == -1) return false
+        if (index == -1) return AppError.NON_EXISTING_TRIP.code
+
         items[index] = item
-        return true
+        return AppError.OK.code
     }
 
-    fun deleteItem(id: Int): Boolean {
-        val status = items.removeIf { it.id == id }
+    fun deleteItem(id: Int): Int {
+        val status = if (items.removeIf { it.id == id }) AppError.OK.code else AppError.NON_EXISTING_TRIP.code
         Log.d("ItineraryItemDataSource", "Deleted item with id: $id with status: $status")
         return status
     }
