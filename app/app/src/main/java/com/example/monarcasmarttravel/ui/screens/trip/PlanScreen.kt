@@ -237,27 +237,22 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId:
             // Camps exclusius per a plans de transport
             if (ruta in transports) {
                 item {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        AppTextField(
-                            value = locationName,
-                            onValueChange = { locationName = it },
-                            label = stringResource(R.string.origin),
-                            placeholder = stringResource(R.string.origin),
-                            leadingIcon = Icons.Default.LocationOn,
-                            modifier = Modifier.weight(1f)
-                        )
-                        AppTextField(
-                            value = destination,
-                            onValueChange = { destination = it },
-                            label = stringResource(R.string.destination),
-                            placeholder = stringResource(R.string.destination),
-                            leadingIcon = Icons.Default.Flag,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                    AppTextField(
+                        value = locationName,
+                        onValueChange = { locationName = it },
+                        label = stringResource(R.string.origin),
+                        placeholder = stringResource(R.string.origin),
+                        leadingIcon = Icons.Default.LocationOn,
+                    )
+                }
+                item {
+                    AppTextField(
+                        value = destination,
+                        onValueChange = { destination = it },
+                        label = stringResource(R.string.destination),
+                        placeholder = stringResource(R.string.destination),
+                        leadingIcon = Icons.Default.Flag
+                    )
                 }
                 item {
                     Row(
