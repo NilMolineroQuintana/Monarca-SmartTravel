@@ -83,7 +83,9 @@ data class PlanFormState(
  */
 @Composable
 fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId: Int?) {
-    Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
+    LaunchedEffect(Unit) {
+        Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
+    }
     val viewModel: ItineraryViewModel = hiltViewModel()
 
     // Estats dels camps del formulari, persistents en rotació de pantalla

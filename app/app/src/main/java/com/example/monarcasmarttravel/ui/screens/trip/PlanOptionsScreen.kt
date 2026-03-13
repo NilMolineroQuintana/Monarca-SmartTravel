@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +34,10 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
  */
 @Composable
 fun PlanOptionsScreen(navController: NavController, tripId: Int) {
-    Log.d("PlanOptionsScreen", "tripId: $tripId")
+    LaunchedEffect(Unit) {
+        Log.d("PlanOptionsScreen", "tripId: $tripId")
+    }
+
     // Plans de transport, considerats els més freqüents
     val popularPlans = listOf(PlanType.FLIGHT, PlanType.BOAT, PlanType.TRAIN)
 

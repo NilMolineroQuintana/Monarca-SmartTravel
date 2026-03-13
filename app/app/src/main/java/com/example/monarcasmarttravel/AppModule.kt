@@ -38,7 +38,7 @@ object AppModule {
     fun provideItineraryRepository(
         tripRepository: TripRepository
     ): ItineraryRepository =
-        ItineraryRepositoryImpl(tripRepository)
+        ItineraryRepositoryImpl()
 
     @Provides
     @Singleton
