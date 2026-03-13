@@ -82,7 +82,7 @@ class ItineraryViewModel @Inject constructor(
     }
 
     fun updateItem(itemId: Int, ruta: String, form: PlanFormState): Int {
-        val existing = repository.getItemById(itemId) ?: return AppError.ITEM_NOT_FOUND.code
+        val existing = repository.getItemById(itemId) ?: return AppError.NON_EXISTING_ITEM.code
 
         val transports = listOf("train", "boat", "flight")
         val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())

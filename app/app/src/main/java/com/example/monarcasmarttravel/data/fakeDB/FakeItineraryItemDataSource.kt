@@ -171,23 +171,25 @@ object FakeItineraryItemDataSource {
         nextId++
 
         items.add(newItem)
-        Log.d("ItineraryItemDataSource", "Added item with ID: ${newItem.id}")
+        Log.d("ItineraryItemDataSource", "Added item with ID: ${newItem.id} ${items.last()}")
+
         return AppError.OK.code
     }
 
 
     fun updateItem(item: ItineraryItem): Int {
         val index = items.indexOfFirst { it.id == item.id }
-        if (index == -1) return AppError.ITEM_NOT_FOUND.code
+        if (index == -1) return AppError.NON_EXISTING_ITEM.code
 
         items[index] = item
-        Log.d("ItineraryItemDataSource", "Updated item with ID: ${item.id}")
+        Log.d("ItineraryItemDataSource", "Updated item with ID: ${item.id} ${items[index]}")
         return AppError.OK.code
     }
 
     fun deleteItem(id: Int): Int {
-        val status = if (items.removeIf { it.id == id }) AppError.OK.code else AppError.NON_EXISTING_TRIP.code
-        Log.d("ItineraryItemDataSource", "Deleted item with id: $id with status: $status")
+        val debugSize = items.size
+        val status = if (items.removeIf { it.id == id }) AppError.OK.code else AppError.NON_EXISTING_ITEM.code
+        Log.d("ItineraryItemDataSource", "Deleted item with id: $id with status: $status ($debugSize -> ${items.size})")
         return status
     }
 }
