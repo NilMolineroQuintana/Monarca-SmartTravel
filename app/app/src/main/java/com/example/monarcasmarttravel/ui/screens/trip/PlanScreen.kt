@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,8 +72,6 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
     Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
     val viewModel: ItineraryViewModel = hiltViewModel()
 
-    var showErrors by rememberSaveable { mutableStateOf(false) }
-
     // Estats dels camps del formulari, persistents en rotació de pantalla
     var locationName by rememberSaveable { mutableStateOf("") }
     var destination by rememberSaveable { mutableStateOf("") }
@@ -81,7 +80,7 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
     var address by rememberSaveable { mutableStateOf("") }
     var company by rememberSaveable { mutableStateOf("") }
     var transportNumber by rememberSaveable { mutableStateOf("") }
-    var price by rememberSaveable { mutableStateOf("") }
+    var price by rememberSaveable { mutableStateOf("0") }
 
     // Tipus que es consideren transport (no mostren camp de nom ni adreça)
     val transports = listOf("train", "boat", "flight")
@@ -116,11 +115,14 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
         else -> ""
     }
 
+
+    val priceError = price.isBlank() || price.toDoubleOrNull() == null || price.toDoubleOrNull()!! < 0
+
     val isFormValid by remember(
         locationName, destination, checkInDate, address, company, transportNumber, price, ruta
     ) {
         derivedStateOf {
-            val commonFields = checkInDate.isNotBlank()
+            val commonFields = checkInDate.isNotBlank() && !priceError
 
             when (ruta) {
                 "flight", "boat", "train" -> {
@@ -265,7 +267,10 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
                     onValueChange = { price = it },
                     label = stringResource(R.string.price),
                     placeholder = "Preu",
-                    leadingIcon = Icons.Default.AttachMoney
+                    leadingIcon = Icons.Default.AttachMoney,
+                    keyboardType = KeyboardType.Decimal,
+                    isError = priceError,
+                    errorMessage = if (priceError) "Format invàlid" else null
                 )
             }
 
