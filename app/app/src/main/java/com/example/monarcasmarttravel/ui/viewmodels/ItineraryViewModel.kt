@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
+import com.example.monarcasmarttravel.ui.screens.trip.PlanFormState
 import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import com.example.monarcasmarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,34 +42,28 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun addItem(
-        tripId: Int,
-        ruta: String,
-        locationName: String,
-        destination: String,
-        company: String,
-        transportNumber: String,
-        address: String,
-        price: String,
-        checkInDate: String
-    ) : Int {
+    fun getItemById(id: Int): ItineraryItem? {
+        return repository.getItemById(id)
+    }
+
+    fun addItem(tripId: Int, ruta: String, form: PlanFormState) : Int {
         val transports = listOf("train", "boat", "flight")
         val planType = PlanType.entries.find { it.route == ruta } ?: return AppError.UNKNOWN.code
 
         val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         val defaultDate = dateTimeFormat.parse("23/03/2026 10:00")
-        val parsedDate = runCatching { dateTimeFormat.parse(checkInDate) }.getOrNull() ?: defaultDate
+        val parsedDate = runCatching { dateTimeFormat.parse(form.checkInDate) }.getOrNull() ?: defaultDate
 
         val newItem = if (ruta in transports) {
             ItineraryItem(
                 id = 0,
                 tripId = tripId,
                 type = planType,
-                price = price.toDoubleOrNull() ?: 0.0,
-                origin = locationName,
-                destination = destination,
-                company = company,
-                transportNumber = transportNumber,
+                price = form.price,
+                origin = form.locationName,
+                destination = form.destination,
+                company = form.company,
+                transportNumber = form.transportNumber,
                 departureDate = parsedDate
             )
         } else {
@@ -76,9 +71,9 @@ class ItineraryViewModel @Inject constructor(
                 id = 0,
                 tripId = tripId,
                 type = planType,
-                price = price.toDoubleOrNull() ?: 0.0,
-                locationName = locationName,
-                address = address,
+                price = form.price,
+                locationName = form.locationName,
+                address = form.address,
                 checkInDate = parsedDate
             )
         }
@@ -86,8 +81,33 @@ class ItineraryViewModel @Inject constructor(
         return repository.addItineraryItem(newItem)
     }
 
-    fun updateItem(item: ItineraryItem) : Int {
-        return repository.updateItineraryItem(item)
+    fun updateItem(itemId: Int, ruta: String, form: PlanFormState): Int {
+        val existing = repository.getItemById(itemId) ?: return AppError.ITEM_NOT_FOUND.code
+
+        val transports = listOf("train", "boat", "flight")
+        val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val parsedDate = runCatching { dateTimeFormat.parse(form.checkInDate) }.getOrNull()
+            ?: existing.getInDate()
+
+        val updated = if (ruta in transports) {
+            existing.copy(
+                price           = form.price,
+                origin          = form.locationName,
+                destination     = form.destination,
+                company         = form.company,
+                transportNumber = form.transportNumber,
+                departureDate   = parsedDate
+            )
+        } else {
+            existing.copy(
+                price        = form.price,
+                locationName = form.locationName,
+                address      = form.address,
+                checkInDate  = parsedDate
+            )
+        }
+
+        return repository.updateItineraryItem(updated)
     }
 
     fun deleteItem(item: ItineraryItem) : Int {

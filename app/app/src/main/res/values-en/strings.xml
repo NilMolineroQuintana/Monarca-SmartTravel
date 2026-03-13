@@ -139,4 +139,13 @@
 
     <string name="description">Description</string>
     <string name="description_example">A trip with the family</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+
+    <string name="error_ok">Ok</string>
+    <string name="error_non_existing_trip">The trip does not exist.</string>
+    <string name="error_item_not_found">The item was not found.</string>
+    <string name="error_item_out_of_range">The item is outside the trip\'s date range.</string>
+    <string name="error_non_existing_date">The date is not assigned.</string>
+    <string name="error_unknown">An unexpected error has occurred.</string>
 </resources>

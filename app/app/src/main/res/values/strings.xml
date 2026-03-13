@@ -137,4 +137,13 @@
 
     <string name="description">Descripció</string>
     <string name="description_example">Un viatge amb la familia</string>
+    <string name="edit">Editar</string>
+    <string name="save">Guardar</string>
+
+    <string name="error_ok">Ok</string>
+    <string name="error_non_existing_trip">El viatge no existeix.</string>
+    <string name="error_item_not_found">No s\'ha trobat l\'element.</string>
+    <string name="error_item_out_of_range">L\'element està fora del rang del viatge.</string>
+    <string name="error_non_existing_date">La data no està assignada.</string>
+    <string name="error_unknown">S\'ha produït un error inesperat.</string>
 </resources>

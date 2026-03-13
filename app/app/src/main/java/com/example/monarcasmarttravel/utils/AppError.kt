@@ -1,13 +1,15 @@
 package com.example.monarcasmarttravel.utils
 
-enum class AppError(val code: Int, val message: String) {
+import com.example.monarcasmarttravel.R
 
-    OK (0, "Ok"),
-    NON_EXISTING_TRIP (1, "El viatje no existèix."),
-    ITEM_OUT_OF_RANGE (2, "L'item que has intentat crear està fora del rang del viatge."),
+enum class AppError(val code: Int, val stringRes: Int) {
 
-    NON_EXISTING_DATE(9998,"La data no està assignada."),
-    UNKNOWN (9999, "S'ha produït un error inesperat.");
+    OK              (0,    R.string.error_ok),
+    NON_EXISTING_TRIP(1,   R.string.error_non_existing_trip),
+    ITEM_NOT_FOUND  (2,    R.string.error_item_not_found),
+    ITEM_OUT_OF_RANGE(3,   R.string.error_item_out_of_range),
+    NON_EXISTING_DATE(9998, R.string.error_non_existing_date),
+    UNKNOWN         (9999, R.string.error_unknown);
 
     companion object {
         fun fromCode(code: Int): AppError =

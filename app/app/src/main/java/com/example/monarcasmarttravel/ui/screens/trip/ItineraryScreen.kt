@@ -256,7 +256,8 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                             ItineraryItemComponent(item = plan, onDelete = {
                                 itineraryViewModel.deleteItem(plan)
                                 itineraryViewModel.loadItemsByTrip(tripId)
-                            })
+                            }, navController = navController
+                            )
                             Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                         }
                     }
@@ -505,7 +506,7 @@ fun ItineraryItemComponent(
  * Inclou el diàleg de confirmació per eliminar el pla.
  */
 @Composable
-fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
+fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }, navController: NavController) {
     var showPopUp by remember { mutableStateOf(false) }
     var showOptions by remember { mutableStateOf(false) }
 
@@ -555,7 +556,7 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
         ),
         onOptionSelected = { index ->
             when (index) {
-                0 -> { Log.d("ItineraryScreen", "Edit clicked") }
+                0 -> { navController.navigate("plan/${item.type.route}/${item.tripId}/${item.id}") }
                 1 -> {
                     showOptions = false
                     showPopUp = true

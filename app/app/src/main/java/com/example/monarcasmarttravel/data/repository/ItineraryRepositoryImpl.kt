@@ -18,6 +18,9 @@ class ItineraryRepositoryImpl @Inject constructor(
     override suspend fun getItemsByTrip(tripId: Int): List<ItineraryItem> =
         dataSource.getItemsByTrip(tripId)
 
+    override fun getItemById(id: Int): ItineraryItem? =
+        dataSource.getItemById(id)
+
     override fun addItineraryItem(item: ItineraryItem): Int {
         var status = validateItinerary(item)
 
@@ -33,8 +36,19 @@ class ItineraryRepositoryImpl @Inject constructor(
         return status
     }
 
-    override fun updateItineraryItem(item: ItineraryItem): Int =
-        dataSource.updateItem(item)
+    override fun updateItineraryItem(item: ItineraryItem): Int {
+        val status = validateItinerary(item)
+
+        Log.d("ItineraryRepositoryImpl", "Validation status: $status")
+
+        if (status != AppError.OK.code) {
+            return status
+        }
+
+        Log.d("ItineraryRepositoryImpl", "Updating item: $item")
+
+        return dataSource.updateItem(item)
+    }
 
     override fun deleteItineraryItem(id: Int): Int {
         val status = dataSource.deleteItem(id)
@@ -42,14 +56,13 @@ class ItineraryRepositoryImpl @Inject constructor(
         return status
     }
 
+    private fun Date.toMinutes() = time / 60000
+
     private fun validateItinerary(item: ItineraryItem): Int {
-        val itemDate: Date = item.getInDate()
-            ?: return AppError.NON_EXISTING_DATE.code
+        val itemDate = item.getInDate() ?: return AppError.NON_EXISTING_DATE.code
+        val trip = tripRepository.getTripById(item.tripId) ?: return AppError.NON_EXISTING_TRIP.code
 
-        val pertainingTrip = tripRepository.getTripById(item.tripId)
-            ?: return AppError.NON_EXISTING_TRIP.code
-
-        if (itemDate.before(pertainingTrip.dateIn) || itemDate.after(pertainingTrip.dateOut)) {
+        if (itemDate.toMinutes() !in trip.dateIn.toMinutes()..trip.dateOut.toMinutes()) {
             return AppError.ITEM_OUT_OF_RANGE.code
         }
 

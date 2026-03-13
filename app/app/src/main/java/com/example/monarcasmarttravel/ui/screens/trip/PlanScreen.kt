@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +48,19 @@ import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.viewmodels.ItineraryViewModel
 import com.example.monarcasmarttravel.utils.AppError
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+
+data class PlanFormState(
+    val locationName: String,
+    val destination: String,
+    val company: String,
+    val transportNumber: String,
+    val address: String,
+    val price: Double,
+    val checkInDate: String
+)
 
 /**
  * Pantalla de formulari per afegir un nou pla a l'itinerari.
@@ -68,7 +82,7 @@ import com.example.monarcasmarttravel.utils.AppError
  *             "hotel", "restaurant", "location".
  */
 @Composable
-fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
+fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId: Int?) {
     Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
     val viewModel: ItineraryViewModel = hiltViewModel()
 
@@ -81,6 +95,20 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
     var company by rememberSaveable { mutableStateOf("") }
     var transportNumber by rememberSaveable { mutableStateOf("") }
     var price by rememberSaveable { mutableStateOf("0") }
+
+    LaunchedEffect(itemId) {
+        if (itemId == null) return@LaunchedEffect
+        val item = viewModel.getItemById(itemId) ?: return@LaunchedEffect
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+        price           = item.price.toString()
+        locationName    = item.origin ?: item.locationName ?: ""
+        destination     = item.destination ?: ""
+        company         = item.company ?: ""
+        transportNumber = item.transportNumber ?: ""
+        address         = item.address ?: ""
+        checkInDate     = item.getInDate()?.let { dateFormat.format(it) } ?: ""
+    }
 
     // Tipus que es consideren transport (no mostren camp de nom ni adreça)
     val transports = listOf("train", "boat", "flight")
@@ -144,10 +172,30 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
         }
     }
 
+    val rutaSegura = ruta ?: return
+
+    val onConfirm: () -> Unit = {
+        val formState = PlanFormState(
+            locationName = locationName,
+            destination = destination,
+            company = company,
+            transportNumber = transportNumber,
+            address = address,
+            price = price.toDoubleOrNull() ?: 0.0,
+            checkInDate     = checkInDate
+        )
+        val status = if (itemId == null) {
+            viewModel.addItem(tripId, rutaSegura, formState)
+        } else {
+            viewModel.updateItem(itemId, rutaSegura, formState)
+        }
+        handleStatus(status, navController, tripId)
+    }
+
     Scaffold(
         topBar = {
             MyTopBar(
-                "${stringResource(R.string.add)} ${titleName.lowercase()}",
+                "${if (itemId == null) stringResource(R.string.add) else stringResource(R.string.edit)} ${titleName.lowercase()}",
                 onBackClick = { navController.popBackStack() }
             )
         }
@@ -277,20 +325,7 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
             // Botó per confirmar i afegir el pla; torna a la pantalla anterior
             item {
                 Button(
-                    onClick = {
-                        val status = viewModel.addItem(
-                            tripId = tripId,
-                            ruta = ruta ?: return@Button,
-                            locationName = locationName,
-                            destination = destination,
-                            company = company,
-                            transportNumber = transportNumber,
-                            address = address,
-                            price = price,
-                            checkInDate = checkInDate
-                        )
-                        handleStatus(status, navController, tripId)
-                    },
+                    onClick = onConfirm,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
@@ -302,7 +337,7 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int) {
                     )
                 ) {
                     Text(
-                        text = stringResource(R.string.add_plan),
+                        text = if (itemId == null) stringResource(R.string.add_plan) else stringResource(R.string.save),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -351,7 +386,7 @@ fun handleStatus(status: Int, navController: NavController, tripId: Int) {
     } else {
         Toast.makeText(
             navController.context,
-            AppError.fromCode(status).message,
+            navController.context.getString(AppError.fromCode(status).stringRes),
             Toast.LENGTH_SHORT
         ).show()
     }
@@ -361,11 +396,11 @@ fun handleStatus(status: Int, navController: NavController, tripId: Int) {
 @Preview(showBackground = true)
 @Composable
 fun HotelScreenPreview() {
-    PlanScreen(rememberNavController(), "hotel", 1)
+    PlanScreen(rememberNavController(), "hotel", 1, null)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun RestaurantScreenPreview() {
-    PlanScreen(rememberNavController(), "flight", 1)
+    PlanScreen(rememberNavController(), "flight", 1, null)
 }

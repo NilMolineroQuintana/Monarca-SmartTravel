@@ -163,6 +163,9 @@ object FakeItineraryItemDataSource {
     fun getItemsByTrip(tripId: Int): List<ItineraryItem> =
         items.filter { it.tripId == tripId }
 
+    fun getItemById(id: Int): ItineraryItem? =
+        items.find { it.id == id }
+
     fun addItem(item: ItineraryItem): Int {
         val newItem = item.copy(id = nextId)
         nextId++
@@ -175,9 +178,10 @@ object FakeItineraryItemDataSource {
 
     fun updateItem(item: ItineraryItem): Int {
         val index = items.indexOfFirst { it.id == item.id }
-        if (index == -1) return AppError.NON_EXISTING_TRIP.code
+        if (index == -1) return AppError.ITEM_NOT_FOUND.code
 
         items[index] = item
+        Log.d("ItineraryItemDataSource", "Updated item with ID: ${item.id}")
         return AppError.OK.code
     }
 

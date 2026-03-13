@@ -128,15 +128,17 @@ fun AppNavigation() {
                 PlanOptionsScreen(navController, tripId)
             }
             composable(
-                route = "plan/{route}/{tripId}",
+                route = "plan/{route}/{tripId}/{itemId}",
                 arguments = listOf(
                     navArgument("route") { type = NavType.StringType },
-                    navArgument("tripId") { type = NavType.IntType }
+                    navArgument("tripId") { type = NavType.IntType },
+                    navArgument("itemId") { type = NavType.IntType }
                 )
             ) { backStackEntry ->
                 val ruta = backStackEntry.arguments?.getString("route")
                 val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
-                PlanScreen(navController, ruta, tripId)
+                val itemId = backStackEntry.arguments?.getInt("itemId")
+                PlanScreen(navController, ruta, tripId, itemId)
             }
             composable("createTrip") {
                 CreateTripScreen(navController)
