@@ -42,16 +42,16 @@ The main objective of Sprint 02 is to implement the core logic of the Travel Pla
 ---
 
 ## 3. Definition of Done (DoD)
-- [ ] Implement base MVVM structure
-- [ ] inMemory CRUD operations for trips implemented following MVVM
-- [ ] inMemory CRUD operations for itinerary activities implemented following MVVM
-- [ ] Data validation implemented in ViewModel and UI layers (DatePickers, required fields, date ranges)
-- [ ] User preferences persisted with SharedPreferences and loaded on app start
-- [ ] Multi-language support implemented (ca, es, en)
-- [ ] Unit tests written for all major CRUD operations
-- [ ] Logs added to Logcat for CRUD operations, validation errors and unexpected behaviors
-- [ ] Documentation updated with test results
-- [ ] Release v2.X.X published on GitHub repository
+- Implement base MVVM structure
+- inMemory CRUD operations for trips implemented following MVVM
+- inMemory CRUD operations for itinerary activities implemented following MVVM
+- Data validation implemented in ViewModel and UI layers (DatePickers, required fields, date ranges)
+- User preferences persisted with SharedPreferences and loaded on app start
+- Multi-language support implemented (ca, es, en)
+- Unit tests written for all major CRUD operations
+- Logs added to Logcat for CRUD operations, validation errors and unexpected behaviors
+- Documentation updated with test results
+- Release v2.X.X published on GitHub repository
 
 ---
 
