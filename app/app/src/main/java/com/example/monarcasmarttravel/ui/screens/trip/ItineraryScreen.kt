@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens.trip
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +22,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsBoatFilled
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material.icons.filled.LocationCity
@@ -64,6 +67,7 @@ import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.OptionsPopUp
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.TopBarAction
 import com.example.monarcasmarttravel.ui.viewmodels.ItineraryViewModel
@@ -198,7 +202,6 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
             }
         }
     ) { innerPadding ->
-
         // PopUp de confirmació per eliminar el viatge
         PopUp(
             show = showPopUp,
@@ -504,6 +507,7 @@ fun ItineraryItemComponent(
 @Composable
 fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
     var showPopUp by remember { mutableStateOf(false) }
+    var showOptions by remember { mutableStateOf(false) }
 
     when (item.type.route) {
         // Transport: mostra origen → destí i número de vehicle
@@ -515,7 +519,7 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
             "${item.origin ?: "-"} -> ${item.destination ?: "-"}",
             "${item.transportNumber ?: "-"} (${item.company ?: "-"})",
             tertiaryText = "${item.price}€",
-            onLongClick = { showPopUp = true }
+            onLongClick = { showOptions = true }
         )
         // Allotjament / punt d'interès: mostra nom i adreça
         "hotel", "location", "restaurant" -> ItineraryItemComponent(
@@ -526,7 +530,7 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
             item.locationName ?: "",
             item.address ?: "",
             tertiaryText = "${item.price}€",
-            onLongClick = { showPopUp = true }
+            onLongClick = { showOptions = true }
         )
     }
 
@@ -540,6 +544,25 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }) {
             showPopUp = false
         },
         onDismiss = { showPopUp = false }
+    )
+
+    OptionsPopUp(
+        show = showOptions,
+        title = "Selecciona una opció",
+        options = listOf(
+            Icons.Default.Edit    to "Editar",
+            Icons.Default.Delete  to "Eliminar",
+        ),
+        onOptionSelected = { index ->
+            when (index) {
+                0 -> { Log.d("ItineraryScreen", "Edit clicked") }
+                1 -> {
+                    showOptions = false
+                    showPopUp = true
+                }
+            }
+        },
+        onDismiss = { showOptions = false }
     )
 }
 

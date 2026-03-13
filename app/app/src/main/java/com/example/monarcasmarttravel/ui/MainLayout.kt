@@ -2,6 +2,7 @@ package com.example.monarcasmarttravel.ui
 
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -28,6 +29,8 @@ import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Luggage
@@ -43,6 +46,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -509,8 +513,8 @@ fun WideOption(
     rounded: Boolean = true,
     color: Color = MaterialTheme.colorScheme.surfaceVariant,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     action: WideOptionAction = WideOptionAction.Arrow,
-    modifier: Modifier = Modifier
 ) {
     val shape = if (rounded) RoundedCornerShape(12.dp) else RectangleShape
 
@@ -522,7 +526,7 @@ fun WideOption(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
+            modifier = modifier.padding(16.dp)
         ) {
             Icon(ico, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.width(12.dp))
@@ -695,21 +699,6 @@ fun PopUp(
         )
     }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-//  AFEGIR A MainLayout.kt
-// ═══════════════════════════════════════════════════════════════════════════
-//
-//  1. IMPORTS (afegir als ja existents):
-//
-//     import androidx.compose.material3.DatePicker
-//     import androidx.compose.material3.DatePickerDialog
-//     import androidx.compose.material3.ExperimentalMaterial3Api
-//     import androidx.compose.material3.rememberDatePickerState
-//
-// ═══════════════════════════════════════════════════════════════════════════
-//  2. COMPONENTS (afegir just abans de les @Preview finals de MainLayout.kt)
-// ═══════════════════════════════════════════════════════════════════════════
 
 /**
  * Diàleg emergent per editar un camp de text.
@@ -966,6 +955,51 @@ fun DateField(
 
 
 /**
+ * Diàleg emergent que mostra una llista d'opcions seleccionables.
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param title Títol del diàleg.
+ * @param options Llista de parells (icona, text) per a cada opció.
+ * @param onOptionSelected Acció invocada amb l'índex de l'opció seleccionada.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@Composable
+fun OptionsPopUp(
+    show: Boolean,
+    title: String,
+    options: List<Pair<ImageVector, String>>,
+    onOptionSelected: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            Column {
+                options.forEachIndexed { index, (icon, label) ->
+                    WideOption(
+                        ico = icon,
+                        text = label,
+                        color = Color.Transparent,
+                        rounded = false,
+                        onClick = {
+                            onOptionSelected(index)
+                            onDismiss()
+                        }
+                    )
+                    if (index < options.lastIndex) {
+                        HorizontalDivider(thickness = 1.dp)
+                    }
+                }
+            }
+        },
+        confirmButton = { }
+    )
+}
+
+/**
  * Obté la versió de l'aplicació instal·lada al dispositiu a partir del PackageManager.
  * Retorna "Desconegut" en cas d'error.
  */
@@ -983,6 +1017,26 @@ fun getAppVersion(): String {
     } catch (e: Exception) {
         stringResource(R.string.unknown)
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OptionsPopUpPreview() {
+    OptionsPopUp(
+        show = true,
+        title = "Selecciona una opció",
+        options = listOf(
+            Icons.Default.Edit    to "Editar",
+            Icons.Default.Delete  to "Eliminar",
+        ),
+        onOptionSelected = { index ->
+            when (index) {
+                0 -> { }
+                1 -> { }
+            }
+        },
+        onDismiss = { }
+    )
 }
 
 @Preview(showBackground = true)
