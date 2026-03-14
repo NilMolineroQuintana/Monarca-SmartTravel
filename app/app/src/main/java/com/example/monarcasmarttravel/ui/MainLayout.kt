@@ -910,20 +910,34 @@ fun DateField(
     onDateSelected: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    initialDateMillis: Long? = null
+    initialDateMillis: Long? = null,
+    showTime: Boolean = true
 ) {
     var showPicker by remember { mutableStateOf(false) }
 
-    DateTimePickerPopUp(
-        show = showPicker,
-        title = label,
-        initialDateMillis = initialDateMillis,
-        onAccept = { dateTime ->
-            onDateSelected(dateTime)
-            showPicker = false
-        },
-        onDismiss = { showPicker = false }
-    )
+    if (showTime) {
+        DateTimePickerPopUp(
+            show = showPicker,
+            title = label,
+            initialDateMillis = initialDateMillis,
+            onAccept = { dateTime ->
+                onDateSelected(dateTime)
+                showPicker = false
+            },
+            onDismiss = { showPicker = false }
+        )
+    } else {
+        DatePickerPopUp(
+            show = showPicker,
+            title = label,
+            initialDateMillis = initialDateMillis,
+            onAccept = { date ->
+                onDateSelected(date)
+                showPicker = false
+            },
+            onDismiss = { showPicker = false }
+        )
+    }
 
     OutlinedTextField(
         value = value,
