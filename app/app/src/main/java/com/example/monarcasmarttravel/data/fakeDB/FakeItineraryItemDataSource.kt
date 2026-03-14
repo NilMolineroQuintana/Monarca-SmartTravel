@@ -8,6 +8,7 @@ import java.util.Calendar
 
 object FakeItineraryItemDataSource {
 
+    private val TAG = "ItineraryItemDataSource"
     private val calendar = Calendar.getInstance()
 
     private val items = mutableListOf(
@@ -167,29 +168,32 @@ object FakeItineraryItemDataSource {
         items.find { it.id == id }
 
     fun addItem(item: ItineraryItem): Int {
-        val newItem = item.copy(id = nextId)
-        nextId++
-
+        val newItem = item.copy(id = nextId++)
         items.add(newItem)
-        Log.d("ItineraryItemDataSource", "Added item with ID: ${newItem.id} ${items.last()}")
-
+        Log.i(TAG, "addItem: afegit id=${newItem.id}, tripId=${newItem.tripId}, tipus=${newItem.type}")
+        Log.d(TAG, "addItem: total items al datasource=${items.size}")
         return AppError.OK.code
     }
 
-
     fun updateItem(item: ItineraryItem): Int {
         val index = items.indexOfFirst { it.id == item.id }
-        if (index == -1) return AppError.NON_EXISTING_ITEM.code
-
+        if (index == -1) {
+            Log.w(TAG, "updateItem: no s'ha trobat id=${item.id}")
+            return AppError.NON_EXISTING_ITEM.code
+        }
         items[index] = item
-        Log.d("ItineraryItemDataSource", "Updated item with ID: ${item.id} ${items[index]}")
+        Log.i(TAG, "updateItem: actualitzat id=${item.id}, tipus=${item.type}")
         return AppError.OK.code
     }
 
     fun deleteItem(id: Int): Int {
-        val debugSize = items.size
-        val status = if (items.removeIf { it.id == id }) AppError.OK.code else AppError.NON_EXISTING_ITEM.code
-        Log.d("ItineraryItemDataSource", "Deleted item with id: $id with status: $status ($debugSize -> ${items.size})")
-        return status
+        val removed = items.removeIf { it.id == id }
+        return if (removed) {
+            Log.i(TAG, "deleteItem: eliminat id=$id, total restants=${items.size}")
+            AppError.OK.code
+        } else {
+            Log.w(TAG, "deleteItem: no s'ha trobat id=$id")
+            AppError.NON_EXISTING_ITEM.code
+        }
     }
 }

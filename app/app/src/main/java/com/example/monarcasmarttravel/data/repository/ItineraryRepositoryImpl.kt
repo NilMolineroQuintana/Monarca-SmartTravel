@@ -14,27 +14,45 @@ class ItineraryRepositoryImpl @Inject constructor() : ItineraryRepository {
     private val TAG = "ItineraryRepositoryImpl"
     private val dataSource = FakeItineraryItemDataSource
 
-    override suspend fun getItemsByTrip(tripId: Int): List<ItineraryItem> =
-        dataSource.getItemsByTrip(tripId)
+    override suspend fun getItemsByTrip(tripId: Int): List<ItineraryItem> {
+        val result = dataSource.getItemsByTrip(tripId)
+        Log.d(TAG, "getItemsByTrip: tripId=$tripId -> ${result.size} items")
+        return result
+    }
 
-    override fun getItemById(id: Int): ItineraryItem? =
-        dataSource.getItemById(id)
+    override fun getItemById(id: Int): ItineraryItem? {
+        val item = dataSource.getItemById(id)
+        if (item == null) Log.w(TAG, "getItemById: no s'ha trobat id=$id")
+        return item
+    }
 
     override fun addItineraryItem(item: ItineraryItem): Int {
         val status = dataSource.addItem(item)
-        Log.d(TAG, "Added item: $item with status: $status")
+        if (status == AppError.OK.code) {
+            Log.i(TAG, "addItineraryItem: creat -> tripId=${item.tripId}, tipus=${item.type}")
+        } else {
+            Log.e(TAG, "addItineraryItem: error inesperat -> status=$status, tipus=${item.type}")
+        }
         return status
     }
 
     override fun updateItineraryItem(item: ItineraryItem): Int {
         val status = dataSource.updateItem(item)
-        Log.d(TAG, "Updated item: $item with status: $status")
+        if (status == AppError.OK.code) {
+            Log.i(TAG, "updateItineraryItem: actualitzat -> id=${item.id}, tipus=${item.type}")
+        } else {
+            Log.w(TAG, "updateItineraryItem: no s'ha trobat id=${item.id}")
+        }
         return status
     }
 
     override fun deleteItineraryItem(id: Int): Int {
         val status = dataSource.deleteItem(id)
-        Log.d(TAG, "Deleted item with id: $id with status: $status")
+        if (status == AppError.OK.code) {
+            Log.i(TAG, "deleteItineraryItem: eliminat -> id=$id")
+        } else {
+            Log.w(TAG, "deleteItineraryItem: no s'ha trobat id=$id")
+        }
         return status
     }
 }
