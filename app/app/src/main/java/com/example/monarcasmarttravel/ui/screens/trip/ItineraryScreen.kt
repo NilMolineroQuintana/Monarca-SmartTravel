@@ -1,11 +1,13 @@
 package com.example.monarcasmarttravel.ui.screens.trip
 
 import android.util.Log
+import android.view.Surface
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -161,6 +164,8 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
     val items by itineraryViewModel.items.collectAsState()
     val isLoading by itineraryViewModel.isLoading.collectAsState()
 
+    var selectedDay by remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(tripId) {
         itineraryViewModel.loadItemsByTrip(tripId)
     }
@@ -169,6 +174,15 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
         .sortedBy { it.getInDate() }
         .filter { it.getInDate() != null }
         .groupBy { it.formatDateKey(it.getInDate()!!) }
+
+    val filteredData = if (selectedDay == null) {
+        groupedData
+    } else {
+        groupedData.filter { (_, itemsDelDia) ->
+            val date = itemsDelDia.first().getInDate()!!
+            SimpleDateFormat("dd MMM", Locale.getDefault()).format(date) == selectedDay
+        }
+    }
 
     val numItems = items.size
     var showPopUp by remember { mutableStateOf(false) }
@@ -247,7 +261,20 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                         ItineraryStatsComponent(items.sumOf { it.price }, numItems)
                         Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
                     }
-                    groupedData.forEach { (date, itemsDelDia) ->
+                    item {
+                        DaysList(
+                            days = groupedData.entries.map { (_, itemsDelDia) ->
+                                val date = itemsDelDia.first().getInDate()!!
+                                SimpleDateFormat("dd MMM", Locale.getDefault()).format(date)
+                            },
+                            selectedDay = selectedDay,
+                            onDaySelected = { day ->
+                                selectedDay = if (selectedDay == day) null else day  // toggle
+                            }
+                        )
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
+                    }
+                    filteredData.forEach { (date, itemsDelDia) ->
                         item {
                             DivisorComponent(date)
                             Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
@@ -565,6 +592,50 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }, navC
         },
         onDismiss = { showOptions = false }
     )
+}
+
+@Composable
+fun DaysList(
+    days: List<String>,
+    selectedDay: String? = null,
+    onDaySelected: (String) -> Unit = {}
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = AppDimensions.PaddingMedium)
+    ) {
+        items(days) { day ->
+            CircleTest(
+                text = day,
+                enabled = day == selectedDay,  // resalta el seleccionado
+                onClick = { onDaySelected(day) }
+            )
+        }
+    }
+}
+
+@Composable
+fun CircleTest(
+    text: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = false,
+    onClick: () -> Unit = {}
+) {
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = if (enabled) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.surfaceVariant,
+        modifier = modifier.clickable { onClick() }
+    ) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
