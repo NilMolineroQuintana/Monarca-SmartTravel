@@ -148,4 +148,5 @@
     <string name="error_item_out_of_range">El elemento está fuera del rango del viaje.</string>
     <string name="error_non_existing_date">La fecha no está asignada.</string>
     <string name="error_unknown">Se ha producido un error inesperado.</string>
+    <string name="edit_trip">Editar viaje</string>
 </resources>

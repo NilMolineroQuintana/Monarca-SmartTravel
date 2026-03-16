@@ -148,4 +148,5 @@
     <string name="error_item_out_of_range">The item is outside the trip\'s date range.</string>
     <string name="error_non_existing_date">The date is not assigned.</string>
     <string name="error_unknown">An unexpected error has occurred.</string>
+    <string name="edit_trip">Edit trip</string>
 </resources>

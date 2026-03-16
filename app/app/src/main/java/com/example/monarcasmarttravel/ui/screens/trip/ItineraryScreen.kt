@@ -193,6 +193,10 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 onBackClick = { navController.popBackStack() },
                 menuItems = listOf(
                     TopBarAction(
+                        stringResource(R.string.edit_trip),
+                        onClick = { /* @TODO Nav to edit trip screen */ }
+                    ),
+                    TopBarAction(
                         stringResource(R.string.deleteTrip),
                         onClick = { showPopUp = true }
                     ),
@@ -259,7 +263,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 } else {
                     item {
                         ItineraryStatsComponent(items.sumOf { it.price }, numItems)
-                        Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                     }
                     item {
                         DaysList(
@@ -269,10 +273,10 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                             },
                             selectedDay = selectedDay,
                             onDaySelected = { day ->
-                                selectedDay = if (selectedDay == day) null else day  // toggle
+                                selectedDay = if (selectedDay == day) null else day
                             }
                         )
-                        Spacer(modifier = Modifier.size(AppDimensions.PaddingMedium))
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
                     }
                     filteredData.forEach { (date, itemsDelDia) ->
                         item {
@@ -373,11 +377,13 @@ fun ItineraryStatsComponent(budget: Double, items: Int) {
         StatItem(
             label = stringResource(R.string.budget),
             value = "$budget€",
+            rounded = RoundedCornerShape(bottomStart = 20.dp),
             modifier = Modifier.weight(1f)
         )
         StatItem(
             label = stringResource(R.string.activities),
             value = "$items",
+            rounded = RoundedCornerShape(bottomEnd = 20.dp),
             modifier = Modifier.weight(1f)
         )
     }
@@ -390,24 +396,25 @@ fun ItineraryStatsComponent(budget: Double, items: Int) {
 private fun StatItem(
     label: String,
     value: String,
+    rounded: RoundedCornerShape,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
+            .clip(rounded)
             .background(MaterialTheme.colorScheme.surfaceContainer)
-            .border(0.5.dp, MaterialTheme.colorScheme.outline)
             .padding(AppDimensions.PaddingSmall),
-        contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = value,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = label,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }
@@ -479,27 +486,30 @@ fun ItineraryItemComponent(
             )
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(AppDimensions.PaddingMedium),
             modifier = Modifier.padding(horizontal = AppDimensions.PaddingMedium, vertical = AppDimensions.PaddingSmall)
         ) {
-            Text(
-                text = enterTime,
-                style = MaterialTheme.typography.labelLarge
-            )
-
-            // Contenidor de la icona amb color de fons personalitzat per tipus de pla
-            Surface(
-                modifier = Modifier.size(40.dp),
-                shape = RoundedCornerShape(12.dp),
-                color = background
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(
-                    imageVector = ico,
-                    contentDescription = null,
-                    tint = color,
-                    modifier = Modifier.padding(AppDimensions.PaddingSmall)
+                Text(
+                    text = enterTime,
+                    style = MaterialTheme.typography.titleMedium,
                 )
+                // Contenidor de la icona amb color de fons personalitzat per tipus de pla
+                Surface(
+                    modifier = Modifier.size(35.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    color = background
+                ) {
+                    Icon(
+                        imageVector = ico,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.padding(AppDimensions.PaddingSmall)
+                    )
+                }
             }
 
             Column(modifier = Modifier.weight(1f)) {
@@ -544,7 +554,7 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }, navC
             item.type.iconColor,
             item.type.backgroundColor,
             item.getDateInTime(),
-            "${item.origin ?: "-"} -> ${item.destination ?: "-"}",
+            "${item.origin ?: "-"} → ${item.destination ?: "-"}",
             "${item.transportNumber ?: "-"} (${item.company ?: "-"})",
             tertiaryText = "${item.price}€",
             onLongClick = { showOptions = true }
@@ -609,7 +619,7 @@ fun DaysList(
         items(days) { day ->
             CircleTest(
                 text = day,
-                enabled = day == selectedDay,  // resalta el seleccionado
+                enabled = day == selectedDay,
                 onClick = { onDaySelected(day) }
             )
         }
@@ -638,10 +648,35 @@ fun CircleTest(
     }
 }
 
+@Preview
+@Composable
+fun ItineraryStatsComponentPreview() {
+    ItineraryStatsComponent(100.0, 2)
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ItineraryPreview() {
     ItineraryScreen(rememberNavController(), 1)
+}
+
+@Preview
+@Composable
+fun ItineraryItemComponentPreview() {
+    ItineraryItemComponent(
+        ItineraryItem(
+            0,
+            0,
+            PlanType.FLIGHT,
+            origin = "AAAA",
+            destination = "EEEEE",
+            company = "JJJJJ",
+            transportNumber = "FAAAA",
+            price = 100.0,
+            departureDate = Date()
+        ),
+        navController = rememberNavController()
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
