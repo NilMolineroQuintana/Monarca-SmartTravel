@@ -147,4 +147,5 @@
     <string name="error_non_existing_date">La data no està assignada.</string>
     <string name="error_unknown">S\'ha produït un error inesperat.</string>
     <string name="edit_trip">Editar viatge</string>
+    <string name="invalid_format">Format invàlid</string>
 </resources>

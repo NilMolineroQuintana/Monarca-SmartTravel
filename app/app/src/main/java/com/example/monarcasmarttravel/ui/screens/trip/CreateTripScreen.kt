@@ -193,6 +193,7 @@ fun CreateTripScreen(
                         startDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                         Log.d(TAG, "Data inici seleccionada: $dateStr")
                     },
+                    blockPastDates = true,
                     showTime = false
                 )
                 DateField(
@@ -204,6 +205,7 @@ fun CreateTripScreen(
                         endDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                         Log.d(TAG, "Data fi seleccionada: $dateStr")
                     },
+                    blockPastDates = true,
                     showTime = false
                 )
             }

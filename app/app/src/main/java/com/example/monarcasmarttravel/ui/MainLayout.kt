@@ -151,7 +151,7 @@ fun MyTopBar(
             if (title.isNotEmpty()) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = if (onBackClick == null) AppDimensions.PaddingMedium else AppDimensions.PaddingSmall)
                 )
@@ -783,13 +783,37 @@ fun DatePickerPopUp(
     initialDateMillis: Long? = null,
     acceptText: String = stringResource(R.string.accept),
     cancelText: String = stringResource(R.string.cancel),
+    blockPastDates: Boolean = false,
     onAccept: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     if (!show) return
 
+    val today = remember {
+        java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    val selectableDates = if (blockPastDates) {
+        object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis >= today
+            }
+        }
+    } else {
+        object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = true
+            override fun isSelectableYear(year: Int) = true
+        }
+    }
+
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialDateMillis
+        initialSelectedDateMillis = initialDateMillis,
+        selectableDates = selectableDates
     )
 
     DatePickerDialog(
@@ -820,7 +844,8 @@ fun DatePickerPopUp(
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
                 )
-            }
+            },
+            showModeToggle = false
         )
     }
 }
@@ -833,6 +858,7 @@ fun DateTimePickerPopUp(
     initialDateMillis: Long? = null,
     acceptText: String = stringResource(R.string.accept),
     cancelText: String = stringResource(R.string.cancel),
+    blockPastDates: Boolean = false,
     onAccept: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -841,9 +867,33 @@ fun DateTimePickerPopUp(
     var step by remember { mutableStateOf(1) }
     var selectedDateMillis by remember { mutableStateOf(initialDateMillis) }
 
+    val today = remember {
+        java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    val selectableDates = if (blockPastDates) {
+        object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis >= today
+            }
+        }
+    } else {
+        object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = true
+            override fun isSelectableYear(year: Int) = true
+        }
+    }
+
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialDateMillis
+        initialSelectedDateMillis = initialDateMillis,
+        selectableDates = selectableDates
     )
+
     val timePickerState = rememberTimePickerState(
         initialHour = 10,
         initialMinute = 0
@@ -873,7 +923,8 @@ fun DateTimePickerPopUp(
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
                     )
-                }
+                },
+                showModeToggle = false
             )
         }
     } else {
@@ -911,7 +962,8 @@ fun DateField(
     label: String,
     modifier: Modifier = Modifier,
     initialDateMillis: Long? = null,
-    showTime: Boolean = true
+    showTime: Boolean = true,
+    blockPastDates: Boolean = false
 ) {
     var showPicker by remember { mutableStateOf(false) }
 
@@ -920,6 +972,7 @@ fun DateField(
             show = showPicker,
             title = label,
             initialDateMillis = initialDateMillis,
+            blockPastDates = blockPastDates,
             onAccept = { dateTime ->
                 onDateSelected(dateTime)
                 showPicker = false
@@ -931,6 +984,7 @@ fun DateField(
             show = showPicker,
             title = label,
             initialDateMillis = initialDateMillis,
+            blockPastDates = blockPastDates,
             onAccept = { date ->
                 onDateSelected(date)
                 showPicker = false

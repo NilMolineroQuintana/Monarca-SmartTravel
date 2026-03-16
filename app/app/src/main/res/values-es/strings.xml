@@ -149,4 +149,5 @@
     <string name="error_non_existing_date">La fecha no está asignada.</string>
     <string name="error_unknown">Se ha producido un error inesperado.</string>
     <string name="edit_trip">Editar viaje</string>
+    <string name="invalid_format">Formato inválido</string>
 </resources>

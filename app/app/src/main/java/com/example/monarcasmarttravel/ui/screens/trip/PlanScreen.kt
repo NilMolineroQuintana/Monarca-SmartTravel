@@ -290,6 +290,7 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId:
                         value = checkInDate,
                         onDateSelected = { checkInDate = it },
                         label = stringResource(R.string.data_de_entrada),
+                        blockPastDates = true,
                         modifier = Modifier.weight(1f)
                     )
                     /*
@@ -311,11 +312,11 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId:
                     value = price,
                     onValueChange = { price = it },
                     label = stringResource(R.string.price),
-                    placeholder = "Preu",
+                    placeholder = stringResource(R.string.price),
                     leadingIcon = Icons.Default.AttachMoney,
                     keyboardType = KeyboardType.Decimal,
                     isError = priceError,
-                    errorMessage = if (priceError) "Format invàlid" else null
+                    errorMessage = if (priceError) stringResource(R.string.invalid_format) else null
                 )
             }
 
