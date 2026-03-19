@@ -92,6 +92,7 @@
     <string name="quick_actions">Accions ràpides</string>
     <string name="create_new_trip">Crear nou viatge</string>
     <string name="create_new_trip_description">Planifica el teu viatge des de zero</string>
+    <string name="trip_options_title">Opcions del viatge</string>
     <string name="no_plans">No tens cap plan</string>
     <string name="add_new_plan">Afegir un nou</string>
     <string name="days_of_duration">%1$s - %2$s • %3$d dies de durada</string>

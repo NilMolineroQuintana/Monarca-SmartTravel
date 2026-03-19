@@ -92,6 +92,7 @@
     <string name="which_adventure">¿Qué aventura planeamos hoy?</string>
     <string name="quick_actions">Acciones rápidas</string>
     <string name="create_new_trip">Crear nuevo viaje</string>
+    <string name="trip_options_title">Trip options</string>
     <string name="create_new_trip_description">Planifica tu viaje desde cero</string>
     <string name="no_plans">No tienes ningún plan</string>
     <string name="add_new_plan">Añadir uno nuevo</string>
