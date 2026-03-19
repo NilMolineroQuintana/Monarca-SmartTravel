@@ -55,10 +55,6 @@ class MainActivity : ComponentActivity() {
 
 /**
  * Navegació principal de l'aplicació.
- *
- * El [TripViewModel] ja no es crea manualment amb remember{}: ara Hilt
- * l'injecta a cada pantalla via hiltViewModel(), garantint que el cicle
- * de vida sigui correcte i que l'estat no es perdi en rotar la pantalla.
  */
 @Composable
 fun AppNavigation() {
@@ -121,6 +117,20 @@ fun AppNavigation() {
                 AlbumScreen(navController, tripId)
             }
             composable(
+                route = "createTrip?tripId={tripId}",
+                arguments = listOf(
+                    navArgument("tripId") {
+                        type = NavType.IntType
+                        defaultValue = -1   // -1 significa "no hi ha tripId" (mode creació)
+                    }
+                )
+            ) { backStackEntry ->
+                val rawId = backStackEntry.arguments?.getInt("tripId") ?: -1
+                val tripId = if (rawId == -1) null else rawId
+                CreateTripScreen(navController, tripId)
+            }
+            // ── Plans de l'itinerari ─────────────────────────────────────────
+            composable(
                 route = "plan/{tripId}",
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
             ) { backStackEntry ->
@@ -150,9 +160,6 @@ fun AppNavigation() {
                 val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
                 val itemId = backStackEntry.arguments?.getInt("itemId")
                 PlanScreen(navController, ruta, tripId, itemId)
-            }
-            composable("createTrip") {
-                CreateTripScreen(navController)
             }
         }
     }

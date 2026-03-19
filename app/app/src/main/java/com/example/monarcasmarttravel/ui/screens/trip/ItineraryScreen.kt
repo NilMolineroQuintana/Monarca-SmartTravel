@@ -194,7 +194,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 menuItems = listOf(
                     TopBarAction(
                         stringResource(R.string.edit_trip),
-                        onClick = { /* @TODO Nav to edit trip screen */ }
+                        onClick = { navController.navigate("createTrip?tripId=$tripId") }
                     ),
                     TopBarAction(
                         stringResource(R.string.deleteTrip),
