@@ -1,6 +1,7 @@
 package com.example.monarcasmarttravel.ui.screens.trip
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,17 +20,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,9 +55,12 @@ private const val DATE_FORMAT = "dd/MM/yyyy"
  * - Si [tripId] té valor → mode edició: pre-omple els camps amb les dades actuals del viatge
  *   via [LaunchedEffect], crida [TripViewModel.updateTrip].
  *
- * La validació de camps obligatoris i el rang de dates es fa a la capa UI.
- * La validació de negoci (títol buit, dateOut > dateIn) la fa el repositori a través
- * del ViewModel, i els errors pugen com a [errorMessage] mostrats en un Snackbar.
+ * La UI valida que tots els camps obligatoris tinguin contingut i que
+ * la data de fi sigui posterior a la d'inici, mostrant errors en línia
+ * abans d'habilitar el botó (validació capa UI).
+ *
+ * La validació de negoci final la fa el repositori a través del ViewModel,
+ * i els errors pugen com a [errorMessage] mostrats amb un Toast.
  *
  * @param navController Controlador de navegació.
  * @param tripId Identificador del viatge a editar. Null si és una creació nova.
@@ -71,12 +73,13 @@ fun CreateTripScreen(
     viewModel: TripViewModel = hiltViewModel()
 ) {
     val isEditMode = tripId != null
+    val context = LocalContext.current
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
-    var title         by rememberSaveable { mutableStateOf("") }
-    var description   by rememberSaveable { mutableStateOf("") }
-    var startDateText by rememberSaveable { mutableStateOf("") }
-    var endDateText   by rememberSaveable { mutableStateOf("") }
+    var title       by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var startDateText by remember { mutableStateOf("") }
+    var endDateText   by remember { mutableStateOf("") }
     var startDate     by remember { mutableStateOf<Date?>(null) }
     var endDate       by remember { mutableStateOf<Date?>(null) }
 
@@ -84,8 +87,6 @@ fun CreateTripScreen(
     var titleError       by remember { mutableStateOf<String?>(null) }
     var descriptionError by remember { mutableStateOf<String?>(null) }
     var dateRangeError   by remember { mutableStateOf<String?>(null) }
-
-    val snackbarHostState = remember { SnackbarHostState() }
 
     // Mode edició: pre-omple el formulari amb les dades del viatge existent,
     LaunchedEffect(tripId) {
@@ -100,10 +101,10 @@ fun CreateTripScreen(
         Log.d(TAG, "Mode edició: pre-omplert viatge id=$tripId")
     }
 
-    // Mostra els errors del domini/repositori com a Snackbar
+    // Mostra els errors del domini/repositori com a Toast
     LaunchedEffect(viewModel.errorMessage) {
         viewModel.errorMessage?.let {
-            snackbarHostState.showSnackbar(it)
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
             viewModel.clearError()
         }
     }
@@ -129,8 +130,7 @@ fun CreateTripScreen(
                 else stringResource(R.string.new_trip),
                 onBackClick = { navController.popBackStack() }
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
