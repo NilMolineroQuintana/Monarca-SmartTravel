@@ -92,6 +92,47 @@ class TripViewModel @Inject constructor(
     }
 
     /**
+     * Actualitza els camps editables d'un viatge existent (títol, descripció i dates).
+     */
+    fun updateTrip(
+        tripId: Int,
+        title: String,
+        description: String,
+        dateIn: Date,
+        dateOut: Date
+    ): Boolean {
+        return try {
+            val existing = trips.find { it.id == tripId } ?: run {
+                errorMessage = "No s'ha trobat el viatge a editar."
+                Log.w(TAG, "updateTrip: viatge no trobat id=$tripId")
+                return false
+            }
+            val updated = existing.copy(
+                title = title.trim(),
+                description = description,
+                dateIn = dateIn,
+                dateOut = dateOut,
+                imageResId = resolveImageForDestination(title) ?: existing.imageResId
+            )
+            val result = repository.updateTrip(updated)
+            if (result != null) {
+                refreshTrips()
+                errorMessage = null
+                Log.i(TAG, "updateTrip: viatge actualitzat -> id=$tripId, destí=$title")
+                true
+            } else {
+                errorMessage = "No s'ha pogut actualitzar el viatge."
+                Log.w(TAG, "updateTrip: error en actualitzar id=$tripId")
+                false
+            }
+        } catch (e: IllegalArgumentException) {
+            errorMessage = e.message
+            Log.e(TAG, "updateTrip: error de validació -> ${e.message}")
+            false
+        }
+    }
+
+    /**
      * Elimina un viatge cridant [Trip.deleteTrip].
      */
     fun deleteTrip(tripId: Int): Boolean {
