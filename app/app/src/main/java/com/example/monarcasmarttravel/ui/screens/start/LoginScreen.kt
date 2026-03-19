@@ -140,7 +140,7 @@ fun LoginScreen(navController: NavController) {
                 )
 
                 Text(
-                    text = stringResource(R.string.i_agree_with) + " ",
+                    text = stringResource(R.string.i_agree_with),
                     style = MaterialTheme.typography.bodyMedium
                 )
 
