@@ -1,10 +1,12 @@
 package com.example.monarcasmarttravel.data.repository
 
 import android.util.Log
+import com.example.monarcasmarttravel.data.fakeDB.FakeItineraryItemDataSource
 import com.example.monarcasmarttravel.data.fakeDB.FakeTripDataSource
 import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import com.example.monarcasmarttravel.domain.model.Trip
 import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,6 +23,7 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
 
     private val TAG = "TripRepositoryImpl"
     private val dataSource = FakeTripDataSource
+    private val itineraryDataSource = FakeItineraryItemDataSource
 
     override fun getAllTrips(): List<Trip> = dataSource.getAllTrips()
 
@@ -40,11 +43,19 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
 
     /**
      * Valida i actualitza un viatge existent.
-     * @throws IllegalArgumentException si les dades no superen la validació.
+     *
+     * A més de la validació de camps bàsica, comprova que cap element de
+     * l'itinerari existent quedi fora del nou rang de dates del viatge.
+     * Ampliar les dates sempre és permès; reduir-les només ho és si cap
+     * item queda fora del nou rang.
+     *
+     * @throws IllegalArgumentException si les dades no superen la validació
+     *         o si algun item de l'itinerari quedaria fora del nou rang de dates.
      * @return El viatge actualitzat, o null si no s'ha trobat.
      */
     override fun updateTrip(trip: Trip): Trip? {
         validateTrip(trip)
+        validateItineraryItemsInRange(trip)
         val updated = dataSource.updateTrip(trip)
         if (updated != null) {
             Log.i(TAG, "updateTrip: actualitzat id=${trip.id}")
@@ -54,12 +65,33 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
         return updated
     }
 
+    /**
+     * Elimina un viatge i tots els elements de l'itinerari associats (cascade delete).
+     *
+     * Els [ItineraryItem] d'un viatge no tenen sentit sense el viatge pare,
+     * per tant s'eliminen primer per mantenir la consistència de les dades
+     * en memòria. Aquesta lògica resideix al repositori (no al ViewModel ni a la UI)
+     * seguint el principi de separació de responsabilitats.
+     *
+     * @return true si el viatge s'ha eliminat correctament, false si no s'ha trobat.
+     */
     override fun deleteTrip(tripId: Int): Boolean {
+        // Obté els items de l'itinerari abans d'eliminar el viatge
+        val itemsToDelete = itineraryDataSource.getItemsByTrip(tripId)
+
+        // Elimina cada item de l'itinerari associat al viatge (cascade)
+        itemsToDelete.forEach { item ->
+            itineraryDataSource.deleteItem(item.id)
+            Log.d(TAG, "deleteTrip: eliminat item id=${item.id} del viatge id=$tripId")
+        }
+        Log.i(TAG, "deleteTrip: eliminats ${itemsToDelete.size} items de l'itinerari del viatge id=$tripId")
+
+        // Elimina el viatge
         val status = dataSource.deleteTrip(tripId)
         if (status) {
-            Log.i(TAG, "deleteTrip: eliminat id=$tripId")
+            Log.i(TAG, "deleteTrip: viatge eliminat id=$tripId")
         } else {
-            Log.w(TAG, "deleteTrip: no s'ha trobat id=$tripId")
+            Log.w(TAG, "deleteTrip: no s'ha trobat el viatge id=$tripId")
         }
         return status
     }
@@ -90,5 +122,47 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
         require(trip.dateOut.after(trip.dateIn)) {
             "La data d'inici ha de ser anterior a la data de fi."
         }
+    }
+
+    /**
+     * Comprova que el primer i l'últim element de l'itinerari del viatge
+     * quedin dins del nou rang [trip.dateIn, trip.dateOut].
+     *
+     * Els items estan ordenats per data, de manera que si el primer i l'últim
+     * estan dins del rang, tots els del mig també ho estaran — no cal iterar-los.
+     *
+     * Utilitza precisió de minuts per ser consistent amb [ItineraryViewModel.validateDate].
+     *
+     * @throws IllegalArgumentException amb el nom de l'item conflictiu.
+     */
+    private fun validateItineraryItemsInRange(trip: Trip) {
+        val items = itineraryDataSource.getItemsByTrip(trip.id)
+            .filter { it.getInDate() != null }
+
+        if (items.isEmpty()) return
+
+        val tripStartMin = trip.dateIn.time  / 60_000
+        val tripEndMin   = trip.dateOut.time / 60_000
+
+        val first = items.minByOrNull { it.getInDate()!!.time }!!
+        val last  = items.maxByOrNull { it.getInDate()!!.time }!!
+
+        if (first.getInDate()!!.time / 60_000 < tripStartMin) {
+            val label = first.locationName ?: first.origin ?: "id=${first.id}"
+            Log.w(TAG, "validateItineraryItemsInRange: '$label' queda abans del nou inici -> viatge id=${trip.id}")
+            throw IllegalArgumentException(
+                "No es pot avançar l'inici del viatge: \"$label\" quedaria fora del rang."
+            )
+        }
+
+        if (last.getInDate()!!.time / 60_000 > tripEndMin) {
+            val label = last.locationName ?: last.origin ?: "id=${last.id}"
+            Log.w(TAG, "validateItineraryItemsInRange: '$label' queda després del nou final -> viatge id=${trip.id}")
+            throw IllegalArgumentException(
+                "No es pot endarrerir el final del viatge: \"$label\" quedaria fora del rang."
+            )
+        }
+
+        Log.d(TAG, "validateItineraryItemsInRange: rang vàlid per al viatge id=${trip.id}")
     }
 }
