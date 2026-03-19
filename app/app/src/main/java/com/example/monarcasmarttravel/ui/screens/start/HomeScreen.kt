@@ -30,12 +30,16 @@ import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.TripCard
 import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
+import java.util.Date
 
 /**
  * Pantalla principal de l'aplicació.
  *
  * Mostra el viatge futur més proper obtingut del [TripViewModel].
  * Si no hi ha cap viatge pròxim, la secció de la targeta no es renderitza.
+ *
+ * La [TripCard] suporta clic llarg per editar o eliminar el viatge directament
+ * des de la pantalla d'inici, seguint el mateix patró que [TripsScreen].
  *
  * @param navController Controlador de navegació.
  * @param viewModel ViewModel gestionat per Hilt.
@@ -46,7 +50,9 @@ fun HomeScreen(
     viewModel: TripViewModel = hiltViewModel()
 ) {
     // Viatge futur més proper; null si no n'hi ha cap
-    val nextTrip = viewModel.getNextUpcomingTrip()
+    val nextTrip = viewModel.trips
+        .filter { it.dateIn >= Date() }
+        .minByOrNull { it.dateIn }
 
     Scaffold(
         bottomBar = { MyBottomBar(navController) }
@@ -61,11 +67,12 @@ fun HomeScreen(
         ) {
             HeaderSection()
 
-            // Mostra la targeta del pròxim viatge només si existeix
+            // Mostra la targeta del pròxim viatge només si existeix.
             if (nextTrip != null) {
                 TripCard(
                     trip = nextTrip,
-                    onClick = { navController.navigate("itinerary/${nextTrip.id}") }
+                    navController = navController,
+                    onDeleted = { viewModel.deleteTrip(nextTrip.id) }
                 )
             }
 
