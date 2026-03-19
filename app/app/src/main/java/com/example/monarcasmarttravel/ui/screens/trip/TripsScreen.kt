@@ -42,6 +42,8 @@ import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
  * automàticament gràcies a mutableStateOf. La llista s'inicialitza amb
  * el fake dataset del repositori.
  *
+ * Cada [TripCard] suporta clic llarg per mostrar un menú contextual (editar/eliminar)
+ *
  * @param navController Controlador de navegació.
  * @param viewModel ViewModel gestionat per Hilt (cicle de vida correcte).
  */
@@ -115,7 +117,8 @@ fun TripsScreen(
                 items(viewModel.trips, key = { it.id }) { trip ->
                     TripCard(
                         trip = trip,
-                        onClick = { navController.navigate("itinerary/${trip.id}") }
+                        navController = navController,
+                        onDeleted = { viewModel.deleteTrip(trip.id) }
                     )
                 }
             }
