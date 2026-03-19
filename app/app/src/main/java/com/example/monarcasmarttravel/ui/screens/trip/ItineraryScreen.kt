@@ -159,7 +159,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
     val destinationName = trip?.title ?: "Viatge"
     val dateIn = trip?.dateIn ?: Date()
     val dateOut = trip?.dateOut ?: Date()
-    val headerImg = trip?.imageResId ?: R.drawable.kyoto_2
+    val headerImg = trip?.imageResId
 
     val items by itineraryViewModel.items.collectAsState()
     val isLoading by itineraryViewModel.isLoading.collectAsState()
@@ -307,21 +307,29 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
  * un degradat fosc a la part inferior, i el nom del destí amb les dates del viatge.
  */
 @Composable
-fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int) {
+fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int?) {
     Box(
         contentAlignment = Alignment.BottomStart,
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
     ) {
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .matchParentSize()
-                .blur(radius = 3.dp)
-        )
+        if (imageRes != null) {
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .matchParentSize()
+                    .blur(radius = 3.dp)
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+            )
+        }
 
         // Degradat vertical per millorar la llegibilitat del text sobre la imatge
         Box(
