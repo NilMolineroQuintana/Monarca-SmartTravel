@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -49,29 +50,33 @@ private const val TAG = "CreateTripScreen"
 private const val DATE_FORMAT = "dd/MM/yyyy"
 
 /**
- * Pantalla per crear un nou viatge.
+ * Pantalla unificada per crear o editar un viatge
  *
- * La UI valida que tots els camps obligatoris tinguin contingut i que
- * la data de fi sigui posterior a la d'inici, mostrant errors en línia
- * abans d'habilitar el botó (validació capa UI, requerida pel lab).
+ * - Si [tripId] és null → mode creació: formulari buit, crida [TripViewModel.addTrip].
+ * - Si [tripId] té valor → mode edició: pre-omple els camps amb les dades actuals del viatge
+ *   via [LaunchedEffect], crida [TripViewModel.updateTrip].
  *
- * La validació de negoci final la fa el repositori a través del ViewModel,
- * i els errors pugen com a [errorMessage] mostrats en un Snackbar.
+ * La validació de camps obligatoris i el rang de dates es fa a la capa UI.
+ * La validació de negoci (títol buit, dateOut > dateIn) la fa el repositori a través
+ * del ViewModel, i els errors pugen com a [errorMessage] mostrats en un Snackbar.
  *
  * @param navController Controlador de navegació.
+ * @param tripId Identificador del viatge a editar. Null si és una creació nova.
  * @param viewModel ViewModel gestionat per Hilt.
  */
 @Composable
 fun CreateTripScreen(
     navController: NavController,
+    tripId: Int? = null,
     viewModel: TripViewModel = hiltViewModel()
 ) {
+    val isEditMode = tripId != null
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
-    var title       by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var startDateText by remember { mutableStateOf("") }
-    var endDateText   by remember { mutableStateOf("") }
+    var title         by rememberSaveable { mutableStateOf("") }
+    var description   by rememberSaveable { mutableStateOf("") }
+    var startDateText by rememberSaveable { mutableStateOf("") }
+    var endDateText   by rememberSaveable { mutableStateOf("") }
     var startDate     by remember { mutableStateOf<Date?>(null) }
     var endDate       by remember { mutableStateOf<Date?>(null) }
 
@@ -82,6 +87,19 @@ fun CreateTripScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // Mode edició: pre-omple el formulari amb les dades del viatge existent,
+    LaunchedEffect(tripId) {
+        if (tripId == null) return@LaunchedEffect
+        val existing = viewModel.getTripById(tripId) ?: return@LaunchedEffect
+        title         = existing.title
+        description   = existing.description
+        startDateText = sdf.format(existing.dateIn)
+        endDateText   = sdf.format(existing.dateOut)
+        startDate     = existing.dateIn
+        endDate       = existing.dateOut
+        Log.d(TAG, "Mode edició: pre-omplert viatge id=$tripId")
+    }
+
     // Mostra els errors del domini/repositori com a Snackbar
     LaunchedEffect(viewModel.errorMessage) {
         viewModel.errorMessage?.let {
@@ -90,13 +108,11 @@ fun CreateTripScreen(
         }
     }
 
-    // Validació en línia de les dates: la fi ha de ser posterior a l'inici
+    // Validació en línia del rang de dates (capa UI)
     LaunchedEffect(startDate, endDate) {
-        if (startDate != null && endDate != null && !endDate!!.after(startDate)) {
-            dateRangeError = "La data de fi ha de ser posterior a la d'inici."
-        } else {
-            dateRangeError = null
-        }
+        dateRangeError = if (startDate != null && endDate != null && !endDate!!.after(startDate)) {
+            "La data de fi ha de ser posterior a la d'inici."
+        } else null
     }
 
     // El botó s'habilita només quan tots els camps són vàlids (validació capa UI)
@@ -109,7 +125,8 @@ fun CreateTripScreen(
     Scaffold(
         topBar = {
             MyTopBar(
-                title = stringResource(R.string.new_trip),
+                title = if (isEditMode) stringResource(R.string.edit_trip)
+                else stringResource(R.string.new_trip),
                 onBackClick = { navController.popBackStack() }
             )
         },
@@ -193,7 +210,8 @@ fun CreateTripScreen(
                         startDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                         Log.d(TAG, "Data inici seleccionada: $dateStr")
                     },
-                    blockPastDates = true,
+                    // En edició no es bloquegen dates passades (el viatge pot ja haver passat)
+                    blockPastDates = !isEditMode,
                     showTime = false
                 )
                 DateField(
@@ -205,7 +223,7 @@ fun CreateTripScreen(
                         endDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                         Log.d(TAG, "Data fi seleccionada: $dateStr")
                     },
-                    blockPastDates = true,
+                    blockPastDates = !isEditMode,
                     showTime = false
                 )
             }
@@ -222,7 +240,7 @@ fun CreateTripScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // ── Botó de crear ────────────────────────────────────────────────
+            // ── Botó de crear / guardar ──────────────────────────────────────
             Button(
                 onClick = {
                     // Marcar camps buits amb error (validació capa UI)
@@ -237,13 +255,26 @@ fun CreateTripScreen(
                     }
                     if (hasError) return@Button
 
-                    val success = viewModel.addTrip(
-                        title = title.trim(),
-                        description = description,
-                        dateIn = startDate!!,
-                        dateOut = endDate!!,
-                        userId = 1 // TODO: substituir per l'ID de l'usuari autenticat
-                    )
+                    val success = if (isEditMode) {
+                        // Edició
+                        viewModel.updateTrip(
+                            tripId = tripId!!,
+                            title = title.trim(),
+                            description = description,
+                            dateIn = startDate!!,
+                            dateOut = endDate!!
+                        ).also { Log.i(TAG, "updateTrip: destí=$title, id=$tripId") }
+                    } else {
+                        // Creació
+                        viewModel.addTrip(
+                            title = title.trim(),
+                            description = description,
+                            dateIn = startDate!!,
+                            dateOut = endDate!!,
+                            userId = 1 // TODO: substituir per l'ID de l'usuari autenticat
+                        ).also { Log.i(TAG, "addTrip: destí=$title") }
+                    }
+
                     if (success) {
                         Log.i(TAG, "Viatge creat correctament -> destí=$title")
                         navController.navigate("trips") {
@@ -262,7 +293,8 @@ fun CreateTripScreen(
                 )
             ) {
                 Text(
-                    text = stringResource(R.string.create_trip),
+                    text = if (isEditMode) stringResource(R.string.save)
+                    else stringResource(R.string.create_trip),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -275,4 +307,10 @@ fun CreateTripScreen(
 @Composable
 fun CreateTripScreenPreview() {
     CreateTripScreen(rememberNavController())
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EditTripScreenPreview() {
+    CreateTripScreen(rememberNavController(), tripId = 1)
 }
