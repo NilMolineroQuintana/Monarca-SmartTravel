@@ -15,7 +15,7 @@ import java.util.Locale
  * - **Transport** (FLIGHT, BOAT, TRAIN): usa els camps [origin], [destination], [company],
  *   [transportNumber] i [departureDate].
  * - **Allotjament / Punt d'interès** (HOTEL, RESTAURANT, LOCATION): usa els camps
- *   [locationName], [address], [checkInDate] i, en el cas d'hotels, [checkOutDate].
+ *   [locationName], [address], [checkInDate].
  *
  * @param id Identificador únic de l'element.
  * @param tripId Identificador del viatge al qual pertany.
@@ -29,7 +29,6 @@ import java.util.Locale
  * @param locationName Nom del lloc, restaurant o hotel (no transport).
  * @param address Adreça del lloc (no transport).
  * @param checkInDate Data d'entrada o visita (no transport).
- * @param checkOutDate Data de sortida; s'usa principalment per a hotels.
  */
 data class ItineraryItem(
     val id: Int,
@@ -48,43 +47,8 @@ data class ItineraryItem(
     val locationName: String? = null,
     val address: String? = null,
     val checkInDate: Date? = null,
-    val checkOutDate: Date? = null,   // Rellevant principalment per a HOTEL
 ) {
-    /**
-     * Afegeix aquest element a l'itinerari del viatge al backend.
-     * Pendent d'implementar.
-     */
-    fun addItineraryItem() {
-        // @TODO Implement add itinerary item
-    }
-
-    /**
-     * Elimina aquest element de l'itinerari del viatge.
-     * Pendent d'implementar.
-     */
-    fun deleteItineraryItem() {
-        // @TODO Implement delete itinerary item
-    }
-
-    /**
-     * Actualitza les dades d'aquest element (per exemple, si canvia l'hora de vol).
-     * Pendent d'implementar.
-     */
-    fun updateItem() {
-        // @TODO Updates the item when the time has arrived
-    }
-
-    /**
-     * Comprova si hi ha un conflicte horari entre aquest element i un altre [other].
-     * Retorna true si les hores es solapen; false en cas contrari.
-     * Pendent d'implementar.
-     */
-    fun hasScheduleConflict(other: ItineraryItem): Boolean {
-        // @TODO Logic to compare departureDate or checkInDate between items
-        return false
-    }
-
-    /**
+     /**
      * Retorna la data d'entrada rellevant per a aquest element:
      * [checkInDate] per a allotjament/POI, o [departureDate] per a transport.
      */
@@ -97,17 +61,6 @@ data class ItineraryItem(
     @Composable
     fun getDateInTime(): String {
         val date = getInDate() ?: return stringResource(R.string.no_date)
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return sdf.format(date)
-    }
-
-    /**
-     * Retorna l'hora de sortida formatada com "HH:mm".
-     * Si no hi ha [checkOutDate], retorna el text localitzat de "sense data".
-     */
-    @Composable
-    fun getDateOutTime(): String {
-        val date = checkOutDate ?: return stringResource(R.string.no_date)
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
         return sdf.format(date)
     }

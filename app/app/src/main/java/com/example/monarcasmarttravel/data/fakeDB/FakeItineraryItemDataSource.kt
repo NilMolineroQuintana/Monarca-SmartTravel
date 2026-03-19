@@ -27,7 +27,6 @@ object FakeItineraryItemDataSource {
             locationName = "Pullman Paris Tour Eiffel",
             address = "18 Avenue de Suffren",
             checkInDate = calendar.apply { set(2026, Calendar.MAY, 15, 8, 30) }.time,
-            checkOutDate = calendar.apply { set(2026, Calendar.MAY, 22, 18, 0) }.time,
             price = 1400.0
         ),
         ItineraryItem(
@@ -59,7 +58,6 @@ object FakeItineraryItemDataSource {
             locationName = "Marriott Marquis",
             address = "Times Square, NY",
             checkInDate = calendar.apply { set(2026, Calendar.AUGUST, 10, 12, 0) }.time,
-            checkOutDate = calendar.apply { set(2026, Calendar.AUGUST, 25, 11, 0) }.time,
             price = 2800.0
         ),
         ItineraryItem(
@@ -91,7 +89,6 @@ object FakeItineraryItemDataSource {
             locationName = "Shinjuku Granbell Hotel",
             address = "2-14-5 Kabukicho, Shinjuku-ku",
             checkInDate = calendar.apply { set(2026, Calendar.MARCH, 23, 15, 0) }.time,
-            checkOutDate = calendar.apply { set(2026, Calendar.MARCH, 30, 11, 0) }.time,
             price = 1200.0
         ),
         ItineraryItem(
