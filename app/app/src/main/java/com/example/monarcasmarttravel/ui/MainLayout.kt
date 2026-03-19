@@ -6,9 +6,11 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -312,24 +314,34 @@ private fun CustomNavItem(
 }
 
 /**
- * Targeta de resum d'un viatge, que mostra el destí, el rang de dates i el temps restant.
+ * Targeta de resum d'un viatge amb suport per a menú contextual en clic llarg.
+ *
+ * En fer clic llarg apareix un [OptionsPopUp] amb les opcions d'editar i eliminar,
+ * idèntic al patró usat per [ItineraryItemComponent].
+ * En confirmar l'eliminació s'obra un [PopUp] de confirmació.
  *
  * El text d'estat varia segons si el viatge és futur, imminent, comença avui o ja ha passat.
  * El color del text d'estat es torna vermell si falten 7 dies o menys.
  *
- * @param place Nom del destí del viatge.
- * @param dateIn Data d'inici del viatge.
- * @param dateOut Data de fi del viatge.
- * @param showNextTitle Si és true, mostra "EL TEU PRÒXIM DESTÍ"; si no, "DESTÍ FUTUR".
- * @param onClick Acció en prémer la targeta.
+ * @param trip Dades del viatge a mostrar.
+ * @param navController Controlador de navegació per a les accions d'editar i eliminar.
+ * @param onDeleted Callback opcional invocat després d'eliminar el viatge.
  * @param modifier Modifier opcional per personalitzar el contenidor.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TripCard(
     trip: Trip,
-    onClick: () -> Unit = {},
+    navController: NavController? = null,
+    onDeleted: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val TAG = "TripCard"
+
+    // Estat del menú d'opcions (clic llarg) i del PopUp de confirmació d'eliminació
+    var showOptions by remember { mutableStateOf(false) }
+    var showDeletePopUp by remember { mutableStateOf(false) }
+
     val dateIn = trip.dateIn
     val dateOut = trip.dateOut
     val place = trip.title
@@ -345,30 +357,78 @@ fun TripCard(
 
     val hasImage = trip.imageResId != null
 
-    val headerColor = if (hasImage) {
-        Color.White
-    } else {
-        MaterialTheme.colorScheme.primary
-    }
-
+    val headerColor = if (hasImage) Color.White else MaterialTheme.colorScheme.primary
     val textColor = if (hasImage) Color.White else MaterialTheme.colorScheme.onSurface
     val secondaryTextColor = if (hasImage) Color.White.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onSurfaceVariant
 
     val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
     val dateRange = "${dateFormat.format(dateIn)} - ${dateFormat.format(dateOut)}"
 
+    // ── Menú d'opcions: editar / eliminar ────────────────────────────────────
+    // Idèntic al patró de ItineraryItemComponent
+    OptionsPopUp(
+        show = showOptions,
+        title = stringResource(R.string.trip_options_title),
+        options = listOf(
+            Icons.Default.Edit   to stringResource(R.string.edit),
+            Icons.Default.Delete to stringResource(R.string.delete)
+        ),
+        onOptionSelected = { index ->
+            when (index) {
+                0 -> {
+                    // Navega a CreateTripScreen en mode edició, idèntic a com
+                    // ItineraryItemComponent navega a PlanScreen amb itemId
+                    navController?.navigate("createTrip?tripId=${trip.id}")
+                    Log.d(TAG, "TripCard: navegar a createTrip (edit) id=${trip.id}")
+                }
+                1 -> {
+                    // Mostra el PopUp de confirmació d'eliminació
+                    showOptions = false
+                    showDeletePopUp = true
+                    Log.d(TAG, "TripCard: sol·licitada eliminació id=${trip.id}")
+                }
+            }
+        },
+        onDismiss = { showOptions = false }
+    )
+
+    // ── PopUp de confirmació d'eliminació ────────────────────────────────────
+    PopUp(
+        show = showDeletePopUp,
+        title = stringResource(R.string.deleteTrip),
+        text = stringResource(R.string.popUp_deleteTrip_text),
+        acceptText = stringResource(R.string.delete),
+        onAccept = {
+            showDeletePopUp = false
+            onDeleted?.invoke()
+            Log.i(TAG, "TripCard: eliminació confirmada id=${trip.id}")
+        },
+        onDismiss = { showDeletePopUp = false }
+    )
+
+    // ── Targeta visual ───────────────────────────────────────────────────────
     Card(
         shape = RoundedCornerShape(16.dp),
-        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = if (!hasImage)
                 MaterialTheme.colorScheme.primaryContainer
-            else if (!hasImage)
-                MaterialTheme.colorScheme.surfaceVariant
             else
-                Color.Transparent
+                MaterialTheme.colorScheme.surfaceVariant
         ),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            // combinedClickable: clic simple navega a l'itinerari, clic llarg obre el menú
+            .clip(RoundedCornerShape(16.dp))
+            .combinedClickable(
+                onClick = { navController?.navigate("itinerary/${trip.id}") },
+                onLongClick = {
+                    // El menú d'opcions només apareix si hi ha navController (no en preview)
+                    if (navController != null) {
+                        showOptions = true
+                        Log.d(TAG, "TripCard: clic llarg id=${trip.id}")
+                    }
+                }
+            )
     ) {
         Box(
             modifier = Modifier
