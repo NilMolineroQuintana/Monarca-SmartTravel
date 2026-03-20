@@ -38,8 +38,8 @@ import java.util.Date
  * Mostra el viatge futur més proper obtingut del [TripViewModel].
  * Si no hi ha cap viatge pròxim, la secció de la targeta no es renderitza.
  *
- * La [TripCard] suporta clic llarg per editar o eliminar el viatge directament
- * des de la pantalla d'inici, seguint el mateix patró que [TripsScreen].
+ * La [TripCard] suporta clic llarg per editar o eliminar el viatge desde
+ * qualsevol lloc.
  *
  * @param navController Controlador de navegació.
  * @param viewModel ViewModel gestionat per Hilt.
