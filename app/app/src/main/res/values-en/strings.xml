@@ -1,162 +1,162 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Monarca Smart Travel</string>
-
+    <string name="version">Version: %1$s</string>
     <string name="bottom_menu_home">Home</string>
     <string name="bottom_menu_trips">Trips</string>
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="more">More</string>
+    <string name="unknown">Unknown</string>
+    <string name="last_update">Last update: March 2026</string>
+    <string name="coming_soon">Feature coming soon</string>
 
-    <string name="preferences_languageAndRegion">LANGUAGE AND REGION</string>
-    <string name="config">Settings</string>
-    <string name="preferences_other">OTHER</string>
+    <string name="which_adventure">What adventure are we planning today?</string>
+    <string name="quick_actions">Quick actions</string>
+    <string name="create_new_trip">Create new trip</string>
+    <string name="create_new_trip_description">Plan your trip from scratch</string>
+    <string name="most_popular">Most popular</string>
 
-    <string name="preferences_text">Preferences</string>
-    <string name="preferences_coin_button">Currency</string>
-    <string name="preferences_coin_description">Currency to use in the budget</string>
-    <string name="preferences_aboutUs_button">About Us</string>
-    <string name="preferences_aboutUs_description">Learn more about the app</string>
-    <string name="preferences_termsAndConditions_button">Terms and Conditions</string>
-    <string name="preferences_termsAndConditions_description">Your rights and duties</string>
-    <string name="preferences_logOut_text">Log out</string>
-    <string name="preferences_logOut_description">Log out of your account securely</string>
-    <string name="preferences_notification_button">Notifications</string>
-    <string name="preferences_notifications_description">Receive relevant notifications</string>
-    <string name="preferences_language_button">Language</string>
-    <string name="preferences_language_description">Change the interface language</string>
-    <string name="preferences_theme_button">Dark theme</string>
-    <string name="preferences_theme_description">Interface colors</string>
-    <string name="preferences_wide_button">Large text</string>
-    <string name="preferences_wide_description">Accessibility assistance</string>
+    <string name="trips_text">My trips</string>
+    <string name="trip">Trip</string>
+    <string name="no_trips">No trips created yet</string>
+    <string name="no_trips_hint">Press the + button to create your first trip</string>
+    <string name="estada_dies">%1$d-day stay</string>
+    <string name="falten_dies">%1$d days left</string>
+    <string name="dema_viatge">The trip starts tomorrow!</string>
+    <string name="avui_viatge">Starts today!</string>
+    <string name="viatge_realitzat">Trip completed</string>
+    <string name="no_date">No date</string>
 
-    <string name="language_catalan">Catalan</string>
-    <string name="language_spanish">Spanish</string>
-    <string name="language_english">English</string>
+    <string name="new_trip">New trip</string>
+    <string name="edit_trip">Edit trip</string>
+    <string name="itinerary_details">Itinerary details</string>
+    <string name="create_trip">Create trip</string>
+    <string name="destination">Destination</string>
+    <string name="example_destination">Ex: Rome, Italy</string>
+    <string name="description">Description</string>
+    <string name="description_example">A family trip</string>
+    <string name="start_date">Start date</string>
+    <string name="final_date">End date</string>
+    <string name="dd_mm_aaaa">DD/MM/YYYY</string>
+    <string name="select_date">Select a date</string>
+    <string name="select_time">Select time</string>
 
-    <string name="theme_light">Light</string>
-    <string name="theme_dark">Dark</string>
+    <string name="trip_to">Trip to %1$s</string>
+    <string name="days_of_duration">%1$s - %2$s • %3$d days long</string>
+    <string name="budget">Budget</string>
+    <string name="activities">Activities</string>
+    <string name="trip_options_title">Trip options</string>
+    <string name="no_plans">You have no plans</string>
+    <string name="album">Album</string>
+    <string name="no_photo">No photo</string>
+    <string name="change_photo">Change photo</string>
+    <string name="deleteTrip">Delete trip</string>
+    <string name="deleteImage">Delete image</string>
+    <string name="popUp_deleteTrip_text">Are you sure you want to delete this trip?</string>
+    <string name="popUp_deleteImage_text">Are you sure you want to delete this image?</string>
 
+    <string name="add_plan">Add plan</string>
+    <string name="add_new_plan">Add new plan</string>
+    <string name="delete_plan">Delete plan</string>
+    <string name="delete_plan_description">Are you sure you want to delete this plan from your itinerary?</string>
     <string name="plan_flight">Flight</string>
     <string name="plan_boat">Boat</string>
     <string name="plan_train">Train</string>
     <string name="plan_hotel">Accommodation</string>
     <string name="plan_restaurant">Restaurant</string>
-    <string name="plan_location">Place of interest</string>
-
+    <string name="plan_location">Point of interest</string>
     <string name="origin">Origin</string>
-    <string name="destination">Destination</string>
     <string name="company">Company</string>
     <string name="data_de_entrada">Check-in date</string>
     <string name="data_de_sortida">Check-out date</string>
     <string name="direccio">Address</string>
-
-    <string name="add">Add</string>
-
+    <string name="price">Price</string>
     <string name="hotel_name">Accommodation name</string>
     <string name="restaurant_name">Restaurant name</string>
-    <string name="location_name">Place of interest name</string>
+    <string name="location_name">Point of interest name</string>
     <string name="flight_num">Flight No.</string>
     <string name="boat_num">Boat No.</string>
     <string name="train_num">Train No.</string>
 
-    <string name="trip_to">Trip to %1$s</string>
-    <string name="add_plan">Add plan</string>
-    <string name="deleteTrip">Delete trip</string>
-    <string name="deleteImage">Delete image</string>
-    <string name="album">Album</string>
-
-    <string name="logOut_popUp_text">Are you sure you want to log out?</string>
-    <string name="popUp_deleteTrip_text">Are you sure you want to delete the trip?</string>
-    <string name="popUp_deleteImage_text">Are you sure you want to delete the image?</string>
-    <string name="accept">Accept</string>
-    <string name="cancel">Cancel</string>
-    <string name="delete">Delete</string>
-
-    <string name="termsAndConditions_text">Last update: February 21, 2026\n\nWelcome to Monarca Smart Travel. Please read these Terms and Conditions carefully before using our mobile application. By accessing or using the Application, you agree to be bound by these terms. If you do not agree with any part of them, you may not access the service.\n\n1. Acceptance of Terms\nThe use of this application grants the status of User and implies full and unreserved acceptance of each and every provision included in this text. Monarca Smart Travel reserves the right to modify these terms at any time, informing users through the application.\n\n2. Service Description\nMonarca Smart Travel is an itinerary management and travel assistance platform that allows users to organize destinations, view dates, and manage logistics information. The service is provided \"as is\" and based on availability.\n\n3. User Registration and Responsibility\nAccount: To access certain features, the user might need to create an account. The user is solely responsible for maintaining the confidentiality of their password.\n\nVeracity: The user agrees to provide real, up-to-date, and complete information during the registration process.\n\nMinimum age: Use of the application is restricted to persons over 18 years of age or minors with legal consent from their guardians.\n\n4. Intellectual Property\nAll application content (texts, graphics, logos, icons, images, source code, Jetpack Compose interface design, and software) are the exclusive property of Monarca Smart Travel or its licensors and are protected by international intellectual property laws. Reproduction, distribution, or transformation without express authorization is prohibited.\n\n5. Privacy Policy and Data Protection\nIn accordance with the General Data Protection Regulation (GDPR), provided personal data will be processed to manage your travel experience. The user has the right to access, rectify, and delete their data at any time through the application settings or by contacting our technical support.\n\n6. Limitation of Liability\nMonarca Smart Travel is not responsible for:\n\nErrors in flight information or reservations provided by third parties.\n\nDamages derived from improper use of the application.\n\nService interruptions due to technical maintenance or force majeure.\n\nData loss if the user does not maintain an adequate backup.\n\n7. Prohibited Use\nThe user agrees not to:\n\nUse the application for illegal purposes.\n\nAttempt to decompile or reverse engineer the software.\n\nIntroduce viruses or malicious software that could damage the service infrastructure.\n\n8. Third-Party Links\nThe application may contain links to third-party websites or services (such as maps, airlines, or hotels). We have no control over and assume no responsibility for the content, privacy policies, or practices of these third parties.\n\n9. Conflict Resolution and Jurisdiction\nThese Terms shall be governed and interpreted in accordance with current legislation in Spain. For any controversy that may arise from the use of the application, the parties submit to the Courts and Tribunals of the city where the company\'s registered office is located, waiving any other jurisdiction that may correspond to them.\n\n10. Contact\nIf you have any questions about these Terms and Conditions, you can contact us at:\n\nEmail: support@monarcasmarttravel.com\n\nWeb: www.monarcasmarttravel.com</string>
-
-    <string name="trips_text">My trips</string>
-
-    <string name="kyoto">Kyoto, Japan</string>
-    <string name="paris">Paris, France</string>
-    <string name="NY">New York, USA</string>
-    <string name="version">Version: %1$s</string>
-    <string name="no_date">No date</string>
-    <string name="who_are_we">Who are we?</string>
-    <string name="aboutUs_text">Monarca Smart Travel is your ideal travel planning app. Organize your itinerary, track your budget, and discover new destinations easily and intelligently.</string>
-    <string name="development_team">Development Team</string>
-    <string name="new_trip">New trip</string>
-    <string name="itinerary_details">Itinerary details</string>
-    <string name="example_destination">Ex: Rome, Italy</string>
-    <string name="start_date">Start date</string>
-    <string name="dd_mm_aaaa">DD/MM/YYYY</string>
-    <string name="final_date">End date</string>
-    <string name="create_trip">Create trip</string>
-    <string name="which_adventure">What adventure are we planning today?</string>
-    <string name="quick_actions">Quick actions</string>
-    <string name="create_new_trip">Create new trip</string>
-    <string name="trip_options_title">Trip options</string>
-    <string name="create_new_trip_description">Plan your trip from scratch</string>
-    <string name="no_plans">You have no plans</string>
-    <string name="add_new_plan">Add a new one</string>
-    <string name="days_of_duration">%1$s - %2$s • %3$d days duration</string>
-    <string name="budget">Budget</string>
-    <string name="activities">Activities</string>
-    <string name="delete_plan">Delete plan</string>
-    <string name="delete_plan_description">Are you sure you want to delete this plan from your itinerary?</string>
-    <string name="login">Log in</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="i_agree_with">"I agree with the "</string>
-    <string name="most_popular">Most popular</string>
-    <string name="more">More</string>
-    <string name="unknown">Unknown</string>
-    <string name="price">Price</string>
-
+    <string name="config">Settings</string>
+    <string name="preferences_text">Preferences</string>
     <string name="preferences_account">Account</string>
+    <string name="preferences_languageAndRegion">LANGUAGE &amp; REGION</string>
+    <string name="preferences_other">OTHERS</string>
 
     <string name="preferences_username_button">Username</string>
     <string name="preferences_username_empty">Not set</string>
     <string name="preferences_username_popup_title">Change username</string>
     <string name="preferences_username_label">Username</string>
-    <string name="preferences_username_placeholder">E.g. Joan García</string>
+    <string name="preferences_username_placeholder">Ex: John Doe</string>
 
     <string name="preferences_birthdate_button">Date of birth</string>
     <string name="preferences_birthdate_empty">Not set</string>
     <string name="preferences_birthdate_popup_title">Date of birth</string>
 
-    <string name="select_date">Select a date</string>
-    <string name="estada_dies">Stay of %1$d days</string>
-    <string name="falten_dies">%1$d days left</string>
-    <string name="dema_viatge">Trip starts tomorrow!</string>
-    <string name="avui_viatge">Starts today!</string>
-    <string name="viatge_realitzat">Trip completed</string>
-    <string name="next">Next</string>
-    <string name="select_time">Select time</string>
-    <string name="back">Back</string>
+    <string name="preferences_coin_button">Currency</string>
+    <string name="preferences_coin_description">Currency for the budget</string>
+    <string name="preferences_language_button">Language</string>
+    <string name="preferences_language_description">Change interface language</string>
+    <string name="preferences_theme_button">Dark mode</string>
+    <string name="preferences_theme_description">Interface colors</string>
+    <string name="preferences_wide_button">Large text</string>
+    <string name="preferences_wide_description">Helps with accessibility</string>
+    <string name="preferences_notification_button">Notifications</string>
+    <string name="preferences_notifications_description">Receive relevant notifications</string>
 
-    <string name="no_trips">No trips created yet</string>
-    <string name="no_trips_hint">Tap the + button to create your first trip</string>
-    <string name="error_empty_destination">Destination cannot be empty</string>
-    <string name="change_photo">Change photo</string>
-    <string name="no_photo">No photo</string>
+    <string name="preferences_aboutUs_button">About us</string>
+    <string name="preferences_aboutUs_description">Learn more about the app</string>
+    <string name="preferences_termsAndConditions_button">Terms and Conditions</string>
+    <string name="preferences_termsAndConditions_description">Your rights and duties</string>
 
-    <string name="description">Description</string>
-    <string name="description_example">A trip with the family</string>
-    <string name="edit">Edit</string>
-    <string name="save">Save</string>
+    <string name="preferences_logOut_text">Log out</string>
+    <string name="preferences_logOut_description">Safely sign out of your account</string>
+    <string name="logOut_popUp_text">Are you sure you want to log out?</string>
+
+    <string name="language_catalan">Catalan</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_english">English</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <string name="login">Log in</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="i_agree_with">I agree to the </string>
+
+    <string name="who_are_we">Who are we?</string>
+    <string name="development_team">Development Team</string>
+    <string name="aboutUs_text">Monarca Smart Travel is your ideal travel planning app. Organize your itinerary, track your budget, and discover new destinations easily and smartly.</string>
+    <string name="termsAndConditions_text">Last update date: February 21, 2026\n\nWelcome to Monarca Smart Travel. Please read these Terms and Conditions carefully before using our mobile application. By accessing or using the App, you agree to be bound by these terms. If you disagree with any part of the terms, you may not access the service.\n\n1. Acceptance of Terms\nThe use of this application implies the status of User and the full and unreserved acceptance of each and every one of the provisions included in this text. Monarca Smart Travel reserves the right to modify these terms at any time, informing users through the app.\n\n2. Service Description\nMonarca Smart Travel is an itinerary management and travel assistance platform that allows users to organize destinations, view dates, and manage logistical information. The service is provided \"as is\" and subject to availability.\n\n3. User Registration and Responsibility\nAccount: To access certain features, the user may need to create an account. The user is solely responsible for maintaining the confidentiality of their password.\n\nAccuracy: The user agrees to provide real, updated, and complete information during the registration process.\n\nMinimum age: The use of the application is restricted to individuals over 18 years old or minors with the legal consent of their guardians.\n\n4. Intellectual Property\nAll app content (texts, graphics, logos, icons, images, source code, Jetpack Compose interface design, and software) is the exclusive property of Monarca Smart Travel or its licensors and is protected by international intellectual property laws. Reproduction, distribution, or transformation without express authorization is prohibited.\n\n5. Privacy Policy and Data Protection\nIn accordance with the General Data Protection Regulation (GDPR), the personal data provided will be processed to manage your travel experience. The user has the right to access, rectify, and delete their data at any time through the app settings or by contacting our technical support.\n\n6. Limitation of Liability\nMonarca Smart Travel is not responsible for:\n\nErrors in flight information or reservations provided by third parties.\n\nDamages resulting from the misuse of the application.\n\nService interruptions due to technical maintenance or force majeure.\n\nData loss if the user does not maintain an adequate backup.\n\n7. Prohibited Use\nThe user agrees not to:\n\nUse the application for illegal purposes.\n\nAttempt to decompile or reverse-engineer the software.\n\nIntroduce viruses or malicious software that could damage the service infrastructure.\n\n8. Third-Party Links\nThe application may contain links to third-party websites or services (such as maps, airlines, or hotels). We have no control over and assume no responsibility for the content, privacy policies, or practices of these third parties.\n\n9. Dispute Resolution and Jurisdiction\nThese Terms shall be governed and construed in accordance with the laws of Spain. For any dispute that may arise from the use of the application, the parties submit to the Courts and Tribunals of the city where the company\'s registered office is located, waiving any other jurisdiction that may correspond to them.\n\n10. Contact\nIf you have any questions about these Terms and Conditions, you can contact us at:\n\nEmail: support@monarcasmarttravel.com\n\nWeb: www.monarcasmarttravel.com</string>
+
+    <string name="kyoto">Kyoto, Japan</string>
+    <string name="paris">Paris, France</string>
+    <string name="NY">New York, USA</string>
 
     <string name="error_ok">Ok</string>
+    <string name="choose_option_title">Select an option</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="error_unknown">An unexpected error occurred.</string>
     <string name="error_non_existing_trip">The trip does not exist.</string>
     <string name="error_item_not_found">The item was not found.</string>
-    <string name="error_item_out_of_range">The item is outside the trip\'s date range.</string>
+    <string name="error_item_out_of_range">The item is outside the trip range.</string>
     <string name="error_non_existing_date">The date is not assigned.</string>
-    <string name="error_unknown">An unexpected error has occurred.</string>
-    <string name="edit_trip">Edit trip</string>
-    <string name="invalid_format">Invalid format</string>
-    <string name="choose_option_title">Select an option</string>
-    <string name="last_update">Last update: March 2026</string>
-    <string name="coming_soon">Feature to be implemented later</string>
-    <string name="invalid_email">Invalid email address</string>
-    <string name="date_before_error">The end date must be after the start date.</string>
-    <string name="description_not_empty_error">The description cannot be empty.</string>
+    <string name="error_empty_destination">The destination cannot be empty.</string>
+    <string name="error_invalid_title">The destination cannot be empty.</string>
+    <string name="error_title_empty">The destination cannot be empty.</string>
     <string name="destination_not_empty_error">The destination cannot be empty.</string>
-    <string name="trip">Trip</string>
+    <string name="error_invalid_description">The description cannot be empty.</string>
+    <string name="error_description_empty">The description cannot be empty.</string>
+    <string name="description_not_empty_error">The description cannot be empty.</string>
+    <string name="error_invalid_date_range">The start date must be before the end date.</string>
+    <string name="error_date_range">The end date must be after the start date.</string>
+    <string name="date_before_error">The end date must be after the start date.</string>
 </resources>

@@ -1,54 +1,82 @@
 <resources>
     <string name="app_name">Monarca Smart Travel</string>
-
+    <string name="version">Versió: %1$s</string>
     <string name="bottom_menu_home">Inici</string>
     <string name="bottom_menu_trips">Viatges</string>
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="add">Afegir</string>
+    <string name="edit">Editar</string>
+    <string name="save">Guardar</string>
+    <string name="next">Següent</string>
+    <string name="back">Enrere</string>
+    <string name="more">Més</string>
+    <string name="unknown">Desconocida</string>
+    <string name="last_update">Última actualització: Març 2026</string>
+    <string name="coming_soon">Funció que s\'implementarà més endevant</string>
 
-    <string name="preferences_languageAndRegion">IDIOMA I REGIÓ</string>
-    <string name="config">Configuració</string>
-    <string name="preferences_other">ALTRES</string>
+    <string name="which_adventure">Quina aventura planejem avui?</string>
+    <string name="quick_actions">Accions ràpides</string>
+    <string name="create_new_trip">Crear nou viatge</string>
+    <string name="create_new_trip_description">Planifica el teu viatge des de zero</string>
+    <string name="most_popular">Els més populars</string>
 
-    <string name="preferences_text">Preferències</string>
-    <string name="preferences_coin_button">Moneda</string>
-    <string name="preferences_coin_description">Moneda a usar al pressupost</string>
-    <string name="preferences_aboutUs_button">Sobre nosaltres</string>
-    <string name="preferences_aboutUs_description">Conèix més informació sobre l\'app</string>
-    <string name="preferences_termsAndConditions_button">Termes i Condicions</string>
-    <string name="preferences_termsAndConditions_description">Els teus drets i deures</string>
-    <string name="preferences_logOut_text">Tancar sessió</string>
-    <string name="preferences_logOut_description">Surt del teu compte de forma segura</string>
-    <string name="preferences_notification_button">Notificacions</string>
-    <string name="preferences_notifications_description">Rebre notificacions rellevants</string>
-    <string name="preferences_language_button">Idioma</string>
-    <string name="preferences_language_description">Canvia l\'idioma de la interfície</string>
-    <string name="preferences_theme_button">Tema fosc</string>
-    <string name="preferences_theme_description">Colors de la interficie</string>
-    <string name="preferences_wide_button">Text gran</string>
-    <string name="preferences_wide_description">Ajuda a l\'accessibilitat</string>
+    <string name="trips_text">Els meus viatges</string>
+    <string name="trip">Viatge</string>
+    <string name="no_trips">Cap viatge creat encara</string>
+    <string name="no_trips_hint">Prem el botó + per crear el teu primer viatge</string>
+    <string name="estada_dies">Estada de %1$d dies</string>
+    <string name="falten_dies">Falten %1$d dies</string>
+    <string name="dema_viatge">Demà comença el viatge!</string>
+    <string name="avui_viatge">Comença avui!</string>
+    <string name="viatge_realitzat">Viatge realitzat</string>
+    <string name="no_date">Sense data</string>
 
-    <string name="language_catalan">Català</string>
-    <string name="language_spanish">Espanyol</string>
-    <string name="language_english">Anglès</string>
+    <string name="new_trip">Nou viatge</string>
+    <string name="edit_trip">Editar viatge</string>
+    <string name="itinerary_details">Detalls de l\'itinerari</string>
+    <string name="create_trip">Crear viatge</string>
+    <string name="destination">Destí</string>
+    <string name="example_destination">Ex: Roma, Itàlia</string>
+    <string name="description">Descripció</string>
+    <string name="description_example">Un viatge amb la familia</string>
+    <string name="start_date">Data inici</string>
+    <string name="final_date">Data final</string>
+    <string name="dd_mm_aaaa">DD/MM/AAAA</string>
+    <string name="select_date">Selecciona una data</string>
+    <string name="select_time">Selecciona l\'hora</string>
 
-    <string name="theme_light">Clar</string>
-    <string name="theme_dark">Fosc</string>
+    <string name="trip_to">Viatge a %1$s</string>
+    <string name="days_of_duration">%1$s - %2$s • %3$d dies de durada</string>
+    <string name="budget">Pressupost</string>
+    <string name="activities">Activitats</string>
+    <string name="trip_options_title">Opcions del viatge</string>
+    <string name="no_plans">No tens cap plan</string>
+    <string name="album">Álbum</string>
+    <string name="no_photo">Sense foto</string>
+    <string name="change_photo">Canviar foto</string>
+    <string name="deleteTrip">Eliminar viatge</string>
+    <string name="deleteImage">Eliminar imatge</string>
+    <string name="popUp_deleteTrip_text">Estas segur que vols eliminar el viatge?</string>
+    <string name="popUp_deleteImage_text">Estàs segur que vols eliminar la imatge?</string>
 
+    <string name="add_plan">Afegir plan</string>
+    <string name="add_new_plan">Afegir un nou</string>
+    <string name="delete_plan">Eliminar plan</string>
+    <string name="delete_plan_description">¿Estàs segur que vols eliminar aquest plan del teu itinerari?</string>
     <string name="plan_flight">Vol</string>
     <string name="plan_boat">Vaixell</string>
     <string name="plan_train">Tren</string>
     <string name="plan_hotel">Allotjament</string>
     <string name="plan_restaurant">Restaurant</string>
     <string name="plan_location">Lloc d\'interès</string>
-
     <string name="origin">Origen</string>
-    <string name="destination">Destí</string>
     <string name="company">Companyia</string>
     <string name="data_de_entrada">Data de entrada</string>
     <string name="data_de_sortida">Data de sortida</string>
     <string name="direccio">Direcció</string>
-
-    <string name="add">Afegir</string>
-
+    <string name="price">Preu</string>
     <string name="hotel_name">Nom allotjament</string>
     <string name="restaurant_name">Nom del restaurant</string>
     <string name="location_name">Nom del lloc d\'interès</string>
@@ -56,59 +84,11 @@
     <string name="boat_num">Nº de vaixell</string>
     <string name="train_num">Nº de tren</string>
 
-    <string name="trip_to">Viatge a %1$s</string>
-    <string name="add_plan">Afegir plan</string>
-    <string name="deleteTrip">Eliminar viatge</string>
-    <string name="deleteImage">Eliminar imatge</string>
-    <string name="album">Álbum</string>
-
-    <string name="logOut_popUp_text">Estàs segur que vols tancar la sessió?</string>
-    <string name="popUp_deleteTrip_text">Estas segur que vols eliminar el viatge?</string>
-    <string name="popUp_deleteImage_text">Estàs segur que vols eliminar la imatge?</string>
-    <string name="accept">Aceptar</string>
-    <string name="cancel">Cancelar</string>
-    <string name="delete">Eliminar</string>
-
-    <string name="termsAndConditions_text">Data de l\'última actualització: 21 de febrer de 2026\n\nBenvingut/da a Monarca Smart Travel. Us preguem que llegiu atentament aquests Termes i Condicions abans d\'utilitzar la nostra aplicació mòbil. En accedir o utilitzar l\'Aplicació, accepteu quedar vinculat per aquests termes. Si no esteu d\'acord amb alguna part dels mateixos, no podreu accedir al servei.\n\n1. Acceptació dels Termes\nL\'ús d\'aquesta aplicació atribueix la condició d\'Usuari i implica l\'acceptació plena i sense reserves de totes i cadascuna de les disposicions incloses en aquest text. Monarca Smart Travel es reserva el dret a modificar aquests termes en qualsevol moment, informant els usuaris a través de l\'aplicació.\n\n2. Descripció del Servei\nMonarca Smart Travel és una plataforma de gestió d\'itineraris i assistència en viatges que permet als usuaris organitzar destins, visualitzar dates i gestionar informació logística. El servei s\'ofereix \"tal com és\" i segons disponibilitat.\n\n3. Registre d\'Usuari i Responsabilitat\nCompte: Per accedir a certes funcionalitats, l\'usuari podria haver de crear un compte. L\'usuari és l\'únic responsable de mantenir la confidencialitat de la seva contrasenya.\n\nVeracitat: L\'usuari es compromet a proporcionar informació real, actualitzada i completa durant el procés de registre.\n\nEdat mínima: L\'ús de l\'aplicació està restringit a persones majors de 18 anys o menors amb consentiment legal dels seus tutors.\n\n4. Propietat Intel·lectual\nTots els continguts de l\'aplicació (textos, gràfics, logotips, icones, imatges, codi font, disseny de la interfície en Jetpack Compose i programari) són propietat exclusiva de Monarca Smart Travel o dels seus llicenciants i estan protegits per les lleis internacionals de propietat intel·lectual. Queda prohibida la seva reproducció, distribució o transformació sense autorització expressa.\n\n5. Política de Privadesa i Protecció de Dades\nDe conformitat amb el Reglament General de Protecció de Dades (RGPD), les dades personals facilitades seran tractades per gestionar la vostra experiència de viatge. L\'usuari té dret a accedir, rectificar i suprimir les seves dades en qualsevol moment a través de la configuració de l\'aplicació o contactant amb el nostre suport tècnic.\n\n6. Limitació de Responsabilitat\nMonarca Smart Travel no es fa responsable de:\n\nErrors en la informació de vols o reserves proporcionada per tercers.\n\nDanys derivats de l\'ús indegut de l\'aplicació.\n\nInterrupcions del servei per manteniment tècnic o causes de força major.\n\nPèrdua de dades si l\'usuari no manté una còpia de seguretat adequada.\n\n7. Ús Prohibit\nL\'usuari es compromet a no:\n\nUtilitzar l\'aplicació per a fins il·legals.\n\nIntentar descompilar o fer enginyeria inversa del programari.\n\nIntroduir virus o programari maliciós que pugui danyar la infraestructura del servei.\n\n8. Enllaços a Tercers\nL\'aplicació pot contenir enllaços a llocs web o serveis de tercers (com mapes, aerolínies o hotels). No tenim control ni assumim cap responsabilitat pel contingut, les polítiques de privadesa o les pràctiques d\'aquests tercers.\n\n9. Resolució de Conflictes i Jurisdicció\nAquests Termes es regiran i s\'interpretaran d\'acord amb la legislació vigent a Espanya. Per a qualsevol controvèrsia que pogués derivar-se de l\'ús de l\'aplicació, les parts se sotmeten als Jutjats i Tribunals de la ciutat on es trobi la seu social de l\'empresa, renunciant a qualsevol altre fòrum que els pogués correspondre.\n\n10. Contacte\nSi teniu qualsevol pregunta sobre aquests Termes i Condicions, podeu contactar amb nosaltres a:\n\nCorreu electrònic: support@monarcasmarttravel.com\n\nWeb: www.monarcasmarttravel.com</string>
-
-    <string name="trips_text">Els meus viatges</string>
-
-    <string name="kyoto">Kyoto, Japó</string>
-    <string name="paris">París, França</string>
-    <string name="NY">Nova York, EUA</string>
-    <string name="version">Versió: %1$s</string>
-    <string name="no_date">Sense data</string>
-    <string name="who_are_we">Qui som?</string>
-    <string name="aboutUs_text">Monarca Smart Travel és la teva aplicació ideal per planificar viatges. Organitza el teu itinerari, controla el teu pressupost i descobreix nous destins de forma fàcil i intel·ligent.</string>
-    <string name="development_team">Equip de Desenvolupament</string>
-    <string name="new_trip">Nou viatge</string>
-    <string name="itinerary_details">Detalls de l\'itinerari</string>
-    <string name="example_destination">Ex: Roma, Itàlia</string>
-    <string name="start_date">Data inici</string>
-    <string name="dd_mm_aaaa">DD/MM/AAAA</string>
-    <string name="final_date">Data final</string>
-    <string name="create_trip">Crear viatge</string>
-    <string name="which_adventure">Quina aventura planejem avui?</string>
-    <string name="quick_actions">Accions ràpides</string>
-    <string name="create_new_trip">Crear nou viatge</string>
-    <string name="create_new_trip_description">Planifica el teu viatge des de zero</string>
-    <string name="trip_options_title">Opcions del viatge</string>
-    <string name="no_plans">No tens cap plan</string>
-    <string name="add_new_plan">Afegir un nou</string>
-    <string name="days_of_duration">%1$s - %2$s • %3$d dies de durada</string>
-    <string name="budget">Pressupost</string>
-    <string name="activities">Activitats</string>
-    <string name="delete_plan">Eliminar plan</string>
-    <string name="delete_plan_description">¿Estàs segur que vols eliminar aquest plan del teu itinerari?</string>
-    <string name="login">Iniciar sessió</string>
-    <string name="email">Correu electrònic</string>
-    <string name="password">Contrasenya</string>
-    <string name="i_agree_with">"Estic d'acord amb els "</string>
-    <string name="most_popular">Els més populars</string>
-    <string name="more">Més</string>
-    <string name="unknown">Desconocida</string>
-    <string name="price">Preu</string>
+    <string name="config">Configuració</string>
+    <string name="preferences_text">Preferències</string>
     <string name="preferences_account">Compte</string>
+    <string name="preferences_languageAndRegion">IDIOMA I REGIÓ</string>
+    <string name="preferences_other">ALTRES</string>
 
     <string name="preferences_username_button">Nom d\'usuari</string>
     <string name="preferences_username_empty">No establert</string>
@@ -120,41 +100,63 @@
     <string name="preferences_birthdate_empty">No establerta</string>
     <string name="preferences_birthdate_popup_title">Data de naixement</string>
 
-    <string name="select_date">Selecciona una data</string>
-    <string name="estada_dies">Estada de %1$d dies</string>
-    <string name="falten_dies">Falten %1$d dies</string>
-    <string name="dema_viatge">Demà comença el viatge!</string>
-    <string name="avui_viatge">Comença avui!</string>
-    <string name="viatge_realitzat">Viatge realitzat</string>
-    <string name="next">Següent</string>
-    <string name="select_time">Selecciona l\'hora</string>
-    <string name="back">Enrere</string>
+    <string name="preferences_coin_button">Moneda</string>
+    <string name="preferences_coin_description">Moneda a usar al pressupost</string>
+    <string name="preferences_language_button">Idioma</string>
+    <string name="preferences_language_description">Canvia l\'idioma de la interfície</string>
+    <string name="preferences_theme_button">Tema fosc</string>
+    <string name="preferences_theme_description">Colors de la interficie</string>
+    <string name="preferences_wide_button">Text gran</string>
+    <string name="preferences_wide_description">Ajuda a l\'accessibilitat</string>
+    <string name="preferences_notification_button">Notificacions</string>
+    <string name="preferences_notifications_description">Rebre notificacions rellevants</string>
 
-    <string name="no_trips">Cap viatge creat encara</string>
-    <string name="no_trips_hint">Prem el botó + per crear el teu primer viatge</string>
-    <string name="error_empty_destination">La destinació no pot estar buida</string>
-    <string name="change_photo">Canviar foto</string>
-    <string name="no_photo">Sense foto</string>
+    <string name="preferences_aboutUs_button">Sobre nosaltres</string>
+    <string name="preferences_aboutUs_description">Conèix més informació sobre l\'app</string>
+    <string name="preferences_termsAndConditions_button">Termes i Condicions</string>
+    <string name="preferences_termsAndConditions_description">Els teus drets i deures</string>
 
-    <string name="description">Descripció</string>
-    <string name="description_example">Un viatge amb la familia</string>
-    <string name="edit">Editar</string>
-    <string name="save">Guardar</string>
+    <string name="preferences_logOut_text">Tancar sessió</string>
+    <string name="preferences_logOut_description">Surt del teu compte de forma segura</string>
+    <string name="logOut_popUp_text">Estàs segur que vols tancar la sessió?</string>
+
+    <string name="language_catalan">Català</string>
+    <string name="language_spanish">Espanyol</string>
+    <string name="language_english">Anglès</string>
+    <string name="theme_light">Clar</string>
+    <string name="theme_dark">Fosc</string>
+
+    <string name="login">Iniciar sessió</string>
+    <string name="email">Correu electrònic</string>
+    <string name="password">Contrasenya</string>
+    <string name="i_agree_with">"Estic d'acord amb els "</string>
+
+    <string name="who_are_we">Qui som?</string>
+    <string name="development_team">Equip de Desenvolupament</string>
+    <string name="aboutUs_text">Monarca Smart Travel és la teva aplicació ideal per planificar viatges. Organitza el teu itinerari, controla el teu pressupost i descobreix nou destins de forma fàcil i intel·ligent.</string>
+    <string name="termsAndConditions_text">Data de l\'última actualització: 21 de febrer de 2026\n\nBenvingut/da a Monarca Smart Travel. Us preguem que llegiu atentament aquests Termes i Condicions abans d\'utilitzar la nostra aplicació mòbil. En accedir o utilitzar l\'Aplicació, accepteu quedar vinculat per aquests termes. Si no esteu d\'acord amb alguna part dels mateixos, no podreu accedir al servei.\n\n1. Acceptació dels Termes\nL\'ús d\'aquesta aplicació atribueix la condició d\'Usuari i implica l\'acceptació plena i sense reserves de totes i cadascuna de les disposicions incloses en aquest text. Monarca Smart Travel es reserva el dret a modificar aquests termes en qualsevol moment, informant els usuaris a través de l\'aplicació.\n\n2. Descripció del Servei\nMonarca Smart Travel és una plataforma de gestió d\'itineraris i assistència en viatges que permet als usuaris organitzar destins, visualitzar dates i gestionar informació logística. El servei s\'ofereix \"tal com és\" i segons disponibilitat.\n\n3. Registre d\'Usuari i Responsabilitat\nCompte: Per accedir a certes funcionalitats, l\'usuari podria haver de crear un compte. L\'usuari és l\'únic responsable de mantenir la confidencialitat de la seva contrasenya.\n\nVeracitat: L\'usuari es compromet a proporcionar informació real, actualitzada i completa durant el procés de registre.\n\nEdat mínima: L\'ús de l\'aplicació està restringit a persones majors de 18 anys o menors amb consentiment legal dels seus tutors.\n\n4. Propietat Intel·lectual\nTots els continguts de l\'aplicació (textos, gràfics, logotips, icones, imatges, codi font, disseny de la interfície en Jetpack Compose i programari) són propietat exclusiva de Monarca Smart Travel o dels seus llicenciants i estan protegits per les lleis internacionals de propietat intel·lectual. Queda prohibida la seva reproducció, distribució o transformació sense autorització expressa.\n\n5. Política de Privadesa i Protecció de Dades\nDe conformitat amb el Reglament General de Protecció de Dades (RGPD), les dades personals facilitades seran tractades per gestionar la vostra experiència de viatge. L\'usuari té dret a accedir, rectificar i suprimir les seves dades en qualsevol moment a través de la configuració de l\'aplicació o contactant amb el nostre suport tècnic.\n\n6. Limitació de Responsabilitat\nMonarca Smart Travel no es fa responsable de:\n\nErrors en la informació de vols o reserves proporcionada per tercers.\n\nDanys derivats de l\'ús indegut de l\'aplicació.\n\nInterrupcions del servei per manteniment tècnic o causes de força major.\n\nPèrdua de dades si l\'usuari no manté una còpia de seguretat adequada.\n\n7. Ús Prohibit\nL\'usuari es compromet a no:\n\nUtilitzar l\'aplicació per a fins il·legals.\n\nIntentar descompilar o fer enginyeria inversa del programari.\n\nIntroduir virus o programari maliciós que pugui danyar la infraestructura del servei.\n\n8. Enllaços a Tercers\nL\'aplicació pot contenir enllaços a llocs web o serveis de tercers (com mapes, aerolínies o hotels). No tenim control ni assumim cap responsabilitat pel contingut, les polítiques de privadesa o les pràctiques d\'aquests tercers.\n\n9. Resolució de Conflictes i Jurisdicció\nAquests Termes es regiran i s\'interpretaran d\'acord amb la legislació vigent a Espanya. Per a qualsevol controvèrsia que pogués derivar-se de l\'ús de l\'aplicació, les parts se sotmeten als Jutjats i Tribunals de la ciutat on es trobi la seu social de l\'empresa, renunciant a qualsevol altre fòrum que els pogués correspondre.\n\n10. Contacte\nSi teniu qualsevol pregunta sobre aquests Termes i Condicions, podeu contactar amb nosaltres a:\n\nCorreu electrònic: support@monarcasmarttravel.com\n\nWeb: www.monarcasmarttravel.com</string>
+
+    <string name="kyoto">Kyoto, Japó</string>
+    <string name="paris">París, França</string>
+    <string name="NY">Nova York, EUA</string>
 
     <string name="error_ok">Ok</string>
+    <string name="choose_option_title">Selecciona una opció</string>
+    <string name="invalid_format">Format invàlid</string>
+    <string name="invalid_email">Correu electrònic invàlid</string>
+    <string name="error_unknown">S\'ha produït un error inesperat.</string>
     <string name="error_non_existing_trip">El viatge no existeix.</string>
     <string name="error_item_not_found">No s\'ha trobat l\'element.</string>
     <string name="error_item_out_of_range">L\'element està fora del rang del viatge.</string>
     <string name="error_non_existing_date">La data no està assignada.</string>
-    <string name="error_unknown">S\'ha produït un error inesperat.</string>
-    <string name="edit_trip">Editar viatge</string>
-    <string name="invalid_format">Format invàlid</string>
-    <string name="choose_option_title">Selecciona una opció</string>
-    <string name="last_update">Última actualització: Març 2026</string>
-    <string name="coming_soon">Funció que s\'implementarà més endevant</string>
-    <string name="invalid_email">Correu electrònic invàlid</string>
-    <string name="date_before_error">La data de fi ha de ser posterior a la d\'inici.</string>
-    <string name="description_not_empty_error">La descripció no pot estar buida.</string>
+    <string name="error_empty_destination">La destinació no pot estar buida</string>
+    <string name="error_invalid_title">La destinació no pot estar buida.</string>
+    <string name="error_title_empty">La destinació no pot estar buida.</string>
     <string name="destination_not_empty_error">La destinació no pot estar buida.</string>
-    <string name="trip">Viatge</string>
+    <string name="error_invalid_description">La descripció no pot estar buida.</string>
+    <string name="error_description_empty">La descripció no pot estar buida.</string>
+    <string name="description_not_empty_error">La descripció no pot estar buida.</string>
+    <string name="error_invalid_date_range">La data d\'inici ha de ser anterior a la data de fi.</string>
+    <string name="error_date_range">La data de fi ha de ser posterior a la d\'inici.</string>
+    <string name="date_before_error">La data de fi ha de ser posterior a la d\'inici.</string>
 </resources>

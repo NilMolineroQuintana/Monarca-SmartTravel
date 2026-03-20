@@ -1,162 +1,162 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Monarca Smart Travel</string>
-
+    <string name="version">Versión: %1$s</string>
     <string name="bottom_menu_home">Inicio</string>
     <string name="bottom_menu_trips">Viajes</string>
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Eliminar</string>
+    <string name="add">Añadir</string>
+    <string name="edit">Editar</string>
+    <string name="save">Guardar</string>
+    <string name="next">Siguiente</string>
+    <string name="back">Atrás</string>
+    <string name="more">Más</string>
+    <string name="unknown">Desconocida</string>
+    <string name="last_update">Última actualización: Marzo 2026</string>
+    <string name="coming_soon">Función que se implementará más adelante</string>
 
-    <string name="preferences_languageAndRegion">IDIOMA Y REGIÓN</string>
-    <string name="config">Configuración</string>
-    <string name="preferences_other">OTROS</string>
+    <string name="which_adventure">¿Qué aventura planeamos hoy?</string>
+    <string name="quick_actions">Acciones rápidas</string>
+    <string name="create_new_trip">Crear nuevo viaje</string>
+    <string name="create_new_trip_description">Planifica tu viaje desde cero</string>
+    <string name="most_popular">Los más populares</string>
 
-    <string name="preferences_text">Preferencias</string>
-    <string name="preferences_coin_button">Moneda</string>
-    <string name="preferences_coin_description">Moneda a usar en el presupuesto</string>
-    <string name="preferences_aboutUs_button">Sobre nosotros</string>
-    <string name="preferences_aboutUs_description">Conoce más información sobre la app</string>
-    <string name="preferences_termsAndConditions_button">Términos y Condiciones</string>
-    <string name="preferences_termsAndConditions_description">Tus derechos y deberes</string>
-    <string name="preferences_logOut_text">Cerrar sesión</string>
-    <string name="preferences_logOut_description">Sal de tu cuenta de forma segura</string>
-    <string name="preferences_notification_button">Notificaciones</string>
-    <string name="preferences_notifications_description">Recibir notificaciones relevantes</string>
-    <string name="preferences_language_button">Idioma</string>
-    <string name="preferences_language_description">Cambia el idioma de la interfaz</string>
-    <string name="preferences_theme_button">Tema oscuro</string>
-    <string name="preferences_theme_description">Colores de la interfaz</string>
-    <string name="preferences_wide_button">Texto grande</string>
-    <string name="preferences_wide_description">Ayuda a la accesibilidad</string>
+    <string name="trips_text">Mis viajes</string>
+    <string name="trip">Viaje</string>
+    <string name="no_trips">Ningún viaje creado todavía</string>
+    <string name="no_trips_hint">Pulsa el botón + para crear tu primer viaje</string>
+    <string name="estada_dies">Estancia de %1$d días</string>
+    <string name="falten_dies">Faltan %1$d días</string>
+    <string name="dema_viatge">¡Mañana empieza el viaje!</string>
+    <string name="avui_viatge">¡Empieza hoy!</string>
+    <string name="viatge_realitzat">Viaje realizado</string>
+    <string name="no_date">Sin fecha</string>
 
-    <string name="language_catalan">Catalán</string>
-    <string name="language_spanish">Español</string>
-    <string name="language_english">Inglés</string>
+    <string name="new_trip">Nuevo viaje</string>
+    <string name="edit_trip">Editar viaje</string>
+    <string name="itinerary_details">Detalles del itinerario</string>
+    <string name="create_trip">Crear viaje</string>
+    <string name="destination">Destino</string>
+    <string name="example_destination">Ej: Roma, Italia</string>
+    <string name="description">Descripción</string>
+    <string name="description_example">Un viaje con la familia</string>
+    <string name="start_date">Fecha inicio</string>
+    <string name="final_date">Fecha final</string>
+    <string name="dd_mm_aaaa">DD/MM/AAAA</string>
+    <string name="select_date">Selecciona una fecha</string>
+    <string name="select_time">Selecciona la hora</string>
 
-    <string name="theme_light">Claro</string>
-    <string name="theme_dark">Oscuro</string>
+    <string name="trip_to">Viaje a %1$s</string>
+    <string name="days_of_duration">%1$s - %2$s • %3$d días de duración</string>
+    <string name="budget">Presupuesto</string>
+    <string name="activities">Actividades</string>
+    <string name="trip_options_title">Opciones del viaje</string>
+    <string name="no_plans">No tienes ningún plan</string>
+    <string name="album">Álbum</string>
+    <string name="no_photo">Sin foto</string>
+    <string name="change_photo">Cambiar foto</string>
+    <string name="deleteTrip">Eliminar viaje</string>
+    <string name="deleteImage">Eliminar imagen</string>
+    <string name="popUp_deleteTrip_text">¿Estás seguro que quieres eliminar el viaje?</string>
+    <string name="popUp_deleteImage_text">¿Estás seguro que quieres eliminar la imagen?</string>
 
+    <string name="add_plan">Añadir plan</string>
+    <string name="add_new_plan">Añadir un nuevo plan</string>
+    <string name="delete_plan">Eliminar plan</string>
+    <string name="delete_plan_description">¿Estás seguro de que quieres eliminar este plan de tu itinerario?</string>
     <string name="plan_flight">Vuelo</string>
     <string name="plan_boat">Barco</string>
     <string name="plan_train">Tren</string>
     <string name="plan_hotel">Alojamiento</string>
     <string name="plan_restaurant">Restaurante</string>
     <string name="plan_location">Lugar de interés</string>
-
     <string name="origin">Origen</string>
-    <string name="destination">Destino</string>
     <string name="company">Compañía</string>
     <string name="data_de_entrada">Fecha de entrada</string>
     <string name="data_de_sortida">Fecha de salida</string>
     <string name="direccio">Dirección</string>
-
-    <string name="add">Añadir</string>
-
-    <string name="hotel_name">Nombre alojamiento</string>
+    <string name="price">Precio</string>
+    <string name="hotel_name">Nombre del alojamiento</string>
     <string name="restaurant_name">Nombre del restaurante</string>
     <string name="location_name">Nombre del lugar de interés</string>
     <string name="flight_num">Nº de vuelo</string>
     <string name="boat_num">Nº de barco</string>
     <string name="train_num">Nº de tren</string>
 
-    <string name="trip_to">Viaje a %1$s</string>
-    <string name="add_plan">Añadir plan</string>
-    <string name="deleteTrip">Eliminar viaje</string>
-    <string name="deleteImage">Eliminar imagen</string>
-    <string name="album">Álbum</string>
-
-    <string name="logOut_popUp_text">¿Estás seguro de que quieres cerrar la sesión?</string>
-    <string name="popUp_deleteTrip_text">¿Estás seguro de que quieres eliminar el viaje?</string>
-    <string name="popUp_deleteImage_text">¿Estás seguro de que quieres eliminar la imagen?</string>
-    <string name="accept">Aceptar</string>
-    <string name="cancel">Cancelar</string>
-    <string name="delete">Eliminar</string>
-
-    <string name="termsAndConditions_text">Fecha de la última actualización: 21 de febrero de 2026\n\nBienvenido/a a Monarca Smart Travel. Te rogamos que leas atentamente estos Términos y Condiciones antes de utilizar nuestra aplicación móvil. Al acceder o utilizar la Aplicación, aceptas quedar vinculado por estos términos. Si no estás de acuerdo con alguna parte de los mismos, no podrás acceder al servicio.\n\n1. Aceptación de los Términos\nEl uso de esta aplicación atribuye la condición de Usuario e implica la aceptación plena y sin reservas de todas y cada una de las disposiciones incluidas en este texto. Monarca Smart Travel se reserva el derecho a modificar estos términos en cualquier momento, informando a los usuarios a través de la aplicación.\n\n2. Descripción del Servicio\nMonarca Smart Travel es una plataforma de gestión de itinerarios y asistencia en viajes que permite a los usuarios organizar destinos, visualizar fechas y gestionar información logística. El servicio se ofrece \"tal cual\" y según disponibilidad.\n\n3. Registro de Usuario y Responsabilidad\nCuenta: Para acceder a ciertas funcionalidades, el usuario podría tener que crear una cuenta. El usuario es el único responsable de mantener la confidencialidad de su contraseña.\n\nVeracidad: El usuario se compromete a proporcionar información real, actualizada y completa durante el proceso de registro.\n\nEdad mínima: El uso de la aplicación está restringido a personas mayores de 18 años o menores con consentimiento legal de sus tutores.\n\n4. Propiedad Intelectual\nTodos los contenidos de la aplicación (textos, gráficos, logotipos, iconos, imágenes, código fuente, diseño de la interfaz en Jetpack Compose y software) son propiedad exclusiva de Monarca Smart Travel o de sus licenciantes y están protegidos por las leyes internacionales de propiedad intelectual. Queda prohibida su reproducción, distribución o transformación sin autorización expresa.\n\n5. Política de Privacidad y Protección de Datos\nDe conformidad con el Reglamento General de Protección de Datos (RGPD), los datos personales facilitados serán tratados para gestionar tu experiencia de viaje. El usuario tiene derecho a acceder, rectificar y suprimir sus datos en cualquier momento a través de la configuración de la aplicación o contactando con nuestro soporte técnico.\n\n6. Limitación de Responsabilidad\nMonarca Smart Travel no se hace responsable de:\n\nErrores en la información de vuelos o reservas proporcionada por terceros.\n\nDaños derivados del uso indebido de la aplicación.\n\nInterrupciones del servicio por mantenimiento técnico o causas de fuerza mayor.\n\nPérdida de datos si el usuario no mantiene una copia de seguridad adecuada.\n\n7. Uso Prohibido\nEl usuario se compromete a no:\n\nUtilizar la aplicación para fines ilegales.\n\nIntentar descompilar o realizar ingeniería inversa del software.\n\nIntroducir virus o software malicioso que pueda dañar la infraestructura del servicio.\n\n8. Enlaces a Terceros\nLa aplicación puede contener enlaces a sitios web o servicios de terceros (como mapas, aerolíneas u hoteles). No tenemos control ni asumimos ninguna responsabilidad por el contenido, las políticas de privacidad o las prácticas de estos terceros.\n\n9. Resolución de Conflictos y Jurisdicción\nEstos Términos se regirán e interpretarán de acuerdo con la legislación vigente en España. Para cualquier controversia que pudiera derivarse del uso de la aplicación, las partes se someten a los Juzgados y Tribunales de la ciudad donde se encuentre la sede social de la empresa, renunciando a cualquier otro fuero que pudiera corresponderles.\n\n10. Contacto\nSi tienes cualquier pregunta sobre estos Términos y Condiciones, puedes contactar con nosotros en:\n\nCorreo electrónico: support@monarcasmarttravel.com\n\nWeb: www.monarcasmarttravel.com</string>
-
-    <string name="trips_text">Mis viajes</string>
-
-    <string name="kyoto">Kioto, Japón</string>
-    <string name="paris">París, Francia</string>
-    <string name="NY">Nueva York, EE. UU.</string>
-    <string name="version">Versión: %1$s</string>
-    <string name="no_date">Sin fecha</string>
-    <string name="who_are_we">¿Quiénes somos?</string>
-    <string name="aboutUs_text">Monarca Smart Travel es tu aplicación ideal para planificar viajes. Organiza tu itinerario, controla tu presupuesto y descubre nuevos destinos de forma fácil e inteligente.</string>
-    <string name="development_team">Equipo de Desarrollo</string>
-    <string name="new_trip">Nuevo viaje</string>
-    <string name="itinerary_details">Detalles del itinerario</string>
-    <string name="example_destination">Ej: Roma, Italia</string>
-    <string name="start_date">Fecha inicio</string>
-    <string name="dd_mm_aaaa">DD/MM/AAAA</string>
-    <string name="final_date">Fecha final</string>
-    <string name="create_trip">Crear viaje</string>
-    <string name="which_adventure">¿Qué aventura planeamos hoy?</string>
-    <string name="quick_actions">Acciones rápidas</string>
-    <string name="create_new_trip">Crear nuevo viaje</string>
-    <string name="trip_options_title">Opciones del viaje</string>
-    <string name="create_new_trip_description">Planifica tu viaje desde cero</string>
-    <string name="no_plans">No tienes ningún plan</string>
-    <string name="add_new_plan">Añadir uno nuevo</string>
-    <string name="days_of_duration">%1$s - %2$s • %3$d días de duración</string>
-    <string name="budget">Presupuesto</string>
-    <string name="activities">Actividades</string>
-    <string name="delete_plan">Eliminar plan</string>
-    <string name="delete_plan_description">¿Estás seguro de que quieres eliminar este plan de tu itinerario?</string>
-    <string name="login">Iniciar sesión</string>
-    <string name="email">Correo electrónico</string>
-    <string name="password">Contraseña</string>
-    <string name="i_agree_with">"Estoy de acuerdo con los "</string>
-    <string name="most_popular">Los más populares</string>
-    <string name="more">Más</string>
-    <string name="unknown">Desconocida</string>
-    <string name="price">Precio</string>
-
+    <string name="config">Configuración</string>
+    <string name="preferences_text">Preferencias</string>
     <string name="preferences_account">Cuenta</string>
+    <string name="preferences_languageAndRegion">IDIOMA Y REGIÓN</string>
+    <string name="preferences_other">OTROS</string>
 
     <string name="preferences_username_button">Nombre de usuario</string>
     <string name="preferences_username_empty">No establecido</string>
-    <string name="preferences_username_popup_title">Cambiar nombre de usuario</string>
+    <string name="preferences_username_popup_title">Cambia el nombre de usuario</string>
     <string name="preferences_username_label">Nombre de usuario</string>
-    <string name="preferences_username_placeholder">Ej: Joan García</string>
+    <string name="preferences_username_placeholder">Ej: Juan García</string>
 
     <string name="preferences_birthdate_button">Fecha de nacimiento</string>
     <string name="preferences_birthdate_empty">No establecida</string>
     <string name="preferences_birthdate_popup_title">Fecha de nacimiento</string>
 
-    <string name="select_date">Selecciona una fecha</string>
-    <string name="estada_dies">Estancia de %1$d días</string>
-    <string name="falten_dies">Faltan %1$d días</string>
-    <string name="dema_viatge">¡Mañana empieza el viaje!</string>
-    <string name="avui_viatge">¡Empieza hoy!</string>
-    <string name="viatge_realitzat">Viaje realizado</string>
-    <string name="next">Següent</string>
-    <string name="select_time">Selecciona l\'hora</string>
-    <string name="back">Enrere</string>
+    <string name="preferences_coin_button">Moneda</string>
+    <string name="preferences_coin_description">Moneda a usar en el presupuesto</string>
+    <string name="preferences_language_button">Idioma</string>
+    <string name="preferences_language_description">Cambia el idioma de la interfaz</string>
+    <string name="preferences_theme_button">Tema oscuro</string>
+    <string name="preferences_theme_description">Colores de la interfaz</string>
+    <string name="preferences_wide_button">Texto grande</string>
+    <string name="preferences_wide_description">Ayuda a la accesibilidad</string>
+    <string name="preferences_notification_button">Notificaciones</string>
+    <string name="preferences_notifications_description">Recibir notificaciones relevantes</string>
 
-    <string name="no_trips">Ningún viaje creado todavía</string>
-    <string name="no_trips_hint">Pulsa el botón + para crear tu primer viaje</string>
-    <string name="error_empty_destination">El destino no puede estar vacío</string>
-    <string name="change_photo">Cambiar foto</string>
-    <string name="no_photo">Sin foto</string>
+    <string name="preferences_aboutUs_button">Sobre nosotros</string>
+    <string name="preferences_aboutUs_description">Conoce más información sobre la app</string>
+    <string name="preferences_termsAndConditions_button">Términos y Condiciones</string>
+    <string name="preferences_termsAndConditions_description">Tus derechos y deberes</string>
 
-    <string name="description">Descripción</string>
-    <string name="description_example">Un viaje con la familia</string>
-    <string name="edit">Editar</string>
-    <string name="save">Guardar</string>
+    <string name="preferences_logOut_text">Cerrar sesión</string>
+    <string name="preferences_logOut_description">Sal de tu cuenta de forma segura</string>
+    <string name="logOut_popUp_text">¿Estás seguro de que quieres cerrar la sesión?</string>
+
+    <string name="language_catalan">Catalán</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">Inglés</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+
+    <string name="login">Iniciar sesión</string>
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="i_agree_with">Estoy de acuerdo con los </string>
+
+    <string name="who_are_we">¿Quiénes somos?</string>
+    <string name="development_team">Equipo de Desarrollo</string>
+    <string name="aboutUs_text">Monarca Smart Travel es tu aplicación ideal para planificar viajes. Organiza tu itinerario, controla tu presupuesto y descubre nuevos destinos de forma fácil e inteligente.</string>
+    <string name="termsAndConditions_text">Fecha de la última actualización: 21 de febrero de 2026\n\nBienvenido/a a Monarca Smart Travel. Te rogamos que leas atentamente estos Términos y Condiciones antes de utilizar nuestra aplicación móvil. Al acceder o utilizar la Aplicación, aceptas quedar vinculado por estos términos. Si no estás de acuerdo con alguna parte de los mismos, no podrás acceder al servicio.\n\n1. Aceptación de los Términos\nEl uso de esta aplicación atribuye la condición de Usuario e implica la aceptación plena y sin reservas de todas y cada una de las disposiciones incluidas en este texto. Monarca Smart Travel se reserva el derecho a modificar estos términos en cualquier momento, informando a los usuarios a través de la aplicación.\n\n2. Descripción del Servicio\nMonarca Smart Travel es una plataforma de gestión de itinerarios y asistencia en viajes que permite a los usuarios organizar destinos, visualizar fechas y gestionar información logística. El servicio se ofrece \"tal cual es\" y según disponibilidad.\n\n3. Registro de Usuario y Responsabilidad\nCuenta: Para acceder a ciertas funcionalidades, el usuario podría tener que crear una cuenta. El usuario es el único responsable de mantener la confidencialidad de su contraseña.\n\nVeracidad: El usuario se compromete a proporcionar información real, actualizada y completa durante el proceso de registro.\n\nEdad mínima: El uso de la aplicación está restringido a personas mayores de 18 años o menores con consentimiento legal de sus tutores.\n\n4. Propiedad Intelectual\nTodos los contenidos de la aplicación (textos, gráficos, logotipos, iconos, imágenes, código fuente, diseño de la interfaz en Jetpack Compose y software) son propiedad exclusiva de Monarca Smart Travel o de sus licenciantes y están protegidos por las leyes internacionales de propiedad intelectual. Queda prohibida su reproducción, distribución o transformación sin autorización expresa.\n\n5. Política de Privacidad y Protección de Datos\nDe conformidad con el Reglamento General de Protección de Datos (RGPD), los datos personales facilitados serán tratados para gestionar tu experiencia de viaje. El usuario tiene derecho a acceder, rectificar y suprimir sus datos en cualquier momento a través de la configuración de la aplicación o contactando con nuestro soporte técnico.\n\n6. Limitación de Responsabilidad\nMonarca Smart Travel no se hace responsable de:\n\nErrores en la información de vuelos o reservas proporcionada por terceros.\n\nDaños derivados del uso indebido de la aplicación.\n\nInterrupciones del servicio por mantenimiento técnico o causas de fuerza mayor.\n\nPérdida de datos si el usuario no mantiene una copia de seguridad adecuada.\n\n7. Uso Prohibido\nEl usuario se compromete a no:\n\nUtilizar la aplicación para fines ilegales.\n\nIntentar descompilar o hacer ingeniería inversa del software.\n\nIntroducir virus o software malicioso que pueda dañar la infraestructura del servicio.\n\n8. Enlaces a Terceros\nLa aplicación puede contener enlaces a sitios web o servicios de terceros (como mapas, aerolíneas u hoteles). No tenemos control ni asumimos ninguna responsabilidad por el contenido, las políticas de privacidad o las prácticas de estos terceros.\n\n9. Resolución de Conflictos y Jurisdicción\nEstos Términos se regirán e interpretarán de acuerdo con la legislación vigente en España. Para cualquier controversia que pudiera derivarse del uso de la aplicación, las partes se someten a los Juzgados y Tribunales de la ciudad donde se encuentre la sede social de la empresa, renunciando a cualquier otro fuero que les pudiera corresponder.\n\n10. Contacto\nSi tienes cualquier pregunta sobre estos Términos y Condiciones, puedes contactar con nosotros en:\n\nCorreo electrónico: support@monarcasmarttravel.com\n\nWeb: www.monarcasmarttravel.com</string>
+
+    <string name="kyoto">Kioto, Japón</string>
+    <string name="paris">París, Francia</string>
+    <string name="NY">Nueva York, EE. UU.</string>
 
     <string name="error_ok">Ok</string>
+    <string name="choose_option_title">Selecciona una opción</string>
+    <string name="invalid_format">Formato inválido</string>
+    <string name="invalid_email">Correo electrónico inválido</string>
+    <string name="error_unknown">Se ha producido un error inesperado.</string>
     <string name="error_non_existing_trip">El viaje no existe.</string>
     <string name="error_item_not_found">No se ha encontrado el elemento.</string>
     <string name="error_item_out_of_range">El elemento está fuera del rango del viaje.</string>
     <string name="error_non_existing_date">La fecha no está asignada.</string>
-    <string name="error_unknown">Se ha producido un error inesperado.</string>
-    <string name="edit_trip">Editar viaje</string>
-    <string name="invalid_format">Formato inválido</string>
-    <string name="choose_option_title">Selecciona una opción</string>
-    <string name="last_update">Última actualización: Marzo 2026</string>
-    <string name="coming_soon">Función que se implementará más adelante</string>
-    <string name="invalid_email">Correo electrónico inválido</string>
-    <string name="date_before_error">La fecha de fin debe ser posterior a la de inicio.</string>
-    <string name="description_not_empty_error">La descripción no puede estar vacía.</string>
+    <string name="error_empty_destination">El destino no puede estar vacío.</string>
+    <string name="error_invalid_title">El destino no puede estar vacío.</string>
+    <string name="error_title_empty">El destino no puede estar vacío.</string>
     <string name="destination_not_empty_error">El destino no puede estar vacío.</string>
-    <string name="trip">Viaje</string>
+    <string name="error_invalid_description">La descripción no puede estar vacía.</string>
+    <string name="error_description_empty">La descripción no puede estar vacía.</string>
+    <string name="description_not_empty_error">La descripción no puede estar vacía.</string>
+    <string name="error_invalid_date_range">La fecha de inicio debe ser anterior a la fecha de fin.</string>
+    <string name="error_date_range">La fecha de fin debe ser posterior a la de inicio.</string>
+    <string name="date_before_error">La fecha de fin debe ser posterior a la de inicio.</string>
 </resources>
