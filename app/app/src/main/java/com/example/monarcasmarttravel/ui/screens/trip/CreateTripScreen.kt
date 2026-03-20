@@ -109,10 +109,12 @@ fun CreateTripScreen(
         }
     }
 
+    val dateBeforeError = stringResource(R.string.date_before_error)
+
     // Validació en línia del rang de dates (capa UI)
     LaunchedEffect(startDate, endDate) {
         dateRangeError = if (startDate != null && endDate != null && !endDate!!.after(startDate)) {
-            "La data de fi ha de ser posterior a la d'inici."
+            dateBeforeError
         } else null
     }
 
@@ -241,16 +243,20 @@ fun CreateTripScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // ── Botó de crear / guardar ──────────────────────────────────────
+
+            val destinationErrorText = stringResource(R.string.destination_not_empty_error)
+            val descriptionErrorText = stringResource(R.string.description_not_empty_error)
+
             Button(
                 onClick = {
                     // Marcar camps buits amb error (validació capa UI)
                     var hasError = false
                     if (title.isBlank()) {
-                        titleError = "La destinació no pot estar buida."
+                        titleError = destinationErrorText
                         hasError = true
                     }
                     if (description.isBlank()) {
-                        descriptionError = "La descripció no pot estar buida."
+                        descriptionError = descriptionErrorText
                         hasError = true
                     }
                     if (hasError) return@Button

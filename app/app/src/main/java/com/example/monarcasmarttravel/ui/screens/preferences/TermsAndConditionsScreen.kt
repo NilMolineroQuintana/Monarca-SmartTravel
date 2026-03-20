@@ -81,7 +81,7 @@ fun TermsAndConditionsScreen(navController: NavController, isLoginScreen: Boolea
 
             // Peu de pàgina
             Text(
-                text = "Última actualització: Març 2026",
+                text = stringResource(R.string.last_update),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,

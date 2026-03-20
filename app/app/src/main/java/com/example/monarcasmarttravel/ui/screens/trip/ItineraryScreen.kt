@@ -156,7 +156,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
     val trip = tripViewModel.getTripById(tripId)
 
     // Fallback per si el viatge no s'ha trobat (no hauria de passar en condicions normals)
-    val destinationName = trip?.title ?: "Viatge"
+    val destinationName = trip?.title ?: stringResource(R.string.trip)
     val dateIn = trip?.dateIn ?: Date()
     val dateOut = trip?.dateOut ?: Date()
     val headerImg = trip?.imageResId
@@ -594,7 +594,7 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }, navC
 
     OptionsPopUp(
         show = showOptions,
-        title = "Selecciona una opció",
+        title = stringResource(R.string.choose_option_title),
         options = listOf(
             Icons.Default.Edit    to "Editar",
             Icons.Default.Delete  to "Eliminar",

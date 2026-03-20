@@ -112,7 +112,7 @@ fun LoginScreen(navController: NavController) {
                 placeholder = "exemple@correu.com",
                 leadingIcon = Icons.Default.Email,
                 isError = !isEmailValid,
-                errorMessage = if (!isEmailValid) "Correu electrònic invàlid" else null,
+                errorMessage = if (!isEmailValid) stringResource(R.string.invalid_email) else null,
                 keyboardType = KeyboardType.Email
             )
 
@@ -120,7 +120,7 @@ fun LoginScreen(navController: NavController) {
                 value = password,
                 onValueChange = { password = it },
                 label = stringResource(R.string.password),
-                placeholder = "Contrasenya",
+                placeholder = stringResource(R.string.password),
                 leadingIcon = Icons.Default.Lock,
                 isPassword = true,
                 keyboardType = KeyboardType.Password,

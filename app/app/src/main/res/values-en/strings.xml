@@ -92,7 +92,7 @@
     <string name="which_adventure">What adventure are we planning today?</string>
     <string name="quick_actions">Quick actions</string>
     <string name="create_new_trip">Create new trip</string>
-    <string name="trip_options_title">Opciones del viaje</string>
+    <string name="trip_options_title">Trip options</string>
     <string name="create_new_trip_description">Plan your trip from scratch</string>
     <string name="no_plans">You have no plans</string>
     <string name="add_new_plan">Add a new one</string>
@@ -151,4 +151,12 @@
     <string name="error_unknown">An unexpected error has occurred.</string>
     <string name="edit_trip">Edit trip</string>
     <string name="invalid_format">Invalid format</string>
+    <string name="choose_option_title">Select an option</string>
+    <string name="last_update">Last update: March 2026</string>
+    <string name="coming_soon">Feature to be implemented later</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="date_before_error">The end date must be after the start date.</string>
+    <string name="description_not_empty_error">The description cannot be empty.</string>
+    <string name="destination_not_empty_error">The destination cannot be empty.</string>
+    <string name="trip">Trip</string>
 </resources>

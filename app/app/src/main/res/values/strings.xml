@@ -149,4 +149,12 @@
     <string name="error_unknown">S\'ha produït un error inesperat.</string>
     <string name="edit_trip">Editar viatge</string>
     <string name="invalid_format">Format invàlid</string>
+    <string name="choose_option_title">Selecciona una opció</string>
+    <string name="last_update">Última actualització: Març 2026</string>
+    <string name="coming_soon">Funció que s\'implementarà més endevant</string>
+    <string name="invalid_email">Correu electrònic invàlid</string>
+    <string name="date_before_error">La data de fi ha de ser posterior a la d\'inici.</string>
+    <string name="description_not_empty_error">La descripció no pot estar buida.</string>
+    <string name="destination_not_empty_error">La destinació no pot estar buida.</string>
+    <string name="trip">Viatge</string>
 </resources>

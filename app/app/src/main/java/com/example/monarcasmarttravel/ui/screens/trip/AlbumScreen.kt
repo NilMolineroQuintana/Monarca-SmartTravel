@@ -93,7 +93,7 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             FloatingActionButton(onClick = {
                 Toast.makeText(
                     context,
-                    "Funció que s'implementarà més endevant",
+                    R.string.coming_soon,
                     Toast.LENGTH_SHORT
                 ).show()
             }) {
