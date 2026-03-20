@@ -49,10 +49,10 @@ private const val TAG = "CreateTripScreen"
 private const val DATE_FORMAT = "dd/MM/yyyy"
 
 /**
- * Pantalla unificada per crear o editar un viatge
+ * Pantalla unificada per crear o actualitzar un viatge.
  *
  * - Si [tripId] és null → mode creació: formulari buit, crida [TripViewModel.addTrip].
- * - Si [tripId] té valor → mode edició: pre-omple els camps amb les dades actuals del viatge
+ * - Si [tripId] té valor → mode actualització: pre-omple els camps amb les dades actuals del viatge
  *   via [LaunchedEffect], crida [TripViewModel.updateTrip].
  *
  * La UI valida que tots els camps obligatoris tinguin contingut i que
@@ -63,7 +63,7 @@ private const val DATE_FORMAT = "dd/MM/yyyy"
  * i els errors pugen com a [errorMessage] mostrats amb un Toast.
  *
  * @param navController Controlador de navegació.
- * @param tripId Identificador del viatge a editar. Null si és una creació nova.
+ * @param tripId Identificador del viatge a actualitzar. Null si és una creació nova.
  * @param viewModel ViewModel gestionat per Hilt.
  */
 @Composable
@@ -72,7 +72,7 @@ fun CreateTripScreen(
     tripId: Int? = null,
     viewModel: TripViewModel = hiltViewModel()
 ) {
-    val isEditMode = tripId != null
+    val isUpdateMode = tripId != null
     val context = LocalContext.current
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
@@ -88,7 +88,12 @@ fun CreateTripScreen(
     var descriptionError by remember { mutableStateOf<String?>(null) }
     var dateRangeError   by remember { mutableStateOf<String?>(null) }
 
-    // Mode edició: pre-omple el formulari amb les dades del viatge existent,
+    // Strings localitzats per als missatges d'error en línia
+    val errorDateRange        = stringResource(R.string.error_date_range)
+    val errorTitleEmpty       = stringResource(R.string.error_title_empty)
+    val errorDescriptionEmpty = stringResource(R.string.error_description_empty)
+
+    // Mode actualització: pre-omple el formulari amb les dades del viatge existent
     LaunchedEffect(tripId) {
         if (tripId == null) return@LaunchedEffect
         val existing = viewModel.getTripById(tripId) ?: return@LaunchedEffect
@@ -98,7 +103,7 @@ fun CreateTripScreen(
         endDateText   = sdf.format(existing.dateOut)
         startDate     = existing.dateIn
         endDate       = existing.dateOut
-        Log.d(TAG, "Mode edició: pre-omplert viatge id=$tripId")
+        Log.d(TAG, "Mode actualització: pre-omplert viatge id=$tripId")
     }
 
     // Mostra els errors del domini/repositori com a Toast
@@ -109,12 +114,10 @@ fun CreateTripScreen(
         }
     }
 
-    val dateBeforeError = stringResource(R.string.date_before_error)
-
     // Validació en línia del rang de dates (capa UI)
     LaunchedEffect(startDate, endDate) {
         dateRangeError = if (startDate != null && endDate != null && !endDate!!.after(startDate)) {
-            dateBeforeError
+            errorDateRange
         } else null
     }
 
@@ -128,7 +131,7 @@ fun CreateTripScreen(
     Scaffold(
         topBar = {
             MyTopBar(
-                title = if (isEditMode) stringResource(R.string.edit_trip)
+                title = if (isUpdateMode) stringResource(R.string.edit_trip)
                 else stringResource(R.string.new_trip),
                 onBackClick = { navController.popBackStack() }
             )
@@ -212,8 +215,8 @@ fun CreateTripScreen(
                         startDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                         Log.d(TAG, "Data inici seleccionada: $dateStr")
                     },
-                    // En edició no es bloquegen dates passades (el viatge pot ja haver passat)
-                    blockPastDates = !isEditMode,
+                    // En mode actualització no es bloquegen dates passades (el viatge pot ja haver passat)
+                    blockPastDates = !isUpdateMode,
                     showTime = false
                 )
                 DateField(
@@ -225,7 +228,7 @@ fun CreateTripScreen(
                         endDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                         Log.d(TAG, "Data fi seleccionada: $dateStr")
                     },
-                    blockPastDates = !isEditMode,
+                    blockPastDates = !isUpdateMode,
                     showTime = false
                 )
             }
@@ -243,26 +246,22 @@ fun CreateTripScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // ── Botó de crear / guardar ──────────────────────────────────────
-
-            val destinationErrorText = stringResource(R.string.destination_not_empty_error)
-            val descriptionErrorText = stringResource(R.string.description_not_empty_error)
-
             Button(
                 onClick = {
                     // Marcar camps buits amb error (validació capa UI)
                     var hasError = false
                     if (title.isBlank()) {
-                        titleError = destinationErrorText
+                        titleError = errorTitleEmpty
                         hasError = true
                     }
                     if (description.isBlank()) {
-                        descriptionError = descriptionErrorText
+                        descriptionError = errorDescriptionEmpty
                         hasError = true
                     }
                     if (hasError) return@Button
 
-                    val success = if (isEditMode) {
-                        // Edició
+                    val success = if (isUpdateMode) {
+                        // Actualització
                         viewModel.updateTrip(
                             tripId = tripId!!,
                             title = title.trim(),
@@ -299,7 +298,7 @@ fun CreateTripScreen(
                 )
             ) {
                 Text(
-                    text = if (isEditMode) stringResource(R.string.save)
+                    text = if (isUpdateMode) stringResource(R.string.save)
                     else stringResource(R.string.create_trip),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
@@ -317,6 +316,6 @@ fun CreateTripScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun EditTripScreenPreview() {
+fun UpdateTripScreenPreview() {
     CreateTripScreen(rememberNavController(), tripId = 1)
 }
