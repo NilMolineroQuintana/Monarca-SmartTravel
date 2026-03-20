@@ -412,7 +412,7 @@ private fun StatItem(
             .clip(rounded)
             .background(MaterialTheme.colorScheme.surfaceContainer)
             .padding(AppDimensions.PaddingSmall),
-            contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -596,8 +596,8 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }, navC
         show = showOptions,
         title = stringResource(R.string.choose_option_title),
         options = listOf(
-            Icons.Default.Edit    to "Editar",
-            Icons.Default.Delete  to "Eliminar",
+            Icons.Default.Edit    to stringResource(R.string.edit),
+            Icons.Default.Delete  to stringResource(R.string.delete),
         ),
         onOptionSelected = { index ->
             when (index) {
