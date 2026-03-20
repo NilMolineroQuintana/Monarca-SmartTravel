@@ -32,10 +32,10 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
 
     /**
      * Valida i afegeix un nou viatge.
-     * @throws IllegalArgumentException si les dades no superen la validació.
+     * Retorna el viatge creat, o null si les dades no superen la validació.
      */
-    override fun addTrip(trip: Trip): Trip {
-        validateTrip(trip)
+    override fun addTrip(trip: Trip): Trip? {
+        if (!validateTrip(trip)) return null
         val created = dataSource.addTrip(trip)
         Log.i(TAG, "addTrip: creat id=${created.id}, títol=${created.title}")
         return created
@@ -49,13 +49,11 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
      * Ampliar les dates sempre és permès; reduir-les només ho és si cap
      * item queda fora del nou rang.
      *
-     * @throws IllegalArgumentException si les dades no superen la validació
-     *         o si algun item de l'itinerari quedaria fora del nou rang de dates.
-     * @return El viatge actualitzat, o null si no s'ha trobat.
+     * @return El viatge actualitzat, o null si no s'ha trobat o la validació falla.
      */
     override fun updateTrip(trip: Trip): Trip? {
-        validateTrip(trip)
-        validateItineraryItemsInRange(trip)
+        if (!validateTrip(trip)) return null
+        if (!validateItineraryItemsInRange(trip)) return null
         val updated = dataSource.updateTrip(trip)
         if (updated != null) {
             Log.i(TAG, "updateTrip: actualitzat id=${trip.id}")
@@ -97,7 +95,7 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
     }
 
     /**
-     * Actualitza la imatge d'un viatge sense revalidar la resta de camps.
+     * Actualitza únicament la imatge d'un viatge existent.
      * @return El viatge actualitzat, o null si no s'ha trobat.
      */
     override fun updateImage(tripId: Int, newImageResId: Int?): Trip? =
@@ -112,16 +110,24 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
 
     // ── Validació ───────────────────────────────────────────────────
 
-    private fun validateTrip(trip: Trip) {
-        require(trip.title.isNotBlank()) {
-            "La destinació no pot estar buida."
+    /**
+     * Valida els camps obligatoris d'un viatge.
+     * @return true si la validació passa, false en cas contrari.
+     */
+    private fun validateTrip(trip: Trip): Boolean {
+        if (trip.title.isBlank()) {
+            Log.w(TAG, "validateTrip: títol buit -> id=${trip.id}")
+            return false
         }
-        require(trip.description.isNotBlank()) {
-            "La descripció no pot estar buida."
+        if (trip.description.isBlank()) {
+            Log.w(TAG, "validateTrip: descripció buida -> id=${trip.id}")
+            return false
         }
-        require(trip.dateOut.after(trip.dateIn)) {
-            "La data d'inici ha de ser anterior a la data de fi."
+        if (!trip.dateOut.after(trip.dateIn)) {
+            Log.w(TAG, "validateTrip: rang de dates invàlid -> id=${trip.id}")
+            return false
         }
+        return true
     }
 
     /**
@@ -133,13 +139,13 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
      *
      * Utilitza precisió de minuts per ser consistent amb [ItineraryViewModel.validateDate].
      *
-     * @throws IllegalArgumentException amb el nom de l'item conflictiu.
+     * @return true si tots els items estan dins del rang, false en cas contrari.
      */
-    private fun validateItineraryItemsInRange(trip: Trip) {
+    private fun validateItineraryItemsInRange(trip: Trip): Boolean {
         val items = itineraryDataSource.getItemsByTrip(trip.id)
             .filter { it.getInDate() != null }
 
-        if (items.isEmpty()) return
+        if (items.isEmpty()) return true
 
         val tripStartMin = trip.dateIn.time  / 60_000
         val tripEndMin   = trip.dateOut.time / 60_000
@@ -150,19 +156,16 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
         if (first.getInDate()!!.time / 60_000 < tripStartMin) {
             val label = first.locationName ?: first.origin ?: "id=${first.id}"
             Log.w(TAG, "validateItineraryItemsInRange: '$label' queda abans del nou inici -> viatge id=${trip.id}")
-            throw IllegalArgumentException(
-                "No es pot avançar l'inici del viatge: \"$label\" quedaria fora del rang."
-            )
+            return false
         }
 
         if (last.getInDate()!!.time / 60_000 > tripEndMin) {
             val label = last.locationName ?: last.origin ?: "id=${last.id}"
             Log.w(TAG, "validateItineraryItemsInRange: '$label' queda després del nou final -> viatge id=${trip.id}")
-            throw IllegalArgumentException(
-                "No es pot endarrerir el final del viatge: \"$label\" quedaria fora del rang."
-            )
+            return false
         }
 
         Log.d(TAG, "validateItineraryItemsInRange: rang vàlid per al viatge id=${trip.id}")
+        return true
     }
 }
