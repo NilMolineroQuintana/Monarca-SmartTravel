@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import com.example.monarcasmarttravel.domain.model.Trip
+import com.example.monarcasmarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Date
 import javax.inject.Inject
@@ -17,9 +18,6 @@ import javax.inject.Inject
  *
  * Anotació @HiltViewModel perquè Hilt gestioni el cicle de vida correctament,
  * evitant la pèrdua d'estat en rotar la pantalla o navegar entre pantalles.
- *
- * Segueix el patró MVVM: la UI mai toca ni el domini ni el repositori directament.
- * Flux: UI → TripViewModel → TripRepository (interfície) → TripRepositoryImpl → FakeTripDataSource
  */
 @HiltViewModel
 class TripViewModel @Inject constructor(
@@ -58,7 +56,28 @@ class TripViewModel @Inject constructor(
     }
 
     /**
-     * Crea un nou viatge cridant [Trip.addTrip].
+     * Valida els camps d'un viatge i retorna el [AppError] corresponent.
+     * Retorna [AppError.OK] si totes les validacions passen.
+     */
+    private fun validateTripFields(title: String, description: String, dateIn: Date, dateOut: Date): AppError {
+        if (title.isBlank()) {
+            Log.w(TAG, "validateTripFields: títol buit")
+            return AppError.INVALID_TITLE
+        }
+        if (description.isBlank()) {
+            Log.w(TAG, "validateTripFields: descripció buida")
+            return AppError.INVALID_DESCRIPTION
+        }
+        if (!dateOut.after(dateIn)) {
+            Log.w(TAG, "validateTripFields: rang de dates invàlid -> dateIn=$dateIn, dateOut=$dateOut")
+            return AppError.INVALID_DATE_RANGE
+        }
+        return AppError.OK
+    }
+
+    /**
+     * Crea un nou viatge.
+     * Valida les dades abans d'enviar-les al repositori.
      * La imatge s'assigna automàticament si el destí coincideix
      * amb una foto disponible al projecte.
      */
@@ -69,30 +88,32 @@ class TripViewModel @Inject constructor(
         dateOut: Date,
         userId: Int
     ): Boolean {
-        return try {
-            val trip = Trip(
-                id = 0,
-                title = title.trim(),
-                description = description,
-                dateIn = dateIn,
-                dateOut = dateOut,
-                imageResId = resolveImageForDestination(title),
-                userId = userId
-            )
-            trip.addTrip(repository)
-            refreshTrips()
-            errorMessage = null
-            Log.i(TAG, "addTrip: viatge creat -> destí=$title")
-            true
-        } catch (e: IllegalArgumentException) {
-            errorMessage = e.message
-            Log.e(TAG, "addTrip: error de validació -> ${e.message}")
-            false
+        val validation = validateTripFields(title, description, dateIn, dateOut)
+        if (validation != AppError.OK) {
+            errorMessage = validation.name
+            Log.e(TAG, "addTrip: validació fallida -> ${validation.name}")
+            return false
         }
+
+        val trip = Trip(
+            id = 0,
+            title = title.trim(),
+            description = description,
+            dateIn = dateIn,
+            dateOut = dateOut,
+            imageResId = resolveImageForDestination(title),
+            userId = userId
+        )
+        repository.addTrip(trip)
+        refreshTrips()
+        errorMessage = null
+        Log.i(TAG, "addTrip: viatge creat -> destí=$title")
+        return true
     }
 
     /**
-     * Actualitza els camps editables d'un viatge existent (títol, descripció i dates).
+     * Actualitza els camps d'un viatge existent (títol, descripció i dates).
+     * Valida les dades abans d'enviar-les al repositori.
      */
     fun updateTrip(
         tripId: Int,
@@ -101,53 +122,57 @@ class TripViewModel @Inject constructor(
         dateIn: Date,
         dateOut: Date
     ): Boolean {
-        return try {
-            val existing = trips.find { it.id == tripId } ?: run {
-                errorMessage = "No s'ha trobat el viatge a editar."
-                Log.w(TAG, "updateTrip: viatge no trobat id=$tripId")
-                return false
-            }
-            val updated = existing.copy(
-                title = title.trim(),
-                description = description,
-                dateIn = dateIn,
-                dateOut = dateOut,
-                imageResId = resolveImageForDestination(title) ?: existing.imageResId
-            )
-            val result = repository.updateTrip(updated)
-            if (result != null) {
-                refreshTrips()
-                errorMessage = null
-                Log.i(TAG, "updateTrip: viatge actualitzat -> id=$tripId, destí=$title")
-                true
-            } else {
-                errorMessage = "No s'ha pogut actualitzar el viatge."
-                Log.w(TAG, "updateTrip: error en actualitzar id=$tripId")
-                false
-            }
-        } catch (e: IllegalArgumentException) {
-            errorMessage = e.message
-            Log.e(TAG, "updateTrip: error de validació -> ${e.message}")
-            false
+        val validation = validateTripFields(title, description, dateIn, dateOut)
+        if (validation != AppError.OK) {
+            errorMessage = validation.name
+            Log.e(TAG, "updateTrip: validació fallida -> ${validation.name}")
+            return false
+        }
+
+        val existing = trips.find { it.id == tripId }
+        if (existing == null) {
+            errorMessage = AppError.NON_EXISTING_ITEM.name
+            Log.w(TAG, "updateTrip: viatge no trobat id=$tripId")
+            return false
+        }
+
+        val updated = existing.copy(
+            title = title.trim(),
+            description = description,
+            dateIn = dateIn,
+            dateOut = dateOut,
+            imageResId = resolveImageForDestination(title) ?: existing.imageResId
+        )
+        val result = repository.updateTrip(updated)
+        if (result != null) {
+            refreshTrips()
+            errorMessage = null
+            Log.i(TAG, "updateTrip: viatge actualitzat -> id=$tripId, destí=$title")
+            return true
+        } else {
+            errorMessage = AppError.NON_EXISTING_ITEM.name
+            Log.w(TAG, "updateTrip: error en actualitzar id=$tripId")
+            return false
         }
     }
 
     /**
-     * Elimina un viatge cridant [Trip.deleteTrip].
+     * Elimina un viatge.
      */
     fun deleteTrip(tripId: Int): Boolean {
-        val trip = trips.find { it.id == tripId } ?: run {
-            errorMessage = "No s'ha trobat el viatge a eliminar."
+        val trip = trips.find { it.id == tripId }
+        if (trip == null) {
+            errorMessage = AppError.NON_EXISTING_ITEM.name
             Log.w(TAG, "deleteTrip: viatge no trobat id=$tripId")
             return false
         }
-        val result = trip.deleteTrip(repository)
+        val result = repository.deleteTrip(tripId)
         if (result) {
             refreshTrips()
             errorMessage = null
             Log.i(TAG, "deleteTrip: viatge eliminat -> id=$tripId")
         } else {
-            errorMessage = "No s'ha pogut eliminar el viatge."
+            errorMessage = AppError.NON_EXISTING_ITEM.name
             Log.w(TAG, "deleteTrip: error en eliminar id=$tripId")
         }
         return result
@@ -161,7 +186,7 @@ class TripViewModel @Inject constructor(
             Log.w(TAG, "changeTripImage: viatge no trobat id=$tripId")
             return false
         }
-        val result = trip.editTrip(repository, newImageResId)
+        val result = repository.updateImage(tripId, newImageResId)
         return if (result != null) {
             refreshTrips()
             Log.i(TAG, "changeTripImage: imatge actualitzada -> id=$tripId")
