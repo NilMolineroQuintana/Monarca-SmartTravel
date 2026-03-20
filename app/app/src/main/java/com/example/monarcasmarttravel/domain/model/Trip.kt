@@ -1,6 +1,5 @@
 package com.example.monarcasmarttravel.domain.model
 
-import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -24,31 +23,6 @@ data class Trip(
     val imageResId: Int? = null,
     val userId: Int
 ) {
-    /**
-     * Afegeix aquest viatge al sistema a través del [TripRepository].
-     * @return El viatge creat amb l'ID assignat pel repositori.
-     */
-    fun addTrip(repository: TripRepository): Trip {
-        return repository.addTrip(this)
-    }
-
-    /**
-     * Actualitza la imatge d'aquest viatge a través del [TripRepository].
-     * @param newImageResId Nou recurs drawable, o null per treure la imatge.
-     * @return El viatge actualitzat, o null si no s'ha trobat.
-     */
-    fun editTrip(repository: TripRepository, newImageResId: Int?): Trip? {
-        return repository.updateImage(this.id, newImageResId)
-    }
-
-    /**
-     * Elimina aquest viatge del sistema a través del [TripRepository].
-     * @return true si s'ha eliminat correctament, false si no s'ha trobat.
-     */
-    fun deleteTrip(repository: TripRepository): Boolean {
-        return repository.deleteTrip(this.id)
-    }
-
     /**
      * Calcula la durada total del viatge en dies.
      */
