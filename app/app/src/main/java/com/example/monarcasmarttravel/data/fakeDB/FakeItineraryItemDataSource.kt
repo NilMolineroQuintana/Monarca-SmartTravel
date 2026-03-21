@@ -11,7 +11,7 @@ object FakeItineraryItemDataSource {
     private val TAG = "ItineraryItemDataSource"
     private val calendar = Calendar.getInstance()
 
-    private val items = mutableListOf(
+    private val initialItems = listOf(
 
         // ─── PARÍS (tripId = 2) ───────────────────────────────────────────────
 
@@ -75,7 +75,7 @@ object FakeItineraryItemDataSource {
             price = 15.0
         ),
 
-        // ─── KYOTO (tripId = 1 / else) ────────────────────────────────────────
+        // ─── KYOTO (tripId = 1) ───────────────────────────────────────────────
 
         ItineraryItem(
             id = 9, tripId = 1, type = PlanType.FLIGHT,
@@ -156,7 +156,15 @@ object FakeItineraryItemDataSource {
         ),
     )
 
-    private var nextId = (items.maxOfOrNull { it.id } ?: 0) + 1
+    private val items = initialItems.toMutableList()
+    private var nextId = (initialItems.maxOfOrNull { it.id } ?: 0) + 1
+
+    fun reset() {
+        items.clear()
+        items.addAll(initialItems)
+        nextId = (initialItems.maxOfOrNull { it.id } ?: 0) + 1
+        Log.d(TAG, "reset: datasource reinicialitzat amb ${items.size} items")
+    }
 
     fun getItemsByTrip(tripId: Int): List<ItineraryItem> =
         items.filter { it.tripId == tripId }

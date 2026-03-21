@@ -4,13 +4,17 @@ import com.example.monarcasmarttravel.data.fakeDB.FakeItineraryItemDataSource
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import com.example.monarcasmarttravel.utils.AppError
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import java.util.Calendar
 
 class FakeItineraryItemDataSourceTest {
+
+    @Before
+    fun setUp() {
+        FakeItineraryItemDataSource.reset()
+    }
 
     // ─── ADD ────────────────────────────────────────────────────────────────
 
@@ -26,10 +30,8 @@ class FakeItineraryItemDataSourceTest {
             price = 26.0
         )
 
-        // Act
         val status = FakeItineraryItemDataSource.addItem(newItem)
 
-        // Assert
         assertEquals(AppError.OK.code, status)
         val itemsForTrip = FakeItineraryItemDataSource.getItemsByTrip(99)
         assertEquals(1, itemsForTrip.size)
@@ -63,10 +65,8 @@ class FakeItineraryItemDataSourceTest {
 
         val updated = original!!.copy(locationName = "Aeroport El Prat", price = 999.0)
 
-        // Act
         val status = FakeItineraryItemDataSource.updateItem(updated)
 
-        // Assert
         assertEquals(AppError.OK.code, status)
         val retrieved = FakeItineraryItemDataSource.getItemById(1)
         assertEquals("Aeroport El Prat", retrieved?.locationName)
@@ -75,7 +75,6 @@ class FakeItineraryItemDataSourceTest {
 
     @Test
     fun `updateItem with non-existing id should return NON_EXISTING_ITEM`() {
-        // Arrange: item amb id que no existeix
         val fakeItem = ItineraryItem(
             id = 9999,
             tripId = 1,
@@ -84,10 +83,8 @@ class FakeItineraryItemDataSourceTest {
             price = 0.0
         )
 
-        // Act
         val status = FakeItineraryItemDataSource.updateItem(fakeItem)
 
-        // Assert
         assertEquals(AppError.NON_EXISTING_ITEM.code, status)
     }
 
@@ -95,7 +92,6 @@ class FakeItineraryItemDataSourceTest {
 
     @Test
     fun `deleteItem should remove only that activity`() {
-        // Arrange: afegim un item nou per no tocar el dataset original
         val newItem = ItineraryItem(
             id = 0,
             tripId = 88,
@@ -106,20 +102,16 @@ class FakeItineraryItemDataSourceTest {
         FakeItineraryItemDataSource.addItem(newItem)
         val addedId = FakeItineraryItemDataSource.getItemsByTrip(88).first().id
 
-        // Act
         val status = FakeItineraryItemDataSource.deleteItem(addedId)
 
-        // Assert
         assertEquals(AppError.OK.code, status)
         assertTrue(FakeItineraryItemDataSource.getItemsByTrip(88).isEmpty())
     }
 
     @Test
     fun `deleteItem with non-existing id should return NON_EXISTING_ITEM`() {
-        // Act
         val status = FakeItineraryItemDataSource.deleteItem(9999)
 
-        // Assert
         assertEquals(AppError.NON_EXISTING_ITEM.code, status)
     }
 }

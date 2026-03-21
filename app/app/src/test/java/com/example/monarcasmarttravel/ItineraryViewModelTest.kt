@@ -1,6 +1,7 @@
 package com.example.monarcasmarttravel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.monarcasmarttravel.data.fakeDB.FakeItineraryItemDataSource
 import com.example.monarcasmarttravel.data.repository.ItineraryRepositoryImpl
 import com.example.monarcasmarttravel.data.repository.TripRepositoryImpl
 import com.example.monarcasmarttravel.ui.screens.trip.PlanFormState
@@ -20,7 +21,6 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class ItineraryViewModelTest {
 
-    // Necessari per a LiveData i StateFlow en tests
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -28,10 +28,9 @@ class ItineraryViewModelTest {
 
     @Before
     fun setUp() {
-        // Substituïm el dispatcher de corrutines per un de síncron (per a tests)
+        FakeItineraryItemDataSource.reset()
+        // needed FakeTripDataSource.reset()
         Dispatchers.setMain(UnconfinedTestDispatcher())
-
-        // Creem el ViewModel amb les implementacions reals (que usen els FakeDataSources)
         viewModel = ItineraryViewModel(
             repository = ItineraryRepositoryImpl(),
             tripRepository = TripRepositoryImpl()
@@ -119,12 +118,9 @@ class ItineraryViewModelTest {
     fun `updateItem with valid data should return OK`() {
         val form = makeForm(checkInDate = "18/05/2026 11:00", locationName = "Louvre (actualitzat)")
 
-        // Act
         val status = viewModel.updateItem(itemId = 3, ruta = "location", form = form)
 
-        // Assert
         assertEquals(AppError.OK.code, status)
-        // Verifiquem que el canvi s'ha persistit
         val updated = viewModel.getItemById(3)
         assertEquals("Louvre (actualitzat)", updated?.locationName)
     }
@@ -156,7 +152,6 @@ class ItineraryViewModelTest {
         assertEquals(AppError.ITEM_OUT_OF_RANGE.code, status)
     }
 
-    // Helper per no repetir els camps buits en cada test
     private fun makeForm(checkInDate: String, locationName: String = "Test") = PlanFormState(
         locationName = locationName,
         destination = "",
