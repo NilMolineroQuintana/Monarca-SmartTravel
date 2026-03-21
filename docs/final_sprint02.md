@@ -1,10 +1,10 @@
-# Sprint 01 – Execution & Review
+# Sprint 02 – Execution & Review
 
 ## 1. Obtained results
 
 ### Comparison with Sprint Goal:
 
-TODO
+The sprint goal was fully achieved. All planned CRUD operations for trips and itinerary items are implemented following the MVVM pattern, with validation at both UI and ViewModel layers. User preferences are persisted with SharedPreferences, multi-language support works across three languages, and unit tests cover all major operations. 
 
 ---
 
@@ -15,8 +15,8 @@ TODO
 |  **T1**   |           | **Data & Persistence** |
 | *T1-Trip* |           | *Trips* |
 |   T1.1.1  |    Yes    | Implemented following full MVVM flow: UI → TripViewModel → TripRepositoryImpl → FakeTripDataSource. |
-|   T1.1.2  |    No    | |
-|   T1.1.3  |    Yes    | `deleteTrip` implemented with confirmation PopUp and automatic navigation back to trips list. |
+|   T1.1.2  |    Yes    | Implemented as `updateTrip` in `TripViewModel` and `TripRepositoryImpl`. Includes itinerary range validation to ensure no existing items fall outside the new trip date range. |
+|   T1.1.3  |    Yes    | `deleteTrip` implemented with cascade delete of all associated itinerary items, confirmation PopUp and automatic navigation back to trips list. |
 | *T1-Itin* |           | *Itinerary / Activity* |
 |   T1.2.1  |    Yes    | `addItem` implemented with full MVVM flow, including route-to-PlanType resolution. |
 |   T1.2.2  |    Yes    | `updateItem` implemented, reusing `PlanScreen` with `itemId` parameter to pre-fill the form. |
@@ -35,11 +35,11 @@ TODO
 |  **T3**   |           | **Testing & Quality** |
 |   T3.1    |    Yes    | Empty fields, invalid price, incorrect date format, and activities outside trip range are all validated with specific `AppError` codes. |
 | *T3-Trip* |           | *Trips* |
-|   T3.2.1  |    No     | |
+|   T3.2.1  |    Yes    | `FakeTripDataSourceTest` covers add, get, update and delete. `TripViewModelTest` covers addTrip, updateTrip and deleteTrip with valid and invalid inputs, including blank fields, invalid date ranges and non-existing IDs. |
 | *T3-Itin* |           | *Itinerary / Activity* |
 |   T3.2.2  |    Yes    | `FakeItineraryItemDataSourceTest` covers add, get, update and delete. `ItineraryViewModelTest` covers date validation edge cases including boundary dates and out-of-range scenarios. |
 |   T3.3    |    Yes    | Manual interaction testing performed across all screens. Unexpected behaviours logged via `Log.e` / `Log.w` in ViewModels and repositories. |
-|   T3.4    |    No    |  |
+|   T3.4    |    Yes    | Documentation updated in `final_sprint02.md` with all test results. |
 |   T3.5    |    Yes    | Logcat logs added at all CRUD operations across `FakeTripDataSource`, `FakeItineraryItemDataSource`, `TripRepositoryImpl`, `ItineraryRepositoryImpl`, `TripViewModel` and `ItineraryViewModel`. KDoc comments added to all public functions and classes. |
 ---
 
@@ -58,6 +58,11 @@ and data access delegated to the Repository.
 
 This ensures the UI never interacts with the data layer directly,
 and that business logic is centralized and testable.
+
+Cascade delete added to deleteTrip: when a trip is deleted, all associated
+itinerary items are also removed automatically via TripRepositoryImpl,
+ensuring data consistency without any extra user action.
+
 ---
 
 ## 4. Retrospective
@@ -74,6 +79,8 @@ and that business logic is centralized and testable.
   and falls back gracefully when the device language is not supported.
 - Unit tests for both `FakeItineraryItemDataSource` and `ItineraryViewModel`
   covered all CRUD operations and edge cases, including boundary date validation.
+- Trip CRUD unit tests (`FakeTripDataSourceTest` and `TripViewModelTest`) covered
+  all operations with valid and invalid inputs, including blank fields and date range errors.
 
 ### What didn't work
 - The unified `ItineraryItem` model with optional fields for transport vs.
@@ -90,6 +97,73 @@ and that business logic is centralized and testable.
 
 ## 5. Team Self-Assessment (0-10)
 
-**Score:** TODO
+**Score:** 10
 
-**Justification:** TODO
+**Justification:** The sprint goal was fully achieved. All planned CRUD operations for trips and itinerary items are implemented following the MVVM pattern, with validation at both UI and ViewModel layers. User preferences are persisted with SharedPreferences, multi-language support works across three languages, and unit tests cover all major operations.
+
+---
+
+## 6. Test Results
+
+### FakeTripDataSourceTest
+
+| Test | Result |
+|------|--------|
+| `addTrip should add trip to list` | ✅ Pass |
+| `getAllTrips should return all trips` | ✅ Pass |
+| `getTripById should return correct trip` | ✅ Pass |
+| `getTripById with invalid id should return null` | ✅ Pass |
+| `updateTrip should modify existing trip` | ✅ Pass |
+| `updateTrip with non-existing id should return NON_EXISTING_ITEM` | ✅ Pass |
+| `deleteTrip should remove only that trip` | ✅ Pass |
+| `deleteTrip with non-existing id should return NON_EXISTING_ITEM` | ✅ Pass |
+
+### TripViewModelTest
+
+| Test | Result |
+|------|--------|
+| `addTrip with valid data should succeed` | ✅ Pass |
+| `addTrip with blank title should return INVALID_TITLE` | ✅ Pass |
+| `addTrip with blank description should return INVALID_DESCRIPTION` | ✅ Pass |
+| `addTrip with endDate before startDate should return INVALID_DATE_RANGE` | ✅ Pass |
+| `addTrip with endDate equal to startDate should return INVALID_DATE_RANGE` | ✅ Pass |
+| `updateTrip with valid data should succeed` | ✅ Pass |
+| `updateTrip with blank title should return INVALID_TITLE` | ✅ Pass |
+| `updateTrip with blank description should return INVALID_DESCRIPTION` | ✅ Pass |
+| `updateTrip with invalid date range should return INVALID_DATE_RANGE` | ✅ Pass |
+| `updateTrip with non-existing id should return false` | ✅ Pass |
+| `deleteTrip should remove only that trip` | ✅ Pass |
+| `deleteTrip with non-existing id should return false` | ✅ Pass |
+
+### FakeItineraryItemDataSourceTest
+
+| Test | Result |
+|------|--------|
+| `addItem should add activity to trip` | ✅ Pass |
+| `getActivitiesByTrip should return only that trip's activities` | ✅ Pass |
+| `getActivitiesByTrip with invalid tripId should return empty list` | ✅ Pass |
+| `updateItem should modify existing activity` | ✅ Pass |
+| `updateItem with non-existing id should return NON_EXISTING_ITEM` | ✅ Pass |
+| `deleteItem should remove only that activity` | ✅ Pass |
+| `deleteItem with non-existing id should return NON_EXISTING_ITEM` | ✅ Pass |
+
+### ItineraryViewModelTest
+
+| Test | Result |
+|------|--------|
+| `addItem within trip date range should succeed` | ✅ Pass |
+| `addItem before trip startDate should return ITEM_OUT_OF_RANGE` | ✅ Pass |
+| `addItem after trip endDate should return ITEM_OUT_OF_RANGE` | ✅ Pass |
+| `addItem on exactly trip startDate should succeed` | ✅ Pass |
+| `addItem on exactly trip endDate should succeed` | ✅ Pass |
+| `addItem with invalid route should return UNKNOWN` | ✅ Pass |
+| `addItem with invalid date format should return NON_EXISTING_DATE` | ✅ Pass |
+| `updateItem with valid data should return OK` | ✅ Pass |
+| `updateItem with non-existing id should return NON_EXISTING_ITEM` | ✅ Pass |
+| `updateItem with invalid date format should return NON_EXISTING_DATE` | ✅ Pass |
+| `updateItem with date out of trip range should return ITEM_OUT_OF_RANGE` | ✅ Pass |
+
+### Fixes applied during testing
+
+- Date validation was initially done using millisecond precision, which caused boundary dates (exactly on trip start or end) to be rejected. Fixed by clamping precision to minutes (`time / 60_000`) in both `ItineraryViewModel.validateDate` and `TripRepositoryImpl.validateItineraryItemsInRange`.
+- `deleteTrip` initially left orphaned itinerary items in `FakeItineraryItemDataSource`. Fixed by adding cascade delete in `TripRepositoryImpl.deleteTrip`.
