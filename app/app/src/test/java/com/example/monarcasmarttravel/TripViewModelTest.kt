@@ -1,6 +1,7 @@
 package com.example.monarcasmarttravel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.monarcasmarttravel.data.fakeDB.FakeTripDataSource
 import com.example.monarcasmarttravel.data.repository.TripRepositoryImpl
 import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 import com.example.monarcasmarttravel.utils.AppError
@@ -29,9 +30,8 @@ class TripViewModelTest {
 
     @Before
     fun setUp() {
+        FakeTripDataSource.reset()
         Dispatchers.setMain(UnconfinedTestDispatcher())
-
-
         viewModel = TripViewModel(
             repository = TripRepositoryImpl()
         )
