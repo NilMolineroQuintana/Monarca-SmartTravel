@@ -5,8 +5,8 @@ import com.example.monarcasmarttravel.data.fakeDB.FakeItineraryItemDataSource
 import com.example.monarcasmarttravel.data.fakeDB.FakeTripDataSource
 import com.example.monarcasmarttravel.domain.interfaces.TripRepository
 import com.example.monarcasmarttravel.domain.model.Trip
+import com.example.monarcasmarttravel.utils.AppError
 import java.util.Date
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,9 +14,6 @@ import javax.inject.Singleton
  * Implementació del repositori de viatges.
  *
  * Delega totes les operacions CRUD al [FakeTripDataSource] (in-memory).
- * La validació de negoci es fa aquí, abans de passar les dades al datasource,
- * seguint el flux:
- * UI → ViewModel → TripRepository (interfície) → TripRepositoryImpl → FakeTripDataSource
  */
 @Singleton
 class TripRepositoryImpl @Inject constructor() : TripRepository {
@@ -54,22 +51,18 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
     override fun updateTrip(trip: Trip): Trip? {
         if (!validateTrip(trip)) return null
         if (!validateItineraryItemsInRange(trip)) return null
-        val updated = dataSource.updateTrip(trip)
-        if (updated != null) {
+        val status = dataSource.updateTrip(trip)
+        return if (status == AppError.OK.code) {
             Log.i(TAG, "updateTrip: actualitzat id=${trip.id}")
+            dataSource.getTripById(trip.id)
         } else {
             Log.w(TAG, "updateTrip: no s'ha trobat id=${trip.id}")
+            null
         }
-        return updated
     }
 
     /**
      * Elimina un viatge i tots els elements de l'itinerari associats (cascade delete).
-     *
-     * Els [ItineraryItem] d'un viatge no tenen sentit sense el viatge pare,
-     * per tant s'eliminen primer per mantenir la consistència de les dades
-     * en memòria. Aquesta lògica resideix al repositori (no al ViewModel ni a la UI)
-     * seguint el principi de separació de responsabilitats.
      *
      * @return true si el viatge s'ha eliminat correctament, false si no s'ha trobat.
      */
@@ -86,12 +79,13 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
 
         // Elimina el viatge
         val status = dataSource.deleteTrip(tripId)
-        if (status) {
+        return if (status == AppError.OK.code) {
             Log.i(TAG, "deleteTrip: viatge eliminat id=$tripId")
+            true
         } else {
             Log.w(TAG, "deleteTrip: no s'ha trobat el viatge id=$tripId")
+            false
         }
-        return status
     }
 
     /**
