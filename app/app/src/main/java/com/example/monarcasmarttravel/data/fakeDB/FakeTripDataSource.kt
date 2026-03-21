@@ -1,9 +1,11 @@
 package com.example.monarcasmarttravel.data.fakeDB
 
 import android.util.Log
-import com.example.monarcasmarttravel.domain.model.Trip
-import java.util.Calendar
 import com.example.monarcasmarttravel.R
+import com.example.monarcasmarttravel.domain.model.Trip
+import com.example.monarcasmarttravel.utils.AppError
+import java.util.Calendar
+
 /**
  * Font de dades en memòria per a viatges.
  *
@@ -18,8 +20,7 @@ object FakeTripDataSource {
     private val TAG = "FakeTripDataSource"
     private val calendar = Calendar.getInstance()
 
-    // Fake dataset: viatges precàrregats per poder provar l'aplicació
-    private val trips = mutableListOf(
+    private val initialTrips = listOf(
         Trip(
             id = 1,
             title = "Kyoto, Japó",
@@ -49,8 +50,15 @@ object FakeTripDataSource {
         )
     )
 
-    // Comptador d'IDs: comença des del següent al darrer element del fake dataset
-    private var nextId = trips.size + 1
+    private val trips = initialTrips.toMutableList()
+    private var nextId = (initialTrips.maxOfOrNull { it.id } ?: 0) + 1
+
+    fun reset() {
+        trips.clear()
+        trips.addAll(initialTrips)
+        nextId = (initialTrips.maxOfOrNull { it.id } ?: 0) + 1
+        Log.d(TAG, "reset: datasource reinicialitzat amb ${trips.size} viatges")
+    }
 
     fun getAllTrips(): List<Trip> = trips.toList()
 
@@ -65,23 +73,31 @@ object FakeTripDataSource {
 
     /**
      * Actualitza tots els camps editables d'un viatge existent.
-     * @return El viatge actualitzat, o null si no s'ha trobat.
+     * @return [AppError.OK] si s'ha actualitzat, [AppError.NON_EXISTING_ITEM] si no s'ha trobat.
      */
-    fun updateTrip(trip: Trip): Trip? {
+    fun updateTrip(trip: Trip): Int {
         val index = trips.indexOfFirst { it.id == trip.id }
         if (index == -1) {
             Log.w(TAG, "updateTrip: no s'ha trobat el viatge id=${trip.id}")
-            return null
+            return AppError.NON_EXISTING_ITEM.code
         }
         trips[index] = trip
         Log.i(TAG, "updateTrip: viatge actualitzat id=${trip.id}")
-        return trips[index]
+        return AppError.OK.code
     }
 
-    fun deleteTrip(tripId: Int): Boolean {
-        val status = trips.removeIf { it.id == tripId }
-        Log.i(TAG, "deleteTrip: id=$tripId, status=$status")
-        return status
+    /**
+     * @return [AppError.OK] si s'ha eliminat, [AppError.NON_EXISTING_ITEM] si no s'ha trobat.
+     */
+    fun deleteTrip(tripId: Int): Int {
+        val removed = trips.removeIf { it.id == tripId }
+        return if (removed) {
+            Log.i(TAG, "deleteTrip: viatge eliminat id=$tripId")
+            AppError.OK.code
+        } else {
+            Log.w(TAG, "deleteTrip: no s'ha trobat el viatge id=$tripId")
+            AppError.NON_EXISTING_ITEM.code
+        }
     }
 
     /**
