@@ -98,22 +98,22 @@ fun AppNavigation() {
                         defaultValue = false
                     }
                 )
-            ) { backStackEntry ->
-                val isLoginScreen = backStackEntry.arguments?.getBoolean("isLoginScreen") ?: false
+            ) {
+                val isLoginScreen = it.arguments?.getBoolean("isLoginScreen") ?: false
                 TermsAndConditionsScreen(navController, isLoginScreen)
             }
             composable(
                 route = "itinerary/{tripId}",
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
+            ) {
+                val tripId = it.arguments?.getInt("tripId") ?: 1
                 ItineraryScreen(navController, tripId)
             }
             composable(
                 route = "album/{tripId}",
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
+            ) {
+                val tripId = it.arguments?.getInt("tripId") ?: 1
                 AlbumScreen(navController, tripId)
             }
             composable(
@@ -124,8 +124,8 @@ fun AppNavigation() {
                         defaultValue = -1   // -1 significa "no hi ha tripId" (mode creació)
                     }
                 )
-            ) { backStackEntry ->
-                val rawId = backStackEntry.arguments?.getInt("tripId") ?: -1
+            ) {
+                val rawId = it.arguments?.getInt("tripId") ?: -1
                 val tripId = if (rawId == -1) null else rawId
                 CreateTripScreen(navController, tripId)
             }
@@ -133,8 +133,8 @@ fun AppNavigation() {
             composable(
                 route = "plan/{tripId}",
                 arguments = listOf(navArgument("tripId") { type = NavType.IntType })
-            ) { backStackEntry ->
-                val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
+            ) {
+                val tripId = it.arguments?.getInt("tripId") ?: 1
                 PlanOptionsScreen(navController, tripId)
             }
             composable(
@@ -143,9 +143,9 @@ fun AppNavigation() {
                     navArgument("route") { type = NavType.StringType },
                     navArgument("tripId") { type = NavType.IntType },
                 )
-            ) { backStackEntry ->
-                val ruta = backStackEntry.arguments?.getString("route")
-                val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
+            ) {
+                val ruta = it.arguments?.getString("route")
+                val tripId = it.arguments?.getInt("tripId") ?: 1
                 PlanScreen(navController, ruta, tripId, null)
             }
             composable(
@@ -155,10 +155,10 @@ fun AppNavigation() {
                     navArgument("tripId") { type = NavType.IntType },
                     navArgument("itemId") { type = NavType.IntType }
                 )
-            ) { backStackEntry ->
-                val ruta = backStackEntry.arguments?.getString("route")
-                val tripId = backStackEntry.arguments?.getInt("tripId") ?: 1
-                val itemId = backStackEntry.arguments?.getInt("itemId")
+            ) {
+                val ruta = it.arguments?.getString("route")
+                val tripId = it.arguments?.getInt("tripId") ?: 1
+                val itemId = it.arguments?.getInt("itemId")
                 PlanScreen(navController, ruta, tripId, itemId)
             }
         }
