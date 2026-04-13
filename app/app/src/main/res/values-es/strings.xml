@@ -160,4 +160,12 @@
     <string name="error_date_range">La fecha de fin debe ser posterior a la de inicio.</string>
     <string name="date_before_error">La fecha de fin debe ser posterior a la de inicio.</string>
     <string name="ongoing">En curso</string>
+    <string name="no_account">¿Aún no tienes cuenta?</string>
+    <string name="register">Regístrate</string>
+    <string name="forgot_password">¿Has olvidado la contraseña?</string>
+    <string name="recover">Recuperar</string>
+    <string name="recover_password">Recuperar contraseña</string>
+    <string name="phone_num">Número de teléfono</string>
+    <string name="address">Dirección</string>
+    <string name="confirm_password">Confirmar contraseña</string>
 </resources>

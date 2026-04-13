@@ -160,4 +160,12 @@
     <string name="error_date_range">La data de fi ha de ser posterior a la d\'inici.</string>
     <string name="date_before_error">La data de fi ha de ser posterior a la d\'inici.</string>
     <string name="ongoing">En curs</string>
+    <string name="no_account">Encara no tens compte?</string>
+    <string name="register">Registra\'t</string>
+    <string name="forgot_password">Has oblidat la contrasenya?</string>
+    <string name="recover">Recuperar</string>
+    <string name="recover_password">Recuperar contrasenya</string>
+    <string name="phone_num">Número de telèfon</string>
+    <string name="address">Adreça</string>
+    <string name="confirm_password">Confirmar contrasenya</string>
 </resources>

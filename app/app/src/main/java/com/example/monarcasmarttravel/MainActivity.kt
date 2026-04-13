@@ -21,6 +21,8 @@ import com.example.monarcasmarttravel.ui.screens.preferences.ProfileScreen
 import com.example.monarcasmarttravel.ui.screens.preferences.TermsAndConditionsScreen
 import com.example.monarcasmarttravel.ui.screens.start.HomeScreen
 import com.example.monarcasmarttravel.ui.screens.start.LoginScreen
+import com.example.monarcasmarttravel.ui.screens.start.RecoverScreen
+import com.example.monarcasmarttravel.ui.screens.start.RegisterScreen
 import com.example.monarcasmarttravel.ui.screens.start.SplashScreen
 import com.example.monarcasmarttravel.ui.screens.trip.AlbumScreen
 import com.example.monarcasmarttravel.ui.screens.trip.CreateTripScreen
@@ -75,8 +77,14 @@ fun AppNavigation() {
                     }
                 })
             }
+            composable("register") {
+                RegisterScreen(navController)
+            }
             composable("login") {
                 LoginScreen(navController)
+            }
+            composable("recoverPassword") {
+                RecoverScreen(navController)
             }
             composable("home") {
                 HomeScreen(navController)
