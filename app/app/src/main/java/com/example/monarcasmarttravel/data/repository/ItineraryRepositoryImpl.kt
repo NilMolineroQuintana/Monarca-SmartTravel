@@ -18,13 +18,13 @@ class ItineraryRepositoryImpl @Inject constructor() : ItineraryRepository {
         return result
     }
 
-    override suspend fun getItemById(id: Int): ItineraryItem? {
+    override fun getItemById(id: Int): ItineraryItem? {
         val item = dataSource.getItemById(id)
         if (item == null) Log.w(TAG, "getItemById: no s'ha trobat id=$id")
         return item
     }
 
-    override suspend fun addItineraryItem(item: ItineraryItem): Int {
+    override fun addItineraryItem(item: ItineraryItem): Int {
         val status = dataSource.addItem(item)
         if (status == AppError.OK.code) {
             Log.i(TAG, "addItineraryItem: creat -> tripId=${item.tripId}, tipus=${item.type}")
@@ -34,7 +34,7 @@ class ItineraryRepositoryImpl @Inject constructor() : ItineraryRepository {
         return status
     }
 
-    override suspend fun updateItineraryItem(item: ItineraryItem): Int {
+    override fun updateItineraryItem(item: ItineraryItem): Int {
         val status = dataSource.updateItem(item)
         if (status == AppError.OK.code) {
             Log.i(TAG, "updateItineraryItem: actualitzat -> id=${item.id}, tipus=${item.type}")
@@ -44,7 +44,7 @@ class ItineraryRepositoryImpl @Inject constructor() : ItineraryRepository {
         return status
     }
 
-    override suspend fun deleteItineraryItem(id: Int): Int {
+    override fun deleteItineraryItem(id: Int): Int {
         val status = dataSource.deleteItem(id)
         if (status == AppError.OK.code) {
             Log.i(TAG, "deleteItineraryItem: eliminat -> id=$id")

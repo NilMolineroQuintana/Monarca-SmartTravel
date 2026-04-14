@@ -2,11 +2,16 @@ package com.example.monarcasmarttravel
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import com.example.monarcasmarttravel.data.MonarcaDatabase
+import com.example.monarcasmarttravel.data.UserDao
 import com.example.monarcasmarttravel.data.repository.ItineraryRepositoryImpl
 import com.example.monarcasmarttravel.data.repository.PreferencesManager
 import com.example.monarcasmarttravel.data.repository.TripRepositoryImpl
+import com.example.monarcasmarttravel.data.repository.UserRepositoryImpl
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.interfaces.TripRepository
+import com.example.monarcasmarttravel.domain.interfaces.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,4 +49,25 @@ object AppModule {
     @Singleton
     fun provideTripRepository(): TripRepository =
         TripRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userDao: UserDao): UserRepository =
+        UserRepositoryImpl(userDao)
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): MonarcaDatabase {
+        return Room.databaseBuilder(
+            context,
+            MonarcaDatabase::class.java,
+            "monarca_db"
+        ).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserDao(db: MonarcaDatabase): UserDao {
+        return db.userDao()
+    }
 }

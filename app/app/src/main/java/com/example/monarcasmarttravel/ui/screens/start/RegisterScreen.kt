@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Key
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
@@ -28,8 +29,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
@@ -37,6 +40,9 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.viewmodels.UserViewModel
+import com.example.monarcasmarttravel.utils.emailPattern
+import com.example.monarcasmarttravel.utils.phonePattern
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -45,6 +51,9 @@ private const val DATE_FORMAT = "dd/MM/yyyy"
 
 @Composable
 fun RegisterScreen(navController: NavController) {
+    
+    val viewModel: UserViewModel = hiltViewModel()
+
     var username by rememberSaveable { mutableStateOf("") }
     var birthdayText by remember { mutableStateOf("") }
     var birthdayDate by remember { mutableStateOf<Date?>(null) }
@@ -56,6 +65,7 @@ fun RegisterScreen(navController: NavController) {
     var confirmPassword by rememberSaveable { mutableStateOf("") }
 
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
+    val isFormValid = username.isNotEmpty() && birthdayDate != null && email.isNotEmpty() && email.matches(emailPattern) && phoneNum.isNotEmpty() && phoneNum.matches(phonePattern) && address.isNotEmpty()
 
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.register), onBackClick = { navController.popBackStack() } ) }
@@ -103,6 +113,7 @@ fun RegisterScreen(navController: NavController) {
                     onValueChange = { phoneNum = it },
                     label = stringResource(R.string.phone_num),
                     placeholder = "",
+                    keyboardType = KeyboardType.Decimal,
                     leadingIcon = Icons.Filled.Phone
                 )
             }
@@ -120,8 +131,10 @@ fun RegisterScreen(navController: NavController) {
                     value = password,
                     onValueChange = { password = it },
                     label = stringResource(R.string.password),
-                    placeholder = "",
-                    leadingIcon = Icons.Filled.Key
+                    placeholder = stringResource(R.string.password),
+                    leadingIcon = Icons.Default.Lock,
+                    isPassword = true,
+                    keyboardType = KeyboardType.Password,
                 )
             }
             item {
@@ -129,13 +142,18 @@ fun RegisterScreen(navController: NavController) {
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
                     label = stringResource(R.string.confirm_password),
-                    placeholder = "",
-                    leadingIcon = Icons.Filled.Key
+                    placeholder = stringResource(R.string.confirm_password),
+                    leadingIcon = Icons.Default.Lock,
+                    isPassword = true,
+                    keyboardType = KeyboardType.Password,
                 )
             }
             item {
                 Button(
-                    onClick = { navController.navigate("home") },
+                    onClick = {
+                        val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
+                        viewModel.registerUser(username, dateFormatted, email, phoneNum, address, password)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
@@ -144,7 +162,8 @@ fun RegisterScreen(navController: NavController) {
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    ),
+                    enabled = isFormValid
                 ) {
                     Text(
                         text = stringResource(R.string.register),

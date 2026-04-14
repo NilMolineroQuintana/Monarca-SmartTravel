@@ -42,6 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
+import com.example.monarcasmarttravel.utils.emailPattern
 
 /**
  * Pantalla d'inici de sessió de l'aplicació.
@@ -64,7 +65,6 @@ fun LoginScreen(navController: NavController) {
     var password by remember { mutableStateOf("1234") }
     var rememberTerms by remember { mutableStateOf(false) }
 
-    val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,}\$".toRegex()
     val isEmailValid = email.matches(emailPattern) || email.isEmpty()
     val isFormValid = email.matches(emailPattern) && password.isNotEmpty() && rememberTerms
 

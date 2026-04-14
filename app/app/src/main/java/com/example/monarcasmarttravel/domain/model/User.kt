@@ -1,5 +1,8 @@
 package com.example.monarcasmarttravel.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 /**
  * Model de dades que representa un usuari de l'aplicació.
  *
@@ -7,10 +10,16 @@ package com.example.monarcasmarttravel.domain.model
  * @param name Nom visible de l'usuari.
  * @param email Adreça de correu electrònic, usada per a l'autenticació.
  */
+
+@Entity(tableName = "users")
 data class User(
-    val userId: String,
-    val name: String,
+    @PrimaryKey(autoGenerate = true) val userId: Int,
+    val username: String,
+    val birthdate: String,
     val email: String,
+    val phoneNum: String,
+    val address: String,
+    val password: String
 ) {
     /**
      * Registra un nou usuari al sistema.
