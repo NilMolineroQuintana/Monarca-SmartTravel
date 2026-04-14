@@ -4,8 +4,8 @@ import com.example.monarcasmarttravel.domain.model.ItineraryItem
 
 interface ItineraryRepository {
     suspend fun getItemsByTrip(tripId: Int): List<ItineraryItem>
-    fun getItemById(id: Int): ItineraryItem?
-    fun addItineraryItem(item: ItineraryItem): Int
-    fun updateItineraryItem(item: ItineraryItem): Int
-    fun deleteItineraryItem(id: Int): Int
+    suspend fun getItemById(id: Int): ItineraryItem?
+    suspend fun addItineraryItem(item: ItineraryItem): Int
+    suspend fun updateItineraryItem(item: ItineraryItem): Int
+    suspend fun deleteItineraryItem(id: Int): Int
 }

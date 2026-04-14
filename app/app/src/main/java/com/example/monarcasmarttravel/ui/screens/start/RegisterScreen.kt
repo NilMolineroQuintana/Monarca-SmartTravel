@@ -58,7 +58,7 @@ fun RegisterScreen(navController: NavController) {
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
     Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.register)) }
+        topBar = { MyTopBar(stringResource(R.string.register), onBackClick = { navController.popBackStack() } ) }
     ) { innerPadding ->
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
