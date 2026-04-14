@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.viewmodels.UserViewModel
+import com.example.monarcasmarttravel.utils.AppError
 import com.example.monarcasmarttravel.utils.emailPattern
 import com.example.monarcasmarttravel.utils.phonePattern
 import java.text.SimpleDateFormat
@@ -53,6 +55,7 @@ private const val DATE_FORMAT = "dd/MM/yyyy"
 fun RegisterScreen(navController: NavController) {
     
     val viewModel: UserViewModel = hiltViewModel()
+    val currentStatus = viewModel.status
 
     var username by rememberSaveable { mutableStateOf("") }
     var birthdayText by remember { mutableStateOf("") }
@@ -65,7 +68,24 @@ fun RegisterScreen(navController: NavController) {
     var confirmPassword by rememberSaveable { mutableStateOf("") }
 
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
-    val isFormValid = username.isNotEmpty() && birthdayDate != null && email.isNotEmpty() && email.matches(emailPattern) && phoneNum.isNotEmpty() && phoneNum.matches(phonePattern) && address.isNotEmpty()
+    val isEmailValid = email.isNotEmpty() && email.matches(emailPattern)
+    val isPhoneValid = phoneNum.isNotEmpty() && phoneNum.matches(phonePattern)
+    val passwordMatchesLength = password.length >= 8
+    val equalPasswords = password == confirmPassword
+    val isPasswordValid = password.isNotEmpty() && equalPasswords && passwordMatchesLength
+
+    val isFormValid = username.isNotEmpty() &&
+            birthdayDate != null
+            && isEmailValid
+            && isPhoneValid
+            && isPasswordValid
+            && address.isNotEmpty()
+
+    LaunchedEffect(currentStatus) {
+        if (currentStatus == AppError.OK) {
+            navController.navigate("home")
+        }
+    }
 
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.register), onBackClick = { navController.popBackStack() } ) }
@@ -80,10 +100,29 @@ fun RegisterScreen(navController: NavController) {
             item {
                 AppTextField(
                     value = username,
-                    onValueChange = { username = it },
+                    onValueChange = {
+                        username = it
+                        viewModel.clearStatus()
+                    },
                     label = stringResource(R.string.preferences_username_label),
                     placeholder = "",
-                    leadingIcon = Icons.Filled.Person
+                    leadingIcon = Icons.Filled.Person,
+                    isError = currentStatus == AppError.EXISTING_USERNAME,
+                    errorMessage = stringResource(R.string.error_existing_username)
+                )
+            }
+            item {
+                AppTextField(
+                    value = email,
+                    onValueChange = {
+                        email = it
+                        viewModel.clearStatus()
+                    },
+                    label = stringResource(R.string.email),
+                    placeholder = "",
+                    leadingIcon = Icons.Filled.Mail,
+                    isError = currentStatus == AppError.EXISTING_EMAIL,
+                    errorMessage = stringResource(R.string.error_existing_email)
                 )
             }
             item {
@@ -91,20 +130,11 @@ fun RegisterScreen(navController: NavController) {
                     value = birthdayText,
                     label = stringResource(R.string.preferences_birthdate_button),
                     onDateSelected = { dateStr ->
-                        birthdayText = dateStr // Guardamos el String
+                        birthdayText = dateStr
                         birthdayDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                     },
                     showTime = false,
                     modifier = Modifier.fillMaxWidth()
-                )
-            }
-            item {
-                AppTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = stringResource(R.string.email),
-                    placeholder = "",
-                    leadingIcon = Icons.Filled.Mail
                 )
             }
             item {
@@ -127,6 +157,14 @@ fun RegisterScreen(navController: NavController) {
                 )
             }
             item {
+                val passwordError = when {
+                    password.isNotEmpty() && !passwordMatchesLength -> stringResource(AppError.REQUIREMENTS_PASSWORD.stringRes)
+                    password.isNotEmpty() && !equalPasswords && confirmPassword.isNotEmpty() -> stringResource(
+                        AppError.DIFFERENT_PASSWORDS.stringRes
+                    )
+                    else -> null
+                }
+
                 AppTextField(
                     value = password,
                     onValueChange = { password = it },
@@ -135,9 +173,15 @@ fun RegisterScreen(navController: NavController) {
                     leadingIcon = Icons.Default.Lock,
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
+                    isError = password.isNotEmpty() && !isPasswordValid,
+                    errorMessage = passwordError
                 )
             }
             item {
+                val confirmError = if (confirmPassword.isNotEmpty() && !equalPasswords)
+                    stringResource(AppError.DIFFERENT_PASSWORDS.stringRes)
+                else null
+
                 AppTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
@@ -146,6 +190,8 @@ fun RegisterScreen(navController: NavController) {
                     leadingIcon = Icons.Default.Lock,
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
+                    isError = confirmPassword.isNotEmpty() && !equalPasswords,
+                    errorMessage = confirmError
                 )
             }
             item {

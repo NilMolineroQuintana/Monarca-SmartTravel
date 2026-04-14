@@ -1,6 +1,7 @@
 package com.example.monarcasmarttravel.domain.model
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
@@ -11,9 +12,15 @@ import androidx.room.PrimaryKey
  * @param email Adreça de correu electrònic, usada per a l'autenticació.
  */
 
-@Entity(tableName = "users")
+@Entity(
+    tableName = "users",
+    indices = [
+        Index(value = ["username"], unique = true),
+        Index(value = ["email"], unique = true)
+    ]
+)
 data class User(
-    @PrimaryKey(autoGenerate = true) val userId: Int,
+    @PrimaryKey(autoGenerate = true) val userId: Int = 0,
     val username: String,
     val birthdate: String,
     val email: String,

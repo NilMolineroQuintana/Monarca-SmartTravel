@@ -721,9 +721,15 @@ fun AppTextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         isError = isError,
-        supportingText = errorMessage?.let {
-            { Text(text = it, color = MaterialTheme.colorScheme.error) }
-        },
+        supportingText = if (isError && errorMessage != null) {
+            {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        } else null,
         shape = RoundedCornerShape(12.dp)
     )
 }

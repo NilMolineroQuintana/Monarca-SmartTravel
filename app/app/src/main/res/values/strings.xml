@@ -159,6 +159,10 @@
     <string name="error_invalid_date_range">La data d\'inici ha de ser anterior a la data de fi.</string>
     <string name="error_date_range">La data de fi ha de ser posterior a la d\'inici.</string>
     <string name="date_before_error">La data de fi ha de ser posterior a la d\'inici.</string>
+    <string name="error_existing_email">Ja existèix un compte associat a aquest email</string>
+    <string name="error_existing_username">Ja existèix un compte associat a aquest usuari</string>
+    <string name="error_password_length">La contrasenya ha de tenir almenys 8 caràcters</string>
+    <string name="error_non_matching_passwords">Les contrasenyes no coincideixen</string>
     <string name="ongoing">En curs</string>
     <string name="no_account">Encara no tens compte?</string>
     <string name="register">Registra\'t</string>

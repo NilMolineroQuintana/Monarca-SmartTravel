@@ -159,6 +159,10 @@
     <string name="error_invalid_date_range">The start date must be before the end date.</string>
     <string name="error_date_range">The end date must be after the start date.</string>
     <string name="date_before_error">The end date must be after the start date.</string>
+    <string name="error_existing_email">An account is already associated with this email</string>
+    <string name="error_existing_username">An account is already associated with this username</string>
+    <string name="error_password_length">Password must be at least 8 characters long</string>
+    <string name="error_non_matching_passwords">Passwords do not match</string>
     <string name="ongoing">Ongoing</string>
     <string name="no_account">Don\'t have an account yet?</string>
     <string name="register">Register</string>
