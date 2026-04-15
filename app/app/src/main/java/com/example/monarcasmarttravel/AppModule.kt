@@ -3,6 +3,7 @@ package com.example.monarcasmarttravel
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import com.example.monarcasmarttravel.data.ItineraryDao
 import com.example.monarcasmarttravel.data.MonarcaDatabase
 import com.example.monarcasmarttravel.data.UserDao
 import com.example.monarcasmarttravel.data.repository.ItineraryRepositoryImpl
@@ -41,9 +42,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideItineraryRepository(
-        tripRepository: TripRepository
+        itineraryDao: ItineraryDao
     ): ItineraryRepository =
-        ItineraryRepositoryImpl()
+        ItineraryRepositoryImpl(itineraryDao)
 
     @Provides
     @Singleton
@@ -69,5 +70,11 @@ object AppModule {
     @Provides
     fun provideUserDao(db: MonarcaDatabase): UserDao {
         return db.userDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideItineraryDao(db: MonarcaDatabase): ItineraryDao {
+        return db.itineraryDao()
     }
 }

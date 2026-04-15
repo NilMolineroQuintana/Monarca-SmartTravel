@@ -2,6 +2,8 @@ package com.example.monarcasmarttravel.domain.model
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import java.text.SimpleDateFormat
@@ -30,8 +32,10 @@ import java.util.Locale
  * @param address Adreça del lloc (no transport).
  * @param checkInDate Data d'entrada o visita (no transport).
  */
+
+@Entity(tableName = "itinerary_items")
 data class ItineraryItem(
-    val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val tripId: Int,
     val type: PlanType,
     val price: Double,

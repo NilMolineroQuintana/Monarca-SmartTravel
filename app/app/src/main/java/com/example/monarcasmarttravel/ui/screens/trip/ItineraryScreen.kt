@@ -154,7 +154,6 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
     val trip = tripViewModel.getTripById(tripId)
 
     val items by itineraryViewModel.items.collectAsState()
-    val isLoading by itineraryViewModel.isLoading.collectAsState()
 
     var selectedDay by remember { mutableStateOf<String?>(null) }
 
@@ -228,67 +227,57 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
             onDismiss = { showPopUp = false }
         )
 
-        // ← AQUÍ va el control de loading, dentro del Scaffold
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                item { Header(trip) }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            item { Header(trip) }
 
-                if (numItems == 0) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.no_plans),
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
-                        )
-                    }
-                } else {
-                    item {
-                        ItineraryStatsComponent(items.sumOf { it.price }, numItems)
-                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
-                    }
-                    item {
-                        DaysList(
-                            days = groupedData.entries.map { (_, itemsDelDia) ->
-                                val date = itemsDelDia.first().getInDate()!!
-                                SimpleDateFormat("dd MMM", Locale.getDefault()).format(date)
-                            },
-                            selectedDay = selectedDay,
-                            onDaySelected = { day ->
-                                selectedDay = if (selectedDay == day) null else day
-                            }
-                        )
-                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
-                    }
-                    filteredData.forEach { (date, itemsDelDia) ->
-                        item {
-                            DivisorComponent(date)
-                            Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
-                        }
-                        items(itemsDelDia) { plan ->
-                            ItineraryItemComponent(item = plan, onDelete = {
-                                itineraryViewModel.deleteItem(plan)
-                                itineraryViewModel.loadItemsByTrip(tripId)
-                            }, navController = navController
-                            )
-                            Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
-                        }
-                    }
-                }
-
+            if (numItems == 0) {
                 item {
-                    Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
+                    Text(
+                        text = stringResource(R.string.no_plans),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 30.dp, bottom = 20.dp)
+                    )
                 }
+            } else {
+                item {
+                    ItineraryStatsComponent(items.sumOf { it.price }, numItems)
+                    Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
+                }
+                item {
+                    DaysList(
+                        days = groupedData.entries.map { (_, itemsDelDia) ->
+                            val date = itemsDelDia.first().getInDate()!!
+                            SimpleDateFormat("dd MMM", Locale.getDefault()).format(date)
+                        },
+                        selectedDay = selectedDay,
+                        onDaySelected = { day ->
+                            selectedDay = if (selectedDay == day) null else day
+                        }
+                    )
+                    Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
+                }
+                filteredData.forEach { (date, itemsDelDia) ->
+                    item {
+                        DivisorComponent(date)
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
+                    }
+                    items(itemsDelDia) { plan ->
+                        ItineraryItemComponent(item = plan, onDelete = {
+                            itineraryViewModel.deleteItem(plan)
+                            itineraryViewModel.loadItemsByTrip(tripId)
+                        }, navController = navController
+                        )
+                        Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
             }
         }
     }

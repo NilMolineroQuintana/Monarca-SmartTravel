@@ -1,21 +1,24 @@
 package com.example.monarcasmarttravel.data.repository
 
 import android.util.Log
+import com.example.monarcasmarttravel.data.ItineraryDao
 import com.example.monarcasmarttravel.data.fakeDB.FakeItineraryItemDataSource
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
 import com.example.monarcasmarttravel.utils.AppError
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ItineraryRepositoryImpl @Inject constructor() : ItineraryRepository {
+class ItineraryRepositoryImpl @Inject constructor(
+    private val dao: ItineraryDao
+) : ItineraryRepository {
 
     private val TAG = "ItineraryRepositoryImpl"
     private val dataSource = FakeItineraryItemDataSource
 
-    override suspend fun getItemsByTrip(tripId: Int): List<ItineraryItem> {
-        val result = dataSource.getItemsByTrip(tripId)
-        Log.d(TAG, "getItemsByTrip: tripId=$tripId -> ${result.size} items")
-        return result
+    override fun getItemsByTrip(tripId: Int): Flow<List<ItineraryItem>> {
+        Log.d(TAG, "getItemsByTrip: observant tripId=$tripId")
+        return dao.getItemsByTrip(tripId)
     }
 
     override fun getItemById(id: Int): ItineraryItem? {

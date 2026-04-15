@@ -11,7 +11,11 @@ import com.example.monarcasmarttravel.ui.screens.trip.PlanType
 import com.example.monarcasmarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -26,11 +30,16 @@ class ItineraryViewModel @Inject constructor(
 
     private val TAG = "ItineraryViewModel"
 
-    private val _items = MutableStateFlow<List<ItineraryItem>>(emptyList())
-    val items: StateFlow<List<ItineraryItem>> = _items
+    private val _currentTripId = MutableStateFlow<Int?>(null)
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val items: StateFlow<List<ItineraryItem>> = _currentTripId
+        .filterNotNull()
+        .flatMapLatest { tripId -> repository.getItemsByTrip(tripId) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
@@ -39,19 +48,8 @@ class ItineraryViewModel @Inject constructor(
     private val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
     fun loadItemsByTrip(tripId: Int) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            Log.d(TAG, "loadItemsByTrip: carregant items del viatge id=$tripId")
-            try {
-                _items.value = repository.getItemsByTrip(tripId)
-                Log.i(TAG, "loadItemsByTrip: ${_items.value.size} items carregats per tripId=$tripId")
-            } catch (e: Exception) {
-                _error.value = e.message
-                Log.e(TAG, "loadItemsByTrip: error inesperat -> ${e.message}")
-            } finally {
-                _isLoading.value = false
-            }
-        }
+        Log.d(TAG, "loadItemsByTrip: observant items del viatge id=$tripId")
+        _currentTripId.value = tripId
     }
 
     fun getItemById(id: Int): ItineraryItem? {
