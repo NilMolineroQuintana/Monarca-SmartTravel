@@ -14,15 +14,14 @@ class ItineraryRepositoryImpl @Inject constructor(
 ) : ItineraryRepository {
 
     private val TAG = "ItineraryRepositoryImpl"
-    private val dataSource = FakeItineraryItemDataSource
 
     override fun getItemsByTrip(tripId: Int): Flow<List<ItineraryItem>> {
         Log.d(TAG, "getItemsByTrip: observant tripId=$tripId")
         return dao.getItemsByTrip(tripId)
     }
 
-    override fun getItemById(id: Int): ItineraryItem? {
-        val item = dataSource.getItemById(id)
+    override suspend fun getItemById(id: Int): ItineraryItem? {
+        val item = dao.getItemById(id)
         if (item == null) Log.w(TAG, "getItemById: no s'ha trobat id=$id")
         return item
     }
@@ -32,14 +31,9 @@ class ItineraryRepositoryImpl @Inject constructor(
         return if (id > 0) AppError.OK.code else AppError.UNKNOWN.code
     }
 
-    override fun updateItineraryItem(item: ItineraryItem): Int {
-        val status = dataSource.updateItem(item)
-        if (status == AppError.OK.code) {
-            Log.i(TAG, "updateItineraryItem: actualitzat -> id=${item.id}, tipus=${item.type}")
-        } else {
-            Log.w(TAG, "updateItineraryItem: no s'ha trobat id=${item.id}")
-        }
-        return status
+    override suspend fun updateItineraryItem(item: ItineraryItem): Int {
+        val affected = dao.updateItem(item)
+        return if (affected > 0) AppError.OK.code else AppError.NON_EXISTING_ITEM.code
     }
 
     override suspend fun deleteItineraryItem(id: Int): Int {

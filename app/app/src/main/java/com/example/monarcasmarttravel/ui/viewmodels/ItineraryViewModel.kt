@@ -62,7 +62,7 @@ class ItineraryViewModel @Inject constructor(
         _currentTripId.value = tripId
     }
 
-    fun getItemById(id: Int): ItineraryItem? {
+    suspend fun getItemById(id: Int): ItineraryItem? {
         val item = repository.getItemById(id)
         if (item == null) Log.w(TAG, "getItemById: no s'ha trobat item id=$id")
         else Log.d(TAG, "getItemById: trobat item id=$id, tipus=${item.type}")
@@ -86,9 +86,9 @@ class ItineraryViewModel @Inject constructor(
             }
 
         val validationStatus = validateDate(parsedDate, tripId)
-        if (validationStatus != AppError.OK.code) {
+        if (validationStatus.code != AppError.OK.code) {
             Log.w(TAG, "addItem: data fora del rang del viatge -> $parsedDate (tripId=$tripId)")
-            status = AppError.fromCode(validationStatus)
+            status = validationStatus
             return
         }
 
@@ -106,39 +106,57 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun updateItem(itemId: Int, ruta: String, form: PlanFormState): Int {
+    fun updateItem(itemId: Int, ruta: String, form: PlanFormState) {
         Log.d(TAG, "updateItem: intent d'actualitzar item id=$itemId, ruta=$ruta")
 
-        val existing = repository.getItemById(itemId)
-            ?: run {
-                Log.w(TAG, "updateItem: item no trobat -> id=$itemId")
-                return AppError.NON_EXISTING_ITEM.code
+        viewModelScope.launch {
+            try {
+                val existing = repository.getItemById(itemId)
+                    ?: run {
+                        status = AppError.NON_EXISTING_ITEM
+                        return@launch
+                    }
+
+                val parsedDate = parseDate(form.checkInDate)
+                    ?: run {
+                        status = AppError.NON_EXISTING_DATE
+                        return@launch
+                    }
+
+                val validationStatus = validateDate(parsedDate, existing.tripId)
+                if (validationStatus.code != AppError.OK.code) {
+                    status = validationStatus
+                    return@launch
+                }
+
+                val updated = if (ruta in transports) {
+                    existing.copy(
+                        price = form.price,
+                        origin = form.locationName,
+                        destination = form.destination,
+                        company = form.company,
+                        transportNumber = form.transportNumber,
+                        departureDate = parsedDate
+                    )
+                } else {
+                    existing.copy(
+                        price = form.price,
+                        locationName = form.locationName,
+                        address = form.address,
+                        checkInDate = parsedDate
+                    )
+                }
+
+                val result = repository.updateItineraryItem(updated)
+
+                status = AppError.fromCode(result)
+                Log.i(TAG, "updateItem: item actualitzat correctament -> id=$itemId")
+
+            } catch (e: Exception) {
+                Log.e(TAG, "updateItem: error al actualitzar item id=$itemId", e)
+                status = AppError.UNKNOWN
             }
-
-        val parsedDate = parseDate(form.checkInDate)
-            ?: run {
-                Log.w(TAG, "updateItem: format de data invàlid -> '${form.checkInDate}'")
-                return AppError.NON_EXISTING_DATE.code
-            }
-
-        val validationStatus = validateDate(parsedDate, existing.tripId)
-        if (validationStatus != AppError.OK.code) {
-            Log.w(TAG, "updateItem: data fora del rang del viatge -> $parsedDate (tripId=${existing.tripId})")
-            return validationStatus
         }
-
-        val updated = if (ruta in transports) {
-            existing.copy(
-                price = form.price, origin = form.locationName, destination = form.destination,
-                company = form.company, transportNumber = form.transportNumber, departureDate = parsedDate
-            )
-        } else {
-            existing.copy(price = form.price, locationName = form.locationName, address = form.address, checkInDate = parsedDate)
-        }
-
-        val result = repository.updateItineraryItem(updated)
-        Log.i(TAG, "updateItem: item actualitzat correctament -> id=$itemId, tipus=${existing.type}")
-        return result
     }
 
     fun deleteItem(item: ItineraryItem): Unit {
@@ -180,13 +198,13 @@ class ItineraryViewModel @Inject constructor(
     private fun Date.toMinutes() = time / 60000
 
     // ── Validació ───────────────────────────────────────────────────
-    private fun validateDate(date: Date, tripId: Int): Int {
-        val trip = tripRepository.getTripById(tripId) ?: return AppError.NON_EXISTING_TRIP.code
+    private fun validateDate(date: Date, tripId: Int): AppError {
+        val trip = tripRepository.getTripById(tripId) ?: return AppError.NON_EXISTING_TRIP
 
         if (date.toMinutes() !in trip.dateIn.toMinutes()..trip.dateOut.toMinutes()) {
-            return AppError.ITEM_OUT_OF_RANGE.code
+            return AppError.ITEM_OUT_OF_RANGE
         }
 
-        return AppError.OK.code
+        return AppError.OK
     }
 }
