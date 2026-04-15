@@ -8,5 +8,5 @@ interface ItineraryRepository {
     fun getItemById(id: Int): ItineraryItem?
     suspend fun addItineraryItem(item: ItineraryItem): Int
     fun updateItineraryItem(item: ItineraryItem): Int
-    fun deleteItineraryItem(id: Int): Int
+    suspend fun deleteItineraryItem(id: Int): Int
 }

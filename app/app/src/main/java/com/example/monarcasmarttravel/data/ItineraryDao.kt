@@ -1,6 +1,7 @@
 package com.example.monarcasmarttravel.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -14,4 +15,7 @@ interface ItineraryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addItem(item: ItineraryItem): Long
+
+    @Query("DELETE FROM itinerary_items WHERE id = :itemId")
+    suspend fun deleteItem(itemId: Int): Int
 }

@@ -42,13 +42,8 @@ class ItineraryRepositoryImpl @Inject constructor(
         return status
     }
 
-    override fun deleteItineraryItem(id: Int): Int {
-        val status = dataSource.deleteItem(id)
-        if (status == AppError.OK.code) {
-            Log.i(TAG, "deleteItineraryItem: eliminat -> id=$id")
-        } else {
-            Log.w(TAG, "deleteItineraryItem: no s'ha trobat id=$id")
-        }
-        return status
+    override suspend fun deleteItineraryItem(id: Int): Int {
+        val affected = dao.deleteItem(id)
+        return if (affected > 0) AppError.OK.code else AppError.NON_EXISTING_ITEM.code
     }
 }

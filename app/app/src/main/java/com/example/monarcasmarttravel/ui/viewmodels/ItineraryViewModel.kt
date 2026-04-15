@@ -96,9 +96,9 @@ class ItineraryViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                repository.addItineraryItem(newItem)
+                val result = repository.addItineraryItem(newItem)
                 Log.i(TAG, "addItem: item creat correctament")
-                status = AppError.OK
+                status = AppError.fromCode(result)
             } catch (e: Exception) {
                 Log.e(TAG, "addItem: error al crear item", e)
                 status = AppError.UNKNOWN
@@ -141,15 +141,18 @@ class ItineraryViewModel @Inject constructor(
         return result
     }
 
-    fun deleteItem(item: ItineraryItem): Int {
+    fun deleteItem(item: ItineraryItem): Unit {
         Log.d(TAG, "deleteItem: intent d'eliminar item id=${item.id}, tipus=${item.type}")
-        val result = repository.deleteItineraryItem(item.id)
-        if (result == AppError.OK.code) {
-            Log.i(TAG, "deleteItem: item eliminat correctament -> id=${item.id}")
-        } else {
-            Log.w(TAG, "deleteItem: no s'ha pogut eliminar item id=${item.id}")
+        viewModelScope.launch {
+            try {
+                val result = repository.deleteItineraryItem(item.id)
+                Log.i(TAG, "deleteItem: item eliminat correctament -> id=${item.id}")
+                status = AppError.fromCode(result)
+            } catch (e: Exception) {
+                Log.e(TAG, "deleteItem: error al eliminar item id=${item.id}", e)
+                status = AppError.UNKNOWN
+            }
         }
-        return result
     }
 
     private fun parseDate(value: String): Date? =

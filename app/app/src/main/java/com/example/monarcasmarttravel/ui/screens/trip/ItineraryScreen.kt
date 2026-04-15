@@ -149,6 +149,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
 
     val itineraryViewModel: ItineraryViewModel = hiltViewModel()
     val tripViewModel: TripViewModel = hiltViewModel()
+    val currentStatus = itineraryViewModel.status
 
     // Obté el viatge real del repositori a través del ViewModel
     val trip = tripViewModel.getTripById(tripId)
@@ -159,6 +160,12 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
 
     LaunchedEffect(tripId) {
         itineraryViewModel.loadItemsByTrip(tripId)
+    }
+
+    LaunchedEffect(currentStatus) {
+        if (currentStatus != null) {
+            itineraryViewModel.clearStatus()
+        }
     }
 
     val groupedData = items
@@ -220,9 +227,6 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 // Elimina el viatge via ViewModel i torna a la llista
                 tripViewModel.deleteTrip(tripId)
                 showPopUp = false
-                navController.navigate("trips") {
-                    popUpTo("trips") { inclusive = true }
-                }
             },
             onDismiss = { showPopUp = false }
         )
@@ -268,7 +272,6 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                     items(itemsDelDia) { plan ->
                         ItineraryItemComponent(item = plan, onDelete = {
                             itineraryViewModel.deleteItem(plan)
-                            itineraryViewModel.loadItemsByTrip(tripId)
                         }, navController = navController
                         )
                         Spacer(modifier = Modifier.size(AppDimensions.PaddingSmall))
