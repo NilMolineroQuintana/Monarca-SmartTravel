@@ -27,14 +27,9 @@ class ItineraryRepositoryImpl @Inject constructor(
         return item
     }
 
-    override fun addItineraryItem(item: ItineraryItem): Int {
-        val status = dataSource.addItem(item)
-        if (status == AppError.OK.code) {
-            Log.i(TAG, "addItineraryItem: creat -> tripId=${item.tripId}, tipus=${item.type}")
-        } else {
-            Log.e(TAG, "addItineraryItem: error inesperat -> status=$status, tipus=${item.type}")
-        }
-        return status
+    override suspend fun addItineraryItem(item: ItineraryItem): Int {
+        val id = dao.addItem(item)
+        return if (id > 0) AppError.OK.code else AppError.UNKNOWN.code
     }
 
     override fun updateItineraryItem(item: ItineraryItem): Int {

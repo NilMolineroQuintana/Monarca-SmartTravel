@@ -1,6 +1,9 @@
 package com.example.monarcasmarttravel.ui.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
@@ -29,6 +32,13 @@ class ItineraryViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val TAG = "ItineraryViewModel"
+
+    var status by mutableStateOf<AppError?>(null)
+        private set
+
+    fun clearStatus() {
+        status = null
+    }
 
     private val _currentTripId = MutableStateFlow<Int?>(null)
 
@@ -59,30 +69,41 @@ class ItineraryViewModel @Inject constructor(
         return item
     }
 
-    fun addItem(tripId: Int, ruta: String, form: PlanFormState) : Int {
+    fun addItem(tripId: Int, ruta: String, form: PlanFormState) : Unit {
         Log.d(TAG, "addItem: intent d'afegir item -> tripId=$tripId, ruta=$ruta")
 
         val planType = PlanType.entries.find { it.route == ruta }
             ?: run {
                 Log.e(TAG, "addItem: ruta desconeguda -> '$ruta'")
-                return AppError.UNKNOWN.code
+                status = AppError.UNKNOWN
+                return
             }
         val parsedDate = parseDate(form.checkInDate)
             ?: run {
                 Log.w(TAG, "addItem: format de data invàlid -> '${form.checkInDate}'")
-                return AppError.NON_EXISTING_DATE.code
+                status = AppError.NON_EXISTING_DATE
+                return
             }
 
         val validationStatus = validateDate(parsedDate, tripId)
         if (validationStatus != AppError.OK.code) {
             Log.w(TAG, "addItem: data fora del rang del viatge -> $parsedDate (tripId=$tripId)")
-            return validationStatus
+            status = AppError.fromCode(validationStatus)
+            return
         }
 
         val newItem = buildItineraryItem(tripId = tripId, ruta = ruta, planType = planType, form = form, date = parsedDate)
-        val result = repository.addItineraryItem(newItem)
-        Log.i(TAG, "addItem: item creat correctament -> tripId=$tripId, tipus=$planType, data=$parsedDate")
-        return result
+
+        viewModelScope.launch {
+            try {
+                repository.addItineraryItem(newItem)
+                Log.i(TAG, "addItem: item creat correctament")
+                status = AppError.OK
+            } catch (e: Exception) {
+                Log.e(TAG, "addItem: error al crear item", e)
+                status = AppError.UNKNOWN
+            }
+        }
     }
 
     fun updateItem(itemId: Int, ruta: String, form: PlanFormState): Int {

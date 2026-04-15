@@ -87,6 +87,7 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId:
         Log.d("PlanScreen", "route: $ruta, tripId: $tripId")
     }
     val viewModel: ItineraryViewModel = hiltViewModel()
+    val currentStatus = viewModel.status
 
     // Estats dels camps del formulari, persistents en rotació de pantalla
     var locationName by rememberSaveable { mutableStateOf("") }
@@ -110,6 +111,13 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId:
         transportNumber = item.transportNumber ?: ""
         address         = item.address ?: ""
         checkInDate     = item.getInDate()?.let { dateFormat.format(it) } ?: ""
+    }
+
+    LaunchedEffect(currentStatus) {
+        if (currentStatus != null) {
+            handleStatus(currentStatus, navController, tripId)
+            viewModel.clearStatus()
+        }
     }
 
     // Tipus que es consideren transport (no mostren camp de nom ni adreça)
@@ -186,12 +194,11 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId:
             price = price.toDoubleOrNull() ?: 0.0,
             checkInDate     = checkInDate
         )
-        val status = if (itemId == null) {
+        if (itemId == null) {
             viewModel.addItem(tripId, rutaSegura, formState)
         } else {
             viewModel.updateItem(itemId, rutaSegura, formState)
         }
-        handleStatus(status, navController, tripId)
     }
 
     Scaffold(
@@ -376,15 +383,15 @@ fun PlanScreen(navController: NavController, ruta: String?, tripId: Int, itemId:
 }
 
 
-fun handleStatus(status: Int, navController: NavController, tripId: Int) {
-    if (status == AppError.OK.code) {
+fun handleStatus(status: AppError, navController: NavController, tripId: Int) {
+    if (status.code == AppError.OK.code) {
         navController.navigate("itinerary/$tripId") {
             popUpTo("itinerary/$tripId") { inclusive = true }
         }
     } else {
         Toast.makeText(
             navController.context,
-            navController.context.getString(AppError.fromCode(status).stringRes),
+            navController.context.getString(status.stringRes),
             Toast.LENGTH_SHORT
         ).show()
     }
