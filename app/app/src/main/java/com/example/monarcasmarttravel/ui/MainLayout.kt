@@ -677,6 +677,7 @@ fun WideOption(
  * @param isError Si és true, aplica l'estil d'error al camp.
  * @param errorMessage Missatge d'error mostrat sota el camp. Si és null, no es mostra res.
  * @param keyboardType Tipus de teclat mostrat enfocar el camp.
+ * @param enabled Si el camp està actiu.
  */
 @Composable
 fun AppTextField(
@@ -690,6 +691,7 @@ fun AppTextField(
     isError: Boolean = false,
     errorMessage: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
+    enabled: Boolean = true
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -707,7 +709,7 @@ fun AppTextField(
         },
         trailingIcon = if (isPassword) {
             {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                IconButton(onClick = { passwordVisible = !passwordVisible }, enabled = enabled) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = if (passwordVisible) "Amagar contrasenya" else "Mostrar contrasenya"
@@ -730,7 +732,8 @@ fun AppTextField(
                 )
             }
         } else null,
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        enabled = enabled
     )
 }
 
@@ -849,6 +852,7 @@ fun EditTextPopUp(
  * @param onAccept Acció invocada amb la data seleccionada ("dd/MM/yyyy") en confirmar.
  * @param onDismiss Acció en cancel·lar o tancar el diàleg.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerPopUp(
     show: Boolean,
@@ -1036,7 +1040,8 @@ fun DateField(
     modifier: Modifier = Modifier,
     initialDateMillis: Long? = null,
     showTime: Boolean = true,
-    blockPastDates: Boolean = false
+    blockPastDates: Boolean = false,
+    enabled: Boolean = true
 ) {
     var showPicker by remember { mutableStateOf(false) }
 
@@ -1081,7 +1086,7 @@ fun DateField(
         readOnly = true,
         singleLine = true,
         shape = RoundedCornerShape(12.dp),
-        modifier = modifier.clickable { showPicker = true },
+        modifier = modifier.clickable(enabled = enabled) { showPicker = true },
         enabled = false,
         colors = OutlinedTextFieldDefaults.colors(
             disabledTextColor = MaterialTheme.colorScheme.onSurface,

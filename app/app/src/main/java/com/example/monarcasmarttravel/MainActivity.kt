@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,6 +33,7 @@ import com.example.monarcasmarttravel.ui.screens.trip.PlanScreen
 import com.example.monarcasmarttravel.ui.screens.trip.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import com.example.monarcasmarttravel.ui.theme.ThemeState
+import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -61,6 +63,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = hiltViewModel()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -72,7 +75,8 @@ fun AppNavigation() {
         ) {
             composable("splash") {
                 SplashScreen(onTimeout = {
-                    navController.navigate("login") {
+                    val startDestination = if (authViewModel.isLoggedIn()) "home" else "login"
+                    navController.navigate(startDestination) {
                         popUpTo("splash") { inclusive = true }
                     }
                 })

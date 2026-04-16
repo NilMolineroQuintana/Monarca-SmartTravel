@@ -52,6 +52,7 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.WideOptionAction
+import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
 import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
 
 /**
@@ -66,6 +67,7 @@ import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
 @Composable
 fun ProfileScreen(navController: NavController) {
     val viewModel: PreferencesViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = hiltViewModel()
 
     val languageCodeMap = mapOf(
         stringResource(R.string.language_catalan) to "ca",
@@ -106,7 +108,12 @@ fun ProfileScreen(navController: NavController) {
             show = showLogOutPopUp,
             title = stringResource(R.string.preferences_logOut_text),
             text = stringResource(R.string.logOut_popUp_text),
-            onAccept = { navController.navigate("login") },
+            onAccept = {
+                authViewModel.logout()
+                navController.navigate("login") {
+                    popUpTo(0) { inclusive = true }
+                }
+            },
             onDismiss = { showLogOutPopUp = false }
         )
 

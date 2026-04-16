@@ -1,6 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens.start
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -9,18 +9,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,7 +43,8 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
-import com.example.monarcasmarttravel.ui.viewmodels.UserViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.AuthState
+import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
 import com.example.monarcasmarttravel.utils.AppError
 import com.example.monarcasmarttravel.utils.emailPattern
 import com.example.monarcasmarttravel.utils.phonePattern
@@ -52,10 +55,10 @@ import java.util.Locale
 private const val DATE_FORMAT = "dd/MM/yyyy"
 
 @Composable
-fun RegisterScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hiltViewModel()) {
     
-    val viewModel: UserViewModel = hiltViewModel()
-    val currentStatus = viewModel.status
+    val authState by viewModel.authState.collectAsState()
+    val context = LocalContext.current
 
     var username by rememberSaveable { mutableStateOf("") }
     var birthdayText by remember { mutableStateOf("") }
@@ -63,7 +66,6 @@ fun RegisterScreen(navController: NavController) {
     var email by rememberSaveable { mutableStateOf("") }
     var phoneNum by rememberSaveable { mutableStateOf("") }
     var address by rememberSaveable { mutableStateOf("") }
-    var country by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
 
@@ -79,11 +81,21 @@ fun RegisterScreen(navController: NavController) {
             && isEmailValid
             && isPhoneValid
             && isPasswordValid
-            && address.isNotEmpty()
+            && address.isNotEmpty() && authState !is AuthState.Loading
 
-    LaunchedEffect(currentStatus) {
-        if (currentStatus == AppError.OK) {
-            navController.navigate("home")
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Success -> {
+                navController.navigate("home") {
+                    popUpTo("register") { inclusive = true }
+                }
+                viewModel.resetState()
+            }
+            is AuthState.Error -> {
+                Toast.makeText(context, (authState as AuthState.Error).message, Toast.LENGTH_LONG).show()
+                viewModel.resetState()
+            }
+            else -> {}
         }
     }
 
@@ -100,29 +112,23 @@ fun RegisterScreen(navController: NavController) {
             item {
                 AppTextField(
                     value = username,
-                    onValueChange = {
-                        username = it
-                        viewModel.clearStatus()
-                    },
+                    onValueChange = { username = it },
                     label = stringResource(R.string.preferences_username_label),
                     placeholder = "",
                     leadingIcon = Icons.Filled.Person,
-                    isError = currentStatus == AppError.EXISTING_USERNAME,
-                    errorMessage = stringResource(R.string.error_existing_username)
+                    enabled = authState !is AuthState.Loading
                 )
             }
             item {
                 AppTextField(
                     value = email,
-                    onValueChange = {
-                        email = it
-                        viewModel.clearStatus()
-                    },
+                    onValueChange = { email = it },
                     label = stringResource(R.string.email),
                     placeholder = "",
                     leadingIcon = Icons.Filled.Mail,
-                    isError = currentStatus == AppError.EXISTING_EMAIL,
-                    errorMessage = stringResource(R.string.error_existing_email)
+                    isError = email.isNotEmpty() && !isEmailValid,
+                    errorMessage = if (email.isNotEmpty() && !isEmailValid) stringResource(R.string.invalid_email) else null,
+                    enabled = authState !is AuthState.Loading
                 )
             }
             item {
@@ -134,7 +140,8 @@ fun RegisterScreen(navController: NavController) {
                         birthdayDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                     },
                     showTime = false,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = authState !is AuthState.Loading
                 )
             }
             item {
@@ -144,7 +151,8 @@ fun RegisterScreen(navController: NavController) {
                     label = stringResource(R.string.phone_num),
                     placeholder = "",
                     keyboardType = KeyboardType.Decimal,
-                    leadingIcon = Icons.Filled.Phone
+                    leadingIcon = Icons.Filled.Phone,
+                    enabled = authState !is AuthState.Loading
                 )
             }
             item {
@@ -153,7 +161,8 @@ fun RegisterScreen(navController: NavController) {
                     onValueChange = { address = it },
                     label = stringResource(R.string.address),
                     placeholder = "",
-                    leadingIcon = Icons.Filled.Home
+                    leadingIcon = Icons.Filled.Home,
+                    enabled = authState !is AuthState.Loading
                 )
             }
             item {
@@ -174,7 +183,8 @@ fun RegisterScreen(navController: NavController) {
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
                     isError = password.isNotEmpty() && !isPasswordValid,
-                    errorMessage = passwordError
+                    errorMessage = passwordError,
+                    enabled = authState !is AuthState.Loading
                 )
             }
             item {
@@ -191,31 +201,36 @@ fun RegisterScreen(navController: NavController) {
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
                     isError = confirmPassword.isNotEmpty() && !equalPasswords,
-                    errorMessage = confirmError
+                    errorMessage = confirmError,
+                    enabled = authState !is AuthState.Loading
                 )
             }
             item {
-                Button(
-                    onClick = {
-                        val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
-                        viewModel.registerUser(username, dateFormatted, email, phoneNum, address, password)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(top = AppDimensions.PaddingSmall),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    enabled = isFormValid
-                ) {
-                    Text(
-                        text = stringResource(R.string.register),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
+                if (authState is AuthState.Loading) {
+                    CircularProgressIndicator()
+                } else {
+                    Button(
+                        onClick = {
+                            val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
+                            viewModel.register(email, password, username, dateFormatted, phoneNum, address)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .padding(top = AppDimensions.PaddingSmall),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        enabled = isFormValid
+                    ) {
+                        Text(
+                            text = stringResource(R.string.register),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             }
         }
