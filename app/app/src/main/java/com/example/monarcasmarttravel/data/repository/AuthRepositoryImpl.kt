@@ -48,4 +48,9 @@ class AuthRepositoryImpl @Inject constructor(
     override fun isAuth() {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getUser(): User? {
+        val uid = auth.currentUser?.uid ?: return null
+        return userDao.getUserById(uid)
+    }
 }

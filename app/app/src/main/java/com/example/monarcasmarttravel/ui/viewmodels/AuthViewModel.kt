@@ -28,6 +28,15 @@ class AuthViewModel @Inject constructor(
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState.Idle)
     val registerState: StateFlow<RegisterState> = _registerState.asStateFlow()
 
+    private val _user = MutableStateFlow<User?>(null)
+    val user: StateFlow<User?> = _user.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _user.value = repository.getUser()
+        }
+    }
+
     fun registerUser(username: String, date: String, email: String, phoneNum: String, address: String, password: String) {
         val user = User(username = username, birthdate = date, email = email, phoneNum = phoneNum, address = address, password = password)
 
@@ -37,9 +46,11 @@ class AuthViewModel @Inject constructor(
 
             val result = repository.registerUser(user)
 
-            _registerState.value = when (result) {
-                AppError.OK -> RegisterState.Success
-                else -> RegisterState.Error(result)
+            if (result == AppError.OK) {
+                _user.value = repository.getUser()
+                _registerState.value = RegisterState.Success
+            } else {
+                _registerState.value = RegisterState.Error(result)
             }
         }
     }

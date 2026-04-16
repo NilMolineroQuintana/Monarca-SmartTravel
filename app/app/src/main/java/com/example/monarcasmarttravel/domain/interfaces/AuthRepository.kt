@@ -7,4 +7,5 @@ interface AuthRepository {
     fun loginUser(email: String, password: String, onComplete: (Boolean) -> Unit)
     suspend fun registerUser(user: User): AppError
     fun isAuth()
+    suspend fun getUser(): User?
 }

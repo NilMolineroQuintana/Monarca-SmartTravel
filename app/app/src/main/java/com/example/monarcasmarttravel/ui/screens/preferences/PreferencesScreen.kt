@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens.preferences
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -28,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +51,7 @@ import com.example.monarcasmarttravel.ui.MyTopBar
 import com.example.monarcasmarttravel.ui.PopUp
 import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.WideOptionAction
+import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
 import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
 
 /**
@@ -63,6 +66,8 @@ import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
 @Composable
 fun ProfileScreen(navController: NavController) {
     val viewModel: PreferencesViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val user = authViewModel.user.collectAsState()
 
     val languageCodeMap = mapOf(
         stringResource(R.string.language_catalan) to "ca",
