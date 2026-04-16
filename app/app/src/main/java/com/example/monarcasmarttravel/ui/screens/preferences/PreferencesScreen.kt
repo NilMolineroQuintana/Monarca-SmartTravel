@@ -60,6 +60,7 @@ import com.example.monarcasmarttravel.ui.WideOptionAction
 import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
 import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
 import com.example.monarcasmarttravel.utils.AppError
+import com.example.monarcasmarttravel.utils.validatePhone
 
 /**
  * Pantalla de preferències de l'usuari.
@@ -177,10 +178,11 @@ fun ProfileScreen(navController: NavController) {
             label = stringResource(R.string.phone_num),
             placeholder = "123456789",
             initialValue = phoneNum,
+            validator = { text -> validatePhone(text) },
             onAccept = { newPhone ->
                 user.value?.let { currentUser ->
                     authViewModel.updateUser(currentUser.copy(phoneNum = newPhone)) { error ->
-                        if(error == AppError.OK) {
+                        if (error == AppError.OK) {
                             phoneNum = newPhone
                             showPhonePopUp = false
                         }

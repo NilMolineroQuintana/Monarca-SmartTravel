@@ -799,6 +799,7 @@ fun EditTextPopUp(
     initialValue: String = "",
     acceptText: String = stringResource(R.string.accept),
     cancelText: String = stringResource(R.string.cancel),
+    validator: (String) -> Boolean = { it.isNotBlank() },
     onAccept: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -823,7 +824,7 @@ fun EditTextPopUp(
         confirmButton = {
             TextButton(
                 onClick = { onAccept(textValue.trim()) },
-                enabled = textValue.isNotBlank()
+                enabled = validator(textValue)
             ) {
                 Text(acceptText)
             }

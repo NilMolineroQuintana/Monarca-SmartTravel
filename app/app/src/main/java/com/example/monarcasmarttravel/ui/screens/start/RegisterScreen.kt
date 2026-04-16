@@ -45,6 +45,10 @@ import com.example.monarcasmarttravel.ui.viewmodels.RegisterState
 import com.example.monarcasmarttravel.utils.AppError
 import com.example.monarcasmarttravel.utils.emailPattern
 import com.example.monarcasmarttravel.utils.phonePattern
+import com.example.monarcasmarttravel.utils.validateBirthDate
+import com.example.monarcasmarttravel.utils.validateEmail
+import com.example.monarcasmarttravel.utils.validatePassword
+import com.example.monarcasmarttravel.utils.validatePhone
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -69,14 +73,14 @@ fun RegisterScreen(navController: NavController) {
     var confirmPassword by rememberSaveable { mutableStateOf("") }
 
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
-    val isEmailValid = email.isNotEmpty() && email.matches(emailPattern)
-    val isPhoneValid = phoneNum.isNotEmpty() && phoneNum.matches(phonePattern)
-    val passwordMatchesLength = password.length >= 8
+    val isEmailValid = validateEmail(email)
+    val isPhoneValid = validatePhone(phoneNum)
+    val passwordMatchesLength = validatePassword(password)
     val equalPasswords = password == confirmPassword
     val isPasswordValid = password.isNotEmpty() && equalPasswords && passwordMatchesLength
 
-    val isFormValid = username.isNotEmpty() &&
-            birthdayDate != null
+    val isFormValid = username.isNotEmpty()
+            && validateBirthDate(birthdayText)
             && isEmailValid
             && isPhoneValid
             && isPasswordValid
