@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -63,6 +64,8 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.room:room-runtime:2.8.4")
     implementation("androidx.room:room-ktx:2.8.4")
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
+    implementation(libs.firebase.auth.ktx)
     ksp("androidx.room:room-compiler:2.8.4")
     ksp("com.google.dagger:hilt-android-compiler:2.57.1")
     testImplementation(libs.junit)
