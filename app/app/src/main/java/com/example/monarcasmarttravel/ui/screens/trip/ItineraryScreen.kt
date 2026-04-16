@@ -76,7 +76,6 @@ import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 /**
  * Enum que representa els tipus de plans que es poden afegir a un itinerari.

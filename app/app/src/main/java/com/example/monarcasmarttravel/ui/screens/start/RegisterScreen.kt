@@ -1,6 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens.start
 
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -9,13 +9,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,7 +29,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,11 +42,15 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
-import com.example.monarcasmarttravel.ui.viewmodels.AuthState
 import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.RegisterState
 import com.example.monarcasmarttravel.utils.AppError
 import com.example.monarcasmarttravel.utils.emailPattern
 import com.example.monarcasmarttravel.utils.phonePattern
+import com.example.monarcasmarttravel.utils.validateBirthDate
+import com.example.monarcasmarttravel.utils.validateEmail
+import com.example.monarcasmarttravel.utils.validatePassword
+import com.example.monarcasmarttravel.utils.validatePhone
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -55,10 +58,11 @@ import java.util.Locale
 private const val DATE_FORMAT = "dd/MM/yyyy"
 
 @Composable
-fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hiltViewModel()) {
+fun RegisterScreen(navController: NavController) {
     
-    val authState by viewModel.authState.collectAsState()
-    val context = LocalContext.current
+    val viewModel: AuthViewModel = hiltViewModel()
+    val state by viewModel.registerState.collectAsState()
+    val currentStatus = (state as? RegisterState.Error)?.error
 
     var username by rememberSaveable { mutableStateOf("") }
     var birthdayText by remember { mutableStateOf("") }
@@ -66,36 +70,29 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
     var email by rememberSaveable { mutableStateOf("") }
     var phoneNum by rememberSaveable { mutableStateOf("") }
     var address by rememberSaveable { mutableStateOf("") }
+    var country by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
 
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
-    val isEmailValid = email.isNotEmpty() && email.matches(emailPattern)
-    val isPhoneValid = phoneNum.isNotEmpty() && phoneNum.matches(phonePattern)
-    val passwordMatchesLength = password.length >= 8
+    val isEmailValid = validateEmail(email)
+    val isPhoneValid = validatePhone(phoneNum)
+    val passwordMatchesLength = validatePassword(password)
     val equalPasswords = password == confirmPassword
     val isPasswordValid = password.isNotEmpty() && equalPasswords && passwordMatchesLength
 
-    val isFormValid = username.isNotEmpty() &&
-            birthdayDate != null
+    val isFormValid = username.isNotEmpty()
+            && validateBirthDate(birthdayText)
             && isEmailValid
             && isPhoneValid
             && isPasswordValid
-            && address.isNotEmpty() && authState !is AuthState.Loading
+            && address.isNotEmpty()
 
-    LaunchedEffect(authState) {
-        when (authState) {
-            is AuthState.Success -> {
-                navController.navigate("home") {
-                    popUpTo("register") { inclusive = true }
-                }
-                viewModel.resetState()
+    LaunchedEffect(state) {
+        if (state is RegisterState.Success) {
+            navController.navigate("home") {
+                popUpTo("login") { inclusive = true }
             }
-            is AuthState.Error -> {
-                Toast.makeText(context, (authState as AuthState.Error).message, Toast.LENGTH_LONG).show()
-                viewModel.resetState()
-            }
-            else -> {}
         }
     }
 
@@ -112,23 +109,27 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
             item {
                 AppTextField(
                     value = username,
-                    onValueChange = { username = it },
+                    onValueChange = {
+                        username = it
+                    },
                     label = stringResource(R.string.preferences_username_label),
                     placeholder = "",
                     leadingIcon = Icons.Filled.Person,
-                    enabled = authState !is AuthState.Loading
+                    isError = currentStatus == AppError.EXISTING_USERNAME,
+                    errorMessage = stringResource(R.string.error_existing_username)
                 )
             }
             item {
                 AppTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = {
+                        email = it
+                    },
                     label = stringResource(R.string.email),
                     placeholder = "",
                     leadingIcon = Icons.Filled.Mail,
-                    isError = email.isNotEmpty() && !isEmailValid,
-                    errorMessage = if (email.isNotEmpty() && !isEmailValid) stringResource(R.string.invalid_email) else null,
-                    enabled = authState !is AuthState.Loading
+                    isError = currentStatus == AppError.EXISTING_EMAIL,
+                    errorMessage = stringResource(R.string.error_existing_email)
                 )
             }
             item {
@@ -140,8 +141,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
                         birthdayDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                     },
                     showTime = false,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = authState !is AuthState.Loading
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
             item {
@@ -151,8 +151,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
                     label = stringResource(R.string.phone_num),
                     placeholder = "",
                     keyboardType = KeyboardType.Decimal,
-                    leadingIcon = Icons.Filled.Phone,
-                    enabled = authState !is AuthState.Loading
+                    leadingIcon = Icons.Filled.Phone
                 )
             }
             item {
@@ -161,8 +160,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
                     onValueChange = { address = it },
                     label = stringResource(R.string.address),
                     placeholder = "",
-                    leadingIcon = Icons.Filled.Home,
-                    enabled = authState !is AuthState.Loading
+                    leadingIcon = Icons.Filled.Home
                 )
             }
             item {
@@ -183,8 +181,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
                     isError = password.isNotEmpty() && !isPasswordValid,
-                    errorMessage = passwordError,
-                    enabled = authState !is AuthState.Loading
+                    errorMessage = passwordError
                 )
             }
             item {
@@ -201,36 +198,31 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel = hilt
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
                     isError = confirmPassword.isNotEmpty() && !equalPasswords,
-                    errorMessage = confirmError,
-                    enabled = authState !is AuthState.Loading
+                    errorMessage = confirmError
                 )
             }
             item {
-                if (authState is AuthState.Loading) {
-                    CircularProgressIndicator()
-                } else {
-                    Button(
-                        onClick = {
-                            val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
-                            viewModel.register(email, password, username, dateFormatted, phoneNum, address)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .padding(top = AppDimensions.PaddingSmall),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        enabled = isFormValid
-                    ) {
-                        Text(
-                            text = stringResource(R.string.register),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
+                Button(
+                    onClick = {
+                        val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
+                        viewModel.registerUser(username, dateFormatted, email, phoneNum, address, password)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(top = AppDimensions.PaddingSmall),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    enabled = isFormValid && state !is RegisterState.Loading
+                ) {
+                    Text(
+                        text = stringResource(R.string.register),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
             }
         }

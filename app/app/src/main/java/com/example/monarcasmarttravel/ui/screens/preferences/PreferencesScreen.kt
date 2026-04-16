@@ -1,5 +1,7 @@
 package com.example.monarcasmarttravel.ui.screens.preferences
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -31,12 +33,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +59,8 @@ import com.example.monarcasmarttravel.ui.WideOption
 import com.example.monarcasmarttravel.ui.WideOptionAction
 import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
 import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
+import com.example.monarcasmarttravel.utils.AppError
+import com.example.monarcasmarttravel.utils.validatePhone
 
 /**
  * Pantalla de preferències de l'usuari.
@@ -66,8 +73,11 @@ import com.example.monarcasmarttravel.ui.viewmodels.PreferencesViewModel
  */
 @Composable
 fun ProfileScreen(navController: NavController) {
+    val context = LocalContext.current
+
     val viewModel: PreferencesViewModel = hiltViewModel()
     val authViewModel: AuthViewModel = hiltViewModel()
+    val user = authViewModel.user.collectAsState()
 
     val languageCodeMap = mapOf(
         stringResource(R.string.language_catalan) to "ca",
@@ -83,18 +93,29 @@ fun ProfileScreen(navController: NavController) {
     var showLogOutPopUp by remember { mutableStateOf(false) }
     var showUsernamePopUp by remember { mutableStateOf(false) }
     var showDatePickerPopUp by remember { mutableStateOf(false) }
+    var showPhonePopUp by remember { mutableStateOf(false) }
+    var showAddressPopUp by remember { mutableStateOf(false) }
 
     // ── Estat del selector d'idioma ───────────────────────────────────────────
     var langMenuExpanded by remember { mutableStateOf(false) }
 
-    var username by remember { mutableStateOf(viewModel.username) }
-    var dateOfBirth by remember { mutableStateOf(viewModel.dateOfBirth) }
+    var username by remember { mutableStateOf("") }
+    var dateOfBirth by remember { mutableStateOf("") }
     var phoneNum by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var selectedLanguage by remember { mutableStateOf(codeToLanguageMap[viewModel.language] ?: defaultLanguage) }
     var darkMode by remember { mutableStateOf(viewModel.isDarkMode) }
     var notifications by remember { mutableStateOf(viewModel.notifications) }
+
+    LaunchedEffect(user.value) {
+        user.value?.let { currentUser ->
+            username = currentUser.username
+            dateOfBirth = currentUser.birthdate
+            phoneNum = currentUser.phoneNum
+            address = currentUser.address
+        }
+    }
 
     val buttonsColor = Color.Transparent
 
@@ -125,9 +146,16 @@ fun ProfileScreen(navController: NavController) {
             placeholder = stringResource(R.string.preferences_username_placeholder),
             initialValue = username,
             onAccept = { newName ->
-                username = newName
-                viewModel.updateUsername(newName)
-                showUsernamePopUp = false
+                user.value?.let { currentUser ->
+                    authViewModel.updateUser(currentUser.copy(username = newName)) { error ->
+                        if (error == AppError.OK) {
+                            username = newName
+                            showUsernamePopUp = false
+                        } else {
+                            Toast.makeText(context, error.stringRes, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             },
             onDismiss = { showUsernamePopUp = false }
         )
@@ -137,11 +165,57 @@ fun ProfileScreen(navController: NavController) {
             show = showDatePickerPopUp,
             title = stringResource(R.string.preferences_birthdate_popup_title),
             onAccept = { newDate ->
-                dateOfBirth = newDate
-                viewModel.updateDateOfBirth(newDate)
-                showDatePickerPopUp = false
+                user.value?.let { currentUser ->
+                    authViewModel.updateUser(currentUser.copy(birthdate = newDate)) { error ->
+                        if(error == AppError.OK) {
+                            dateOfBirth = newDate
+                            showDatePickerPopUp = false
+                        }
+                    }
+                }
             },
             onDismiss = { showDatePickerPopUp = false }
+        )
+
+        // ── Pop-up: editar telèfon ───────────────────────────────────────
+        EditTextPopUp(
+            show = showPhonePopUp,
+            title = stringResource(R.string.phone_num),
+            label = stringResource(R.string.phone_num),
+            placeholder = "123456789",
+            initialValue = phoneNum,
+            validator = { text -> validatePhone(text) },
+            onAccept = { newPhone ->
+                user.value?.let { currentUser ->
+                    authViewModel.updateUser(currentUser.copy(phoneNum = newPhone)) { error ->
+                        if (error == AppError.OK) {
+                            phoneNum = newPhone
+                            showPhonePopUp = false
+                        }
+                    }
+                }
+            },
+            onDismiss = { showPhonePopUp = false }
+        )
+
+        // ── Pop-up: editar adreça ───────────────────────────────────────
+        EditTextPopUp(
+            show = showAddressPopUp,
+            title = stringResource(R.string.address),
+            label = stringResource(R.string.address),
+            placeholder = "Carrer...",
+            initialValue = address,
+            onAccept = { newAddress ->
+                user.value?.let { currentUser ->
+                    authViewModel.updateUser(currentUser.copy(address = newAddress)) { error ->
+                        if(error == AppError.OK) {
+                            address = newAddress
+                            showAddressPopUp = false
+                        }
+                    }
+                }
+            },
+            onDismiss = { showAddressPopUp = false }
         )
 
         LazyColumn(
@@ -188,7 +262,7 @@ fun ProfileScreen(navController: NavController) {
                         rounded = false,
                         color = buttonsColor,
                         action = WideOptionAction.Arrow,
-                        onClick = {  }
+                        onClick = { showPhonePopUp = true }
                     )
                     HorizontalDivider(thickness = 1.dp)
                     WideOption(
@@ -200,19 +274,7 @@ fun ProfileScreen(navController: NavController) {
                         rounded = false,
                         color = buttonsColor,
                         action = WideOptionAction.Arrow,
-                        onClick = {  }
-                    )
-                    HorizontalDivider(thickness = 1.dp)
-                    WideOption(
-                        ico = Icons.Filled.Key,
-                        text = stringResource(R.string.password),
-                        secondaryText = password.ifEmpty {
-                            stringResource(R.string.preferences_birthdate_empty)
-                        },
-                        rounded = false,
-                        color = buttonsColor,
-                        action = WideOptionAction.Arrow,
-                        onClick = {  }
+                        onClick = { showAddressPopUp = true }
                     )
                 }
             }
