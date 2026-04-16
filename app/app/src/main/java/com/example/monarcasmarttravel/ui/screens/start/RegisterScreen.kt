@@ -1,6 +1,5 @@
 package com.example.monarcasmarttravel.ui.screens.start
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -9,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
@@ -21,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +40,8 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
-import com.example.monarcasmarttravel.ui.viewmodels.UserViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
+import com.example.monarcasmarttravel.ui.viewmodels.RegisterState
 import com.example.monarcasmarttravel.utils.AppError
 import com.example.monarcasmarttravel.utils.emailPattern
 import com.example.monarcasmarttravel.utils.phonePattern
@@ -54,8 +54,9 @@ private const val DATE_FORMAT = "dd/MM/yyyy"
 @Composable
 fun RegisterScreen(navController: NavController) {
     
-    val viewModel: UserViewModel = hiltViewModel()
-    val currentStatus = viewModel.status
+    val viewModel: AuthViewModel = hiltViewModel()
+    val state by viewModel.registerState.collectAsState()
+    val currentStatus = (state as? RegisterState.Error)?.error
 
     var username by rememberSaveable { mutableStateOf("") }
     var birthdayText by remember { mutableStateOf("") }
@@ -81,9 +82,11 @@ fun RegisterScreen(navController: NavController) {
             && isPasswordValid
             && address.isNotEmpty()
 
-    LaunchedEffect(currentStatus) {
-        if (currentStatus == AppError.OK) {
-            navController.navigate("home")
+    LaunchedEffect(state) {
+        if (state is RegisterState.Success) {
+            navController.navigate("home") {
+                popUpTo("login") { inclusive = true }
+            }
         }
     }
 
@@ -102,7 +105,6 @@ fun RegisterScreen(navController: NavController) {
                     value = username,
                     onValueChange = {
                         username = it
-                        viewModel.clearStatus()
                     },
                     label = stringResource(R.string.preferences_username_label),
                     placeholder = "",
@@ -116,7 +118,6 @@ fun RegisterScreen(navController: NavController) {
                     value = email,
                     onValueChange = {
                         email = it
-                        viewModel.clearStatus()
                     },
                     label = stringResource(R.string.email),
                     placeholder = "",
@@ -209,7 +210,7 @@ fun RegisterScreen(navController: NavController) {
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
-                    enabled = isFormValid
+                    enabled = isFormValid && state !is RegisterState.Loading
                 ) {
                     Text(
                         text = stringResource(R.string.register),

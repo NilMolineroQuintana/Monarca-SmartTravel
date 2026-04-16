@@ -11,7 +11,6 @@ import com.example.monarcasmarttravel.domain.model.User
 import com.example.monarcasmarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
