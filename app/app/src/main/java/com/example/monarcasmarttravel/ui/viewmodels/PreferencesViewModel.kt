@@ -14,12 +14,6 @@ class PreferencesViewModel @Inject constructor(
     private val sharedPrefsManager: PreferencesManager
 ) : ViewModel() {
 
-    var username by mutableStateOf(sharedPrefsManager.username)
-        private set
-
-    var dateOfBirth by mutableStateOf(sharedPrefsManager.dateOfBirth)
-        private set
-
     var language by mutableStateOf(sharedPrefsManager.language)
         private set
 
@@ -29,8 +23,6 @@ class PreferencesViewModel @Inject constructor(
     var notifications by mutableStateOf(sharedPrefsManager.notifications)
         private set
 
-    fun updateUsername(value: String) { sharedPrefsManager.username = value; username = value }
-    fun updateDateOfBirth(value: String) { sharedPrefsManager.dateOfBirth = value; dateOfBirth = value }
     fun updateLanguage(value: String) { sharedPrefsManager.language = value; language = value }
     fun updateDarkMode(value: Boolean) { sharedPrefsManager.isDarkMode = value; isDarkMode = value; ThemeState.isDarkMode = value }
     fun updateNotifications(value: Boolean) { sharedPrefsManager.notifications = value; notifications = value }

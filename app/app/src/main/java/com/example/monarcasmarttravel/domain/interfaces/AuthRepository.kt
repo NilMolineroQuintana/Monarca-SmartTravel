@@ -8,4 +8,5 @@ interface AuthRepository {
     suspend fun registerUser(user: User): AppError
     fun isAuth()
     suspend fun getUser(): User?
+    suspend fun updateUser(user: User): AppError
 }

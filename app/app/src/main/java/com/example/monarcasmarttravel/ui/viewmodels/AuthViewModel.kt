@@ -54,4 +54,14 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateUser(user: User, onResult: (AppError) -> Unit) {
+        viewModelScope.launch {
+            val result = repository.updateUser(user)
+            if (result == AppError.OK) {
+                _user.value = repository.getUser()
+            }
+            onResult(result)
+        }
+    }
 }

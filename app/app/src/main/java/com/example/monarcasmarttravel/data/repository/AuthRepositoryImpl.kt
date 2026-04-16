@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.data.repository
 
+import android.database.sqlite.SQLiteConstraintException
 import android.util.Log
 import com.example.monarcasmarttravel.data.UserDao
 import com.example.monarcasmarttravel.domain.interfaces.AuthRepository
@@ -52,5 +53,17 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun getUser(): User? {
         val uid = auth.currentUser?.uid ?: return null
         return userDao.getUserById(uid)
+    }
+
+    override suspend fun updateUser(user: User): AppError {
+        return try {
+            userDao.updateUser(user)
+            AppError.OK
+        } catch (e: SQLiteConstraintException) {
+            AppError.EXISTING_USERNAME
+        }
+        catch (e: Exception) {
+            AppError.UNKNOWN
+        }
     }
 }
