@@ -121,8 +121,8 @@
     <string name="logOut_popUp_text">Estàs segur que vols tancar la sessió?</string>
 
     <string name="language_catalan">Català</string>
-    <string name="language_spanish">Espanyol</string>
-    <string name="language_english">Anglès</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">English</string>
     <string name="theme_light">Clar</string>
     <string name="theme_dark">Fosc</string>
 
@@ -172,4 +172,5 @@
     <string name="phone_num">Número de telèfon</string>
     <string name="address">Adreça</string>
     <string name="confirm_password">Confirmar contrasenya</string>
+    <string name="email_sent">S\'ha enviat un correu de recuperació</string>
 </resources>

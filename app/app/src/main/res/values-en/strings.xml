@@ -120,8 +120,8 @@
     <string name="preferences_logOut_description">Safely sign out of your account</string>
     <string name="logOut_popUp_text">Are you sure you want to log out?</string>
 
-    <string name="language_catalan">Catalan</string>
-    <string name="language_spanish">Spanish</string>
+    <string name="language_catalan">Català</string>
+    <string name="language_spanish">Español</string>
     <string name="language_english">English</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
@@ -172,4 +172,5 @@
     <string name="phone_num">Phone number</string>
     <string name="address">Address</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="email_sent">A recuperation email has been sent</string>
 </resources>
