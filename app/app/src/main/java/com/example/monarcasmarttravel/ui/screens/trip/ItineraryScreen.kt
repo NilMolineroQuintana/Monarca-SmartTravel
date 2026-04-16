@@ -31,7 +31,6 @@ import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.PhotoAlbum
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Train
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -76,7 +75,6 @@ import com.example.monarcasmarttravel.ui.viewmodels.TripViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 /**
  * Enum que representa els tipus de plans que es poden afegir a un itinerari.
