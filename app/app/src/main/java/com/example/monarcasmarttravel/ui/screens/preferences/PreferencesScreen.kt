@@ -19,8 +19,11 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FormatPaint
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -89,6 +92,9 @@ fun ProfileScreen(navController: NavController) {
 
     var username by remember { mutableStateOf(viewModel.username) }
     var dateOfBirth by remember { mutableStateOf(viewModel.dateOfBirth) }
+    var phoneNum by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var selectedLanguage by remember { mutableStateOf(codeToLanguageMap[viewModel.language] ?: defaultLanguage) }
     var darkMode by remember { mutableStateOf(viewModel.isDarkMode) }
     var notifications by remember { mutableStateOf(viewModel.notifications) }
@@ -169,6 +175,42 @@ fun ProfileScreen(navController: NavController) {
                         color = buttonsColor,
                         action = WideOptionAction.Arrow,
                         onClick = { showDatePickerPopUp = true }
+                    )
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(
+                        ico = Icons.Filled.Phone,
+                        text = stringResource(R.string.phone_num),
+                        secondaryText = phoneNum.ifEmpty {
+                            stringResource(R.string.preferences_birthdate_empty)
+                        },
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Arrow,
+                        onClick = {  }
+                    )
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(
+                        ico = Icons.Filled.Home,
+                        text = stringResource(R.string.address),
+                        secondaryText = address.ifEmpty {
+                            stringResource(R.string.preferences_birthdate_empty)
+                        },
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Arrow,
+                        onClick = {  }
+                    )
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(
+                        ico = Icons.Filled.Key,
+                        text = stringResource(R.string.password),
+                        secondaryText = password.ifEmpty {
+                            stringResource(R.string.preferences_birthdate_empty)
+                        },
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Arrow,
+                        onClick = {  }
                     )
                 }
             }
