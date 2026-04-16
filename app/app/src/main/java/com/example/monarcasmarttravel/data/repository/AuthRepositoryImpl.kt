@@ -1,6 +1,7 @@
 package com.example.monarcasmarttravel.data.repository
 
 import com.example.monarcasmarttravel.domain.interfaces.AuthRepository
+import com.example.monarcasmarttravel.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
@@ -15,15 +16,7 @@ class AuthRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun registerUser(
-        username: String,
-        birthdayDate: String,
-        email: String,
-        phoneNum: String,
-        address: String,
-        password: String,
-        onComplete: (Boolean) -> Unit
-    ) {
+    override fun registerUser(user: User, onComplete: (Boolean) -> Unit) {
         TODO("Not yet implemented")
     }
 
