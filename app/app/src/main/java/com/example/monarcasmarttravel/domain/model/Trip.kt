@@ -37,4 +37,8 @@ data class Trip(
     fun getDaysUntilStart(): Long {
         return TimeUnit.MILLISECONDS.toDays(dateIn.time - System.currentTimeMillis())
     }
+
+    fun getDaysUntilEnd(): Long {
+        return TimeUnit.MILLISECONDS.toDays(dateOut.time - System.currentTimeMillis())
+    }
 }

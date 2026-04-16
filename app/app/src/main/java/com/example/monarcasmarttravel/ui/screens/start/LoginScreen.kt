@@ -42,6 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
+import com.example.monarcasmarttravel.utils.emailPattern
 
 /**
  * Pantalla d'inici de sessió de l'aplicació.
@@ -64,7 +65,6 @@ fun LoginScreen(navController: NavController) {
     var password by remember { mutableStateOf("1234") }
     var rememberTerms by remember { mutableStateOf(false) }
 
-    val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-zA-Z]{2,}\$".toRegex()
     val isEmailValid = email.matches(emailPattern) || email.isEmpty()
     val isFormValid = email.matches(emailPattern) && password.isNotEmpty() && rememberTerms
 
@@ -127,7 +127,7 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier.padding(top = AppDimensions.PaddingSmall)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(AppDimensions.PaddingSmall))
 
             // termes i condicions
             Row(
@@ -149,9 +149,49 @@ fun LoginScreen(navController: NavController) {
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable {
-                        navController.navigate("termsAndConditions?isLoginScreen=true")
-                    }
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate("termsAndConditions?isLoginScreen=true")
+                        }
+                        .padding(4.dp)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.no_account))
+                Text(
+                    text = stringResource(R.string.register),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate("register")
+                        }
+                        .padding(4.dp)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.forgot_password))
+                Text(
+                    text = stringResource(R.string.recover),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate("recoverPassword")
+                        }
+                        .padding(4.dp)
                 )
             }
 

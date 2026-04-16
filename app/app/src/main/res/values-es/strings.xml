@@ -159,4 +159,17 @@
     <string name="error_invalid_date_range">La fecha de inicio debe ser anterior a la fecha de fin.</string>
     <string name="error_date_range">La fecha de fin debe ser posterior a la de inicio.</string>
     <string name="date_before_error">La fecha de fin debe ser posterior a la de inicio.</string>
+    <string name="error_existing_email">Ya existe una cuenta asociada a este email</string>
+    <string name="error_existing_username">Ya existe una cuenta asociada a este usuario</string>
+    <string name="error_password_length">La contraseña debe tener al menos 8 caracteres</string>
+    <string name="error_non_matching_passwords">Las contraseñas no coinciden</string>
+    <string name="ongoing">En curso</string>
+    <string name="no_account">¿Aún no tienes cuenta?</string>
+    <string name="register">Regístrate</string>
+    <string name="forgot_password">¿Has olvidado la contraseña?</string>
+    <string name="recover">Recuperar</string>
+    <string name="recover_password">Recuperar contraseña</string>
+    <string name="phone_num">Número de teléfono</string>
+    <string name="address">Dirección</string>
+    <string name="confirm_password">Confirmar contraseña</string>
 </resources>

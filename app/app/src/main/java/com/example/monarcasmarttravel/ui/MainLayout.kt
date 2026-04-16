@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Luggage
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
@@ -346,12 +347,14 @@ fun TripCard(
     val dateOut = trip.dateOut
     val place = trip.title
     val remainingDays = trip.getDaysUntilStart()
+    val daysUntilEnd = trip.getDaysUntilEnd()
 
     // Text d'estat dinàmic segons la proximitat del viatge
     val dateStatus = when {
         remainingDays > 1 -> stringResource(R.string.falten_dies, remainingDays)
         remainingDays == 1L -> stringResource(R.string.dema_viatge)
         remainingDays == 0L -> stringResource(R.string.avui_viatge)
+        daysUntilEnd > 0 -> stringResource(R.string.ongoing)
         else -> stringResource(R.string.viatge_realitzat)
     }
 
@@ -484,7 +487,11 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
-                        imageVector = if (remainingDays >= 0) Icons.Filled.FlightTakeoff else Icons.Filled.CheckCircle,
+                        imageVector = when {
+                            remainingDays >= 0 -> Icons.Filled.FlightTakeoff
+                            daysUntilEnd >= 0 -> Icons.Filled.LocationOn
+                            else -> Icons.Filled.CheckCircle
+                        },
                         contentDescription = null,
                         tint = headerColor,
                         modifier = Modifier.size(32.dp)
@@ -714,9 +721,15 @@ fun AppTextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         isError = isError,
-        supportingText = errorMessage?.let {
-            { Text(text = it, color = MaterialTheme.colorScheme.error) }
-        },
+        supportingText = if (isError && errorMessage != null) {
+            {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        } else null,
         shape = RoundedCornerShape(12.dp)
     )
 }

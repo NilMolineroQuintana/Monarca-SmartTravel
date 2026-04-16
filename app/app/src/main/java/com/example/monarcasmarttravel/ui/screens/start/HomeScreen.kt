@@ -50,8 +50,10 @@ fun HomeScreen(
     viewModel: TripViewModel = hiltViewModel()
 ) {
     // Viatge futur més proper; null si no n'hi ha cap
+    val today = Date()
+
     val nextTrip = viewModel.trips
-        .filter { it.dateIn >= Date() }
+        .filter { it.dateOut >= today }
         .minByOrNull { it.dateIn }
 
     Scaffold(

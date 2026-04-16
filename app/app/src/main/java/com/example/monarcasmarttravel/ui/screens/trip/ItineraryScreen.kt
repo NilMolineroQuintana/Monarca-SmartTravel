@@ -64,6 +64,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.monarcasmarttravel.R
 import com.example.monarcasmarttravel.domain.model.ItineraryItem
+import com.example.monarcasmarttravel.domain.model.Trip
 import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.MyBottomBar
 import com.example.monarcasmarttravel.ui.MyTopBar
@@ -151,12 +152,6 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
 
     // Obté el viatge real del repositori a través del ViewModel
     val trip = tripViewModel.getTripById(tripId)
-
-    // Fallback per si el viatge no s'ha trobat (no hauria de passar en condicions normals)
-    val destinationName = trip?.title ?: stringResource(R.string.trip)
-    val dateIn = trip?.dateIn ?: Date()
-    val dateOut = trip?.dateOut ?: Date()
-    val headerImg = trip?.imageResId
 
     val items by itineraryViewModel.items.collectAsState()
     val isLoading by itineraryViewModel.isLoading.collectAsState()
@@ -246,7 +241,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                item { Header(destinationName, dateIn, dateOut, headerImg) }
+                item { Header(trip) }
 
                 if (numItems == 0) {
                     item {
@@ -304,16 +299,19 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
  * un degradat fosc a la part inferior, i el nom del destí amb les dates del viatge.
  */
 @Composable
-fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int?) {
+fun Header(trip: Trip?) {
+    // Fallback per si el viatge no s'ha trobat (no hauria de passar en condicions normals)
+    val destinationName = trip?.title ?: stringResource(R.string.trip)
+    val headerImg = trip?.imageResId
     Box(
         contentAlignment = Alignment.BottomStart,
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
     ) {
-        if (imageRes != null) {
+        if (headerImg != null) {
             Image(
-                painter = painterResource(id = imageRes),
+                painter = painterResource(id = headerImg),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -348,19 +346,18 @@ fun Header(destination: String, startDate: Date, endDate: Date, imageRes: Int?) 
                 .padding(start = AppDimensions.PaddingMedium, bottom = AppDimensions.PaddingSmall)
         ) {
             Text(
-                text = stringResource(R.string.trip_to, destination),
+                text = stringResource(R.string.trip_to, destinationName),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
-            val tripLength = TimeUnit.MILLISECONDS.toDays(endDate.time - startDate.time)
             Text(
                 text = stringResource(
                     R.string.days_of_duration,
-                    dateFormat.format(startDate),
-                    dateFormat.format(endDate),
-                    tripLength
+                    trip?.dateIn?.let { dateFormat.format(it) } ?: "Error",
+                    trip?.dateOut?.let { dateFormat.format(it) } ?: "Error",
+                    trip?.getTripDuration() ?: "Error"
                 ),
                 style = MaterialTheme.typography.titleSmall,
                 color = Color.White
