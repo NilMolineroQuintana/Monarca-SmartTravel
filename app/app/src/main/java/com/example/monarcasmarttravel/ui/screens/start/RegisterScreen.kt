@@ -101,7 +101,7 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
     }
 
     Scaffold(
-        topBar = { MyTopBar(stringResource(if (!isCompleting) R.string.register else R.string.fill_empty_fields), onBackClick = { if (!isCompleting) navController.popBackStack() } ) }
+        topBar = { MyTopBar(stringResource(if (!isCompleting) R.string.register else R.string.fill_empty_fields), onBackClick = if (!isCompleting) { { navController.popBackStack() } } else null) }
     ) { innerPadding ->
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
@@ -110,6 +110,11 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
                 .padding(innerPadding)
                 .padding(horizontal = AppDimensions.PaddingMedium)
         ) {
+            if (isCompleting) {
+                item {
+                    Text(stringResource(R.string.missing_fields_explanation))
+                }
+            }
             item {
                 AppTextField(
                     value = username,

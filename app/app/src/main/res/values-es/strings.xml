@@ -176,4 +176,5 @@
     <string name="address">Dirección</string>
     <string name="confirm_password">Confirmar contraseña</string>
     <string name="email_sent">Se ha enviado un correo de recuperación</string>
+    <string name="missing_fields_explanation">Para continuar, es necesario que rellenes los datos restantes de tu registro. Solo te tomará un minuto.</string>
 </resources>
