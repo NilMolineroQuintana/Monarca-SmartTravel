@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,6 +33,7 @@ import com.example.monarcasmarttravel.ui.screens.trip.PlanScreen
 import com.example.monarcasmarttravel.ui.screens.trip.TripsScreen
 import com.example.monarcasmarttravel.ui.theme.MonarcaSmartTravelTheme
 import com.example.monarcasmarttravel.ui.theme.ThemeState
+import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -61,6 +63,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = hiltViewModel()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -72,13 +75,31 @@ fun AppNavigation() {
         ) {
             composable("splash") {
                 SplashScreen(onTimeout = {
-                    navController.navigate("login") {
+                    val isLoggedIn = authViewModel.isLoggedIn()
+                    val hasLocalData = authViewModel.user.value != null
+
+                    val startDestination = when {
+                        !isLoggedIn -> "login"
+                        !hasLocalData -> "register?isCompleting=true"
+                        else -> "home"
+                    }
+
+                    navController.navigate(startDestination) {
                         popUpTo("splash") { inclusive = true }
                     }
                 })
             }
-            composable("register") {
-                RegisterScreen(navController)
+            composable(
+                route = "register?isCompleting={isCompleting}",
+                arguments = listOf(
+                    navArgument("isCompleting") {
+                        type = NavType.BoolType
+                        defaultValue = false
+                    }
+                )
+            ) {
+                val isCompleting = it.arguments?.getBoolean("isCompleting") ?: false
+                RegisterScreen(navController, isCompleting)
             }
             composable("login") {
                 LoginScreen(navController)

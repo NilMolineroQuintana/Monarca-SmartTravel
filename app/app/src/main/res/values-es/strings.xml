@@ -120,9 +120,9 @@
     <string name="preferences_logOut_description">Sal de tu cuenta de forma segura</string>
     <string name="logOut_popUp_text">¿Estás seguro de que quieres cerrar la sesión?</string>
 
-    <string name="language_catalan">Catalán</string>
+    <string name="language_catalan">Català</string>
     <string name="language_spanish">Español</string>
-    <string name="language_english">Inglés</string>
+    <string name="language_english">English</string>
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Oscuro</string>
 
@@ -163,6 +163,9 @@
     <string name="error_existing_username">Ya existe una cuenta asociada a este usuario</string>
     <string name="error_password_length">La contraseña debe tener al menos 8 caracteres</string>
     <string name="error_non_matching_passwords">Las contraseñas no coinciden</string>
+    <string name="email_o_contrasenya_incorrecta">Email o contraseña incorrecta</string>
+    <string name="falten_camps">Faltan campos</string>
+    <string name="fill_empty_fields">Rellena tu perfil</string>
     <string name="ongoing">En curso</string>
     <string name="no_account">¿Aún no tienes cuenta?</string>
     <string name="register">Regístrate</string>
@@ -172,4 +175,6 @@
     <string name="phone_num">Número de teléfono</string>
     <string name="address">Dirección</string>
     <string name="confirm_password">Confirmar contraseña</string>
+    <string name="email_sent">Se ha enviado un correo de recuperación</string>
+    <string name="missing_fields_explanation">Para continuar, es necesario que rellenes los datos restantes de tu registro. Solo te tomará un minuto.</string>
 </resources>

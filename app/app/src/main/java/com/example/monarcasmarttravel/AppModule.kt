@@ -6,13 +6,14 @@ import androidx.room.Room
 import com.example.monarcasmarttravel.data.ItineraryDao
 import com.example.monarcasmarttravel.data.MonarcaDatabase
 import com.example.monarcasmarttravel.data.UserDao
+import com.example.monarcasmarttravel.data.repository.AuthRepositoryImpl
 import com.example.monarcasmarttravel.data.repository.ItineraryRepositoryImpl
 import com.example.monarcasmarttravel.data.repository.PreferencesManager
 import com.example.monarcasmarttravel.data.repository.TripRepositoryImpl
-import com.example.monarcasmarttravel.data.repository.UserRepositoryImpl
+import com.example.monarcasmarttravel.domain.interfaces.AuthRepository
 import com.example.monarcasmarttravel.domain.interfaces.ItineraryRepository
 import com.example.monarcasmarttravel.domain.interfaces.TripRepository
-import com.example.monarcasmarttravel.domain.interfaces.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,8 +54,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(userDao: UserDao): UserRepository =
-        UserRepositoryImpl(userDao)
+    fun provideAuthRepository(auth: FirebaseAuth, userDao: UserDao): AuthRepository =
+        AuthRepositoryImpl(auth, userDao)
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth =
+        FirebaseAuth.getInstance()
 
     @Provides
     @Singleton
