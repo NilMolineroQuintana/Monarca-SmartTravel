@@ -163,6 +163,9 @@
     <string name="error_existing_username">Ya existe una cuenta asociada a este usuario</string>
     <string name="error_password_length">La contraseña debe tener al menos 8 caracteres</string>
     <string name="error_non_matching_passwords">Las contraseñas no coinciden</string>
+    <string name="email_o_contrasenya_incorrecta">Email o contraseña incorrecta</string>
+    <string name="falten_camps">Faltan campos</string>
+    <string name="fill_empty_fields">Rellena tu perfil</string>
     <string name="ongoing">En curso</string>
     <string name="no_account">¿Aún no tienes cuenta?</string>
     <string name="register">Regístrate</string>

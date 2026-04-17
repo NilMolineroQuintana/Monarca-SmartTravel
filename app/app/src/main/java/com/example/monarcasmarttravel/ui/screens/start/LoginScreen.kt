@@ -50,6 +50,7 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.viewmodels.AuthState
 import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
+import com.example.monarcasmarttravel.utils.AppError
 import com.example.monarcasmarttravel.utils.emailPattern
 
 /**
@@ -88,7 +89,11 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = hiltVie
                 viewModel.resetState()
             }
             is AuthState.Error -> {
-                Toast.makeText(context, (authState as AuthState.Error).message, Toast.LENGTH_LONG).show()
+                if ((authState as AuthState.Error).error == AppError.MISSING_FIELDS) {
+                    navController.navigate("register?isCompleting=true")
+                } else {
+                    Toast.makeText(context, (authState as AuthState.Error).error.stringRes, Toast.LENGTH_LONG).show()
+                }
                 viewModel.resetState()
             }
             else -> {}

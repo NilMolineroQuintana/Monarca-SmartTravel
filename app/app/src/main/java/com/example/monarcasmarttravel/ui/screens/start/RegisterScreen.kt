@@ -58,8 +58,7 @@ import java.util.Locale
 private const val DATE_FORMAT = "dd/MM/yyyy"
 
 @Composable
-fun RegisterScreen(navController: NavController) {
-    
+fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
     val viewModel: AuthViewModel = hiltViewModel()
     val state by viewModel.registerState.collectAsState()
     val currentStatus = (state as? RegisterState.Error)?.error
@@ -88,6 +87,10 @@ fun RegisterScreen(navController: NavController) {
             && isPasswordValid
             && address.isNotEmpty()
 
+    val IsFormValidCompleting = isPhoneValid
+            && address.isNotEmpty()
+            && validateBirthDate(birthdayText)
+
     LaunchedEffect(state) {
         if (state is RegisterState.Success) {
             navController.navigate("home") {
@@ -97,7 +100,7 @@ fun RegisterScreen(navController: NavController) {
     }
 
     Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.register), onBackClick = { navController.popBackStack() } ) }
+        topBar = { MyTopBar(stringResource(if (!isCompleting) R.string.register else R.string.fill_empty_fields), onBackClick = { if (!isCompleting) navController.popBackStack() } ) }
     ) { innerPadding ->
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(AppDimensions.PaddingSmall),
@@ -119,18 +122,20 @@ fun RegisterScreen(navController: NavController) {
                     errorMessage = stringResource(R.string.error_existing_username)
                 )
             }
-            item {
-                AppTextField(
-                    value = email,
-                    onValueChange = {
-                        email = it
-                    },
-                    label = stringResource(R.string.email),
-                    placeholder = "",
-                    leadingIcon = Icons.Filled.Mail,
-                    isError = currentStatus == AppError.EXISTING_EMAIL,
-                    errorMessage = stringResource(R.string.error_existing_email)
-                )
+            if (!isCompleting) {
+                item {
+                    AppTextField(
+                        value = email,
+                        onValueChange = {
+                            email = it
+                        },
+                        label = stringResource(R.string.email),
+                        placeholder = "",
+                        leadingIcon = Icons.Filled.Mail,
+                        isError = currentStatus == AppError.EXISTING_EMAIL,
+                        errorMessage = stringResource(R.string.error_existing_email)
+                    )
+                }
             }
             item {
                 DateField(
@@ -163,49 +168,51 @@ fun RegisterScreen(navController: NavController) {
                     leadingIcon = Icons.Filled.Home
                 )
             }
-            item {
-                val passwordError = when {
-                    password.isNotEmpty() && !passwordMatchesLength -> stringResource(AppError.REQUIREMENTS_PASSWORD.stringRes)
-                    password.isNotEmpty() && !equalPasswords && confirmPassword.isNotEmpty() -> stringResource(
-                        AppError.DIFFERENT_PASSWORDS.stringRes
+            if (!isCompleting) {
+                item {
+                    val passwordError = when {
+                        password.isNotEmpty() && !passwordMatchesLength -> stringResource(AppError.REQUIREMENTS_PASSWORD.stringRes)
+                        password.isNotEmpty() && !equalPasswords && confirmPassword.isNotEmpty() -> stringResource(
+                            AppError.DIFFERENT_PASSWORDS.stringRes
+                        )
+                        else -> null
+                    }
+
+                    AppTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = stringResource(R.string.password),
+                        placeholder = stringResource(R.string.password),
+                        leadingIcon = Icons.Default.Lock,
+                        isPassword = true,
+                        keyboardType = KeyboardType.Password,
+                        isError = password.isNotEmpty() && !isPasswordValid,
+                        errorMessage = passwordError
                     )
-                    else -> null
                 }
+                item {
+                    val confirmError = if (confirmPassword.isNotEmpty() && !equalPasswords)
+                        stringResource(AppError.DIFFERENT_PASSWORDS.stringRes)
+                    else null
 
-                AppTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = stringResource(R.string.password),
-                    placeholder = stringResource(R.string.password),
-                    leadingIcon = Icons.Default.Lock,
-                    isPassword = true,
-                    keyboardType = KeyboardType.Password,
-                    isError = password.isNotEmpty() && !isPasswordValid,
-                    errorMessage = passwordError
-                )
-            }
-            item {
-                val confirmError = if (confirmPassword.isNotEmpty() && !equalPasswords)
-                    stringResource(AppError.DIFFERENT_PASSWORDS.stringRes)
-                else null
-
-                AppTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = stringResource(R.string.confirm_password),
-                    placeholder = stringResource(R.string.confirm_password),
-                    leadingIcon = Icons.Default.Lock,
-                    isPassword = true,
-                    keyboardType = KeyboardType.Password,
-                    isError = confirmPassword.isNotEmpty() && !equalPasswords,
-                    errorMessage = confirmError
-                )
+                    AppTextField(
+                        value = confirmPassword,
+                        onValueChange = { confirmPassword = it },
+                        label = stringResource(R.string.confirm_password),
+                        placeholder = stringResource(R.string.confirm_password),
+                        leadingIcon = Icons.Default.Lock,
+                        isPassword = true,
+                        keyboardType = KeyboardType.Password,
+                        isError = confirmPassword.isNotEmpty() && !equalPasswords,
+                        errorMessage = confirmError
+                    )
+                }
             }
             item {
                 Button(
                     onClick = {
                         val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
-                        viewModel.registerUser(username, dateFormatted, email, phoneNum, address, password)
+                        viewModel.registerUser(username, dateFormatted, email, phoneNum, address, password, isCompleting)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -216,7 +223,7 @@ fun RegisterScreen(navController: NavController) {
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
-                    enabled = isFormValid && state !is RegisterState.Loading
+                    enabled = ((!isCompleting && isFormValid) || (isCompleting && IsFormValidCompleting)) && state !is RegisterState.Loading
                 ) {
                     Text(
                         text = stringResource(R.string.register),
@@ -233,5 +240,5 @@ fun RegisterScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun RegisterPreview() {
-    RegisterScreen(rememberNavController())
+    RegisterScreen(rememberNavController(), false)
 }

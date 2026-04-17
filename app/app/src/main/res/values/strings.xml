@@ -163,6 +163,9 @@
     <string name="error_existing_username">Ja existèix un compte associat a aquest usuari</string>
     <string name="error_password_length">La contrasenya ha de tenir almenys 8 caràcters</string>
     <string name="error_non_matching_passwords">Les contrasenyes no coincideixen</string>
+    <string name="email_o_contrasenya_incorrecta">Email o contrasenya incorrecta</string>
+    <string name="falten_camps">Falten camps</string>
+    <string name="fill_empty_fields">Completa el perfil</string>
     <string name="ongoing">En curs</string>
     <string name="no_account">Encara no tens compte?</string>
     <string name="register">Registra\'t</string>

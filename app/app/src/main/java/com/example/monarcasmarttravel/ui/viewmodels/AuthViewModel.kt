@@ -25,7 +25,7 @@ sealed class AuthState {
     object Loading : AuthState()
     object Success : AuthState()
     object RecoverEmailSent : AuthState()
-    data class Error(val message: String) : AuthState()
+    data class Error(val error: AppError) : AuthState()
 }
 
 @HiltViewModel
@@ -52,23 +52,23 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             val result = repository.login(email, password)
-            result.onSuccess {
+            if (result == AppError.OK) {
                 _authState.value = AuthState.Success
-            }.onFailure {
-                _authState.value = AuthState.Error(it.message ?: "Error al iniciar sessió")
+            } else {
+                _authState.value = AuthState.Error(result)
             }
         }
     }
 
 
-    fun registerUser(username: String, date: String, email: String, phoneNum: String, address: String, password: String) {
+    fun registerUser(username: String, date: String, email: String, phoneNum: String, address: String, password: String, isCompleting: Boolean) {
         val user = User(username = username, birthdate = date, email = email, phoneNum = phoneNum, address = address, password = password)
 
         viewModelScope.launch {
             Log.d("AuthViewModel", "registerUser: $user")
             _registerState.value = RegisterState.Loading
 
-            val result = repository.registerUser(user)
+            val result = repository.registerUser(user, isCompleting)
 
             if (result == AppError.OK) {
                 _user.value = repository.getUser()
@@ -88,7 +88,7 @@ class AuthViewModel @Inject constructor(
             onResult(result)
         }
     }
-
+/*
     fun recoverPassword(email: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
@@ -100,7 +100,7 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
-
+*/
     fun logout() {
         repository.logout()
         _authState.value = AuthState.Idle

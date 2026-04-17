@@ -163,6 +163,9 @@
     <string name="error_existing_username">An account is already associated with this username</string>
     <string name="error_password_length">Password must be at least 8 characters long</string>
     <string name="error_non_matching_passwords">Passwords do not match</string>
+    <string name="email_o_contrasenya_incorrecta">Incorrect email or password</string>
+    <string name="falten_camps">Missing fields</string>
+    <string name="fill_empty_fields">Fill empty fields</string>
     <string name="ongoing">Ongoing</string>
     <string name="no_account">Don\'t have an account yet?</string>
     <string name="register">Register</string>

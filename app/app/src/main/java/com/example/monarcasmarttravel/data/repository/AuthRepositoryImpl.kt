@@ -7,6 +7,8 @@ import com.example.monarcasmarttravel.domain.interfaces.AuthRepository
 import com.example.monarcasmarttravel.domain.model.User
 import com.example.monarcasmarttravel.utils.AppError
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import kotlinx.coroutines.tasks.await
@@ -17,25 +19,32 @@ class AuthRepositoryImpl @Inject constructor(
     private val userDao: UserDao
 ): AuthRepository {
 
-    override suspend fun login(email: String, password: String): Result<Boolean> {
+    override suspend fun login(email: String, password: String): AppError {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
-            Result.success(result.user != null)
+            val uid = result.user?.uid ?: return AppError.UNKNOWN
+            userDao.getUserById(uid) ?: return AppError.MISSING_FIELDS
+            AppError.OK
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            AppError.INVALID_CREDENTIALS
         } catch (e: Exception) {
-            Result.failure(e)
+            AppError.UNKNOWN
         }
     }
 
-    override suspend fun registerUser(user: User): AppError {
+    override suspend fun registerUser(user: User, isCompleting: Boolean): AppError {
         return try {
             Log.d("AuthRepositoryImpl", "before registerUser: $user")
-            val existingUser =  userDao.getUserByUsername(user.username)
-            Log.d("AuthRepositoryImpl", "registerUser: $existingUser")
-            if (existingUser != null) return AppError.EXISTING_USERNAME
+            var uid = ""
+            if (!isCompleting) {
+                val existingUser =  userDao.getUserByUsername(user.username)
+                if (existingUser != null) return AppError.EXISTING_USERNAME
 
-            val result = auth.createUserWithEmailAndPassword(user.email, user.password).await()
-            val uid = result.user?.uid ?: return AppError.UNKNOWN
-
+                val result = auth.createUserWithEmailAndPassword(user.email, user.password).await()
+                uid = result.user?.uid ?: return AppError.UNKNOWN
+            } else {
+                uid = auth.currentUser?.uid ?: return AppError.UNKNOWN
+            }
             userDao.insertUser(user.copy(userId = uid))
             AppError.OK
         } catch (e: FirebaseAuthUserCollisionException) {
