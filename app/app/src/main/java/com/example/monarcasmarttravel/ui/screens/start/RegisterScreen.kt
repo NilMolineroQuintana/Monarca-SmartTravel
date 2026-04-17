@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -209,27 +210,31 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
                 }
             }
             item {
-                Button(
-                    onClick = {
-                        val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
-                        viewModel.registerUser(username, dateFormatted, email, phoneNum, address, password, isCompleting)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(top = AppDimensions.PaddingSmall),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    enabled = ((!isCompleting && isFormValid) || (isCompleting && IsFormValidCompleting)) && state !is RegisterState.Loading
-                ) {
-                    Text(
-                        text = stringResource(R.string.register),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
+                if (state is RegisterState.Loading) {
+                    CircularProgressIndicator()
+                } else {
+                    Button(
+                        onClick = {
+                            val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
+                            viewModel.registerUser(username, dateFormatted, email, phoneNum, address, password, isCompleting)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .padding(top = AppDimensions.PaddingSmall),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        enabled = ((!isCompleting && isFormValid) || (isCompleting && IsFormValidCompleting)) && state !is RegisterState.Loading
+                    ) {
+                        Text(
+                            text = stringResource(R.string.register),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             }
         }
