@@ -24,6 +24,7 @@ class AuthRepositoryImpl @Inject constructor(
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val uid = result.user?.uid ?: return AppError.UNKNOWN
             userDao.getUserById(uid) ?: return AppError.MISSING_FIELDS
+            userDao.registerAccess(uid)
             AppError.OK
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             AppError.INVALID_CREDENTIALS
@@ -45,7 +46,8 @@ class AuthRepositoryImpl @Inject constructor(
             } else {
                 uid = auth.currentUser?.uid ?: return AppError.UNKNOWN
             }
-            userDao.insertUser(user.copy(userId = uid))
+            userDao.insertUser(user.copy(userId = uid, email = "", password = ""))
+            userDao.registerAccess(uid)
             AppError.OK
         } catch (e: FirebaseAuthUserCollisionException) {
             AppError.EXISTING_EMAIL

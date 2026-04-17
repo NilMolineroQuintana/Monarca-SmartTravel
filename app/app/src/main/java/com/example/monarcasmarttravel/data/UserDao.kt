@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.monarcasmarttravel.domain.model.AccesHistory
 import com.example.monarcasmarttravel.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -13,6 +14,9 @@ import kotlinx.coroutines.flow.Flow
 interface UserDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertUser(user: User)
+
+    @Query("INSERT INTO acces_history (userId) VALUES (:userId)")
+    suspend fun registerAccess(userId: String)
 
     @Query("SELECT * FROM users")
     fun getAllUsers(): Flow<List<User>>
