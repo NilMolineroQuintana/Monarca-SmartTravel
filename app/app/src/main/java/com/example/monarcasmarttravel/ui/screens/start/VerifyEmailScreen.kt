@@ -50,16 +50,17 @@ fun VerifyEmailScreen(navController: NavController) {
     }
 
     Scaffold(
-        topBar = { MyTopBar("Verifica el teu email") }
+        topBar = { MyTopBar(stringResource(R.string.verify_email)) }
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
                 .padding(horizontal = AppDimensions.PaddingMedium)
                 .fillMaxSize()
         ) {
             Text(
-                "Se t'ha enviat un correu de verificació al teu email. Verifica per continuar.",
+                stringResource(R.string.verification_sent),
                 textAlign = TextAlign.Center
             )
             if (registerState is RegisterState.Loading) {

@@ -177,5 +177,7 @@
     <string name="confirm_password">Confirm password</string>
     <string name="email_sent">A recuperation email has been sent</string>
     <string name="missing_fields_explanation">To continue, please fill in the remaining details of your registration. It will only take a minute.</string>
-    <string name="non_verified_email">Email no verificat</string>
+    <string name="non_verified_email">Unverified email</string>
+    <string name="verify_email">Verify your email</string>
+    <string name="verification_sent">A verification email has been sent to your address. Please verify to continue.</string>
 </resources>
