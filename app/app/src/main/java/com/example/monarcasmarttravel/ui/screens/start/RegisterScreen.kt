@@ -1,5 +1,6 @@
 package com.example.monarcasmarttravel.ui.screens.start
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,6 +43,7 @@ import com.example.monarcasmarttravel.ui.AppDimensions
 import com.example.monarcasmarttravel.ui.AppTextField
 import com.example.monarcasmarttravel.ui.DateField
 import com.example.monarcasmarttravel.ui.MyTopBar
+import com.example.monarcasmarttravel.ui.viewmodels.AuthState
 import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
 import com.example.monarcasmarttravel.ui.viewmodels.RegisterState
 import com.example.monarcasmarttravel.utils.AppError
@@ -58,6 +61,8 @@ private const val DATE_FORMAT = "dd/MM/yyyy"
 
 @Composable
 fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
+    val context = LocalContext.current
+
     val viewModel: AuthViewModel = hiltViewModel()
     val state by viewModel.registerState.collectAsState()
     val currentStatus = (state as? RegisterState.Error)?.error
@@ -91,12 +96,22 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
             && validateBirthDate(birthdayText)
 
     LaunchedEffect(state) {
-        if (state is RegisterState.Success) {
-            navController.navigate("home") {
-                popUpTo("login") { inclusive = true }
+        when (state) {
+            is RegisterState.Success -> {
+                navController.navigate("home") {
+                    popUpTo(0) { inclusive = true }
+                }
             }
-        } else if (state is RegisterState.Error && currentStatus == AppError.VERIFICATION_REQUIRED) {
-            navController.navigate("verifyEmail")
+            is RegisterState.Error -> {
+                if (currentStatus == AppError.VERIFICATION_REQUIRED) {
+                    navController.navigate("verifyEmail") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                } else {
+                    Toast.makeText(context, (state as RegisterState.Error).error.stringRes, Toast.LENGTH_LONG).show()
+                }
+            }
+            else -> {}
         }
     }
 

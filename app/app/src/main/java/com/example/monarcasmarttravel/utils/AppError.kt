@@ -18,6 +18,7 @@ enum class AppError(val code: Int, val stringRes: Int) {
     MISSING_FIELDS(11, R.string.falten_camps),
     INVALID_CREDENTIALS(12, R.string.email_o_contrasenya_incorrecta),
     VERIFICATION_REQUIRED (13, R.string.non_verified_email),
+    FIREBASE_UNKNOWN_ERROR (9997, R.string.firebase_error),
     NON_EXISTING_DATE(9998, R.string.error_non_existing_date),
     UNKNOWN         (9999, R.string.error_unknown);
 

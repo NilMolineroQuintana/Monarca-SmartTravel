@@ -32,7 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             AppError.INVALID_CREDENTIALS
         } catch (e: Exception) {
-            AppError.UNKNOWN
+            AppError.FIREBASE_UNKNOWN_ERROR
         }
     }
 
@@ -64,7 +64,7 @@ class AuthRepositoryImpl @Inject constructor(
             AppError.REQUIREMENTS_PASSWORD
         }
         catch (e: Exception) {
-            AppError.UNKNOWN
+            AppError.FIREBASE_UNKNOWN_ERROR
         }
     }
 

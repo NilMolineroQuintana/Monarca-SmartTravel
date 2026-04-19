@@ -180,4 +180,5 @@
     <string name="non_verified_email">Email no verificat</string>
     <string name="verify_email">Verifica el teu email</string>
     <string name="verification_sent">Se t\'ha enviat un correu de verificació al teu email. Verifica per continuar.</string>
+    <string name="firebase_error">N\'hi ha hagut algun error desconegut. Revisa la teva connexió a internet.</string>
 </resources>
