@@ -23,6 +23,9 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val uid = result.user?.uid ?: return AppError.UNKNOWN
+
+            if (!result.user!!.isEmailVerified) return AppError.VERIFICATION_REQUIRED
+
             userDao.getUserById(uid) ?: return AppError.MISSING_FIELDS
             userDao.registerAccess(uid)
             AppError.OK

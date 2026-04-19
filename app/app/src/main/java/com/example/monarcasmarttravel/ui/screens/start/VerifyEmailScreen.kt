@@ -40,8 +40,10 @@ fun VerifyEmailScreen(navController: NavController) {
 
     LaunchedEffect(registerState) {
         if (registerState is RegisterState.Success) {
-            navController.navigate("home") {
-                popUpTo("login") { inclusive = true }
+            authViewModel.resolveStartDestination { dest ->
+                navController.navigate(dest) {
+                    popUpTo(0) { inclusive = true }
+                }
             }
             authViewModel.resetState()
         }

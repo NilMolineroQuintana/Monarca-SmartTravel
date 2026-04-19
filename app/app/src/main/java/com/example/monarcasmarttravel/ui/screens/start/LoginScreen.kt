@@ -89,12 +89,14 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = hiltVie
                 viewModel.resetState()
             }
             is AuthState.Error -> {
-                if ((authState as AuthState.Error).error == AppError.MISSING_FIELDS) {
-                    navController.navigate("register?isCompleting=true") {
+                when ((authState as AuthState.Error).error) {
+                    AppError.MISSING_FIELDS -> navController.navigate("register?isCompleting=true") {
                         popUpTo("login") { inclusive = true }
                     }
-                } else {
-                    Toast.makeText(context, (authState as AuthState.Error).error.stringRes, Toast.LENGTH_LONG).show()
+                    AppError.VERIFICATION_REQUIRED -> navController.navigate("verifyEmail") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                    else -> Toast.makeText(context, (authState as AuthState.Error).error.stringRes, Toast.LENGTH_LONG).show()
                 }
                 viewModel.resetState()
             }
