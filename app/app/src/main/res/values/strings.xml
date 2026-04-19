@@ -177,4 +177,5 @@
     <string name="confirm_password">Confirmar contrasenya</string>
     <string name="email_sent">S\'ha enviat un correu de recuperació</string>
     <string name="missing_fields_explanation">Per continuar, és necessari que omplis les dades restants del teu registre. Només et prendrà un minut.</string>
+    <string name="non_verified_email">Email no verificat</string>
 </resources>

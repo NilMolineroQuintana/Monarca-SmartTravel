@@ -42,7 +42,13 @@ class AuthRepositoryImpl @Inject constructor(
                 if (existingUser != null) return AppError.EXISTING_USERNAME
 
                 val result = auth.createUserWithEmailAndPassword(user.email, user.password).await()
-                uid = result.user?.uid ?: return AppError.UNKNOWN
+                val firebaseUser = result.user ?: return AppError.UNKNOWN
+
+                firebaseUser.sendEmailVerification().await()
+                uid = firebaseUser.uid
+                userDao.insertUser(user.copy(userId = uid, email = "", password = ""))
+                userDao.registerAccess(uid)
+                return AppError.VERIFICATION_REQUIRED
             } else {
                 uid = auth.currentUser?.uid ?: return AppError.UNKNOWN
             }
@@ -75,6 +81,19 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun isLoggedIn(): Boolean {
         return auth.currentUser != null
+    }
+
+    override suspend fun isEmailVerified(): AppError {
+        return try {
+            val user = auth.currentUser ?: return AppError.UNKNOWN
+
+            if (user.isEmailVerified) return AppError.OK
+
+            user.reload().await()
+            if (user.isEmailVerified) AppError.OK else AppError.VERIFICATION_REQUIRED
+        } catch (e: Exception) {
+            AppError.UNKNOWN
+        }
     }
 
     override suspend fun getUser(): User? {

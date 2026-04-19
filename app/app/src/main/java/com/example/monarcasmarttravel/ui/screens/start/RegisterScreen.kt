@@ -95,6 +95,8 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
             navController.navigate("home") {
                 popUpTo("login") { inclusive = true }
             }
+        } else if (state is RegisterState.Error && currentStatus == AppError.VERIFICATION_REQUIRED) {
+            navController.navigate("verifyEmail")
         }
     }
 

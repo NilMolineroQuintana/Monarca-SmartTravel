@@ -17,6 +17,7 @@ enum class AppError(val code: Int, val stringRes: Int) {
     REQUIREMENTS_PASSWORD(10, R.string.error_password_length),
     MISSING_FIELDS(11, R.string.falten_camps),
     INVALID_CREDENTIALS(12, R.string.email_o_contrasenya_incorrecta),
+    VERIFICATION_REQUIRED (13, R.string.non_verified_email),
     NON_EXISTING_DATE(9998, R.string.error_non_existing_date),
     UNKNOWN         (9999, R.string.error_unknown);
 

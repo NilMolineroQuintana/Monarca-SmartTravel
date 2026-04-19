@@ -110,7 +110,20 @@ class AuthViewModel @Inject constructor(
         return repository.isLoggedIn()
     }
 
+    fun isEmailVerified() {
+        viewModelScope.launch {
+            _registerState.value = RegisterState.Loading
+            val result = repository.isEmailVerified()
+            _registerState.value = if (result == AppError.OK) {
+                RegisterState.Success
+            } else {
+                RegisterState.Error(result)
+            }
+        }
+    }
+
     fun resetState() {
+        _registerState.value = RegisterState.Idle
         _authState.value = AuthState.Idle
     }
 }

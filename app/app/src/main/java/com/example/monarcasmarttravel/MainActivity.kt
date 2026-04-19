@@ -25,6 +25,7 @@ import com.example.monarcasmarttravel.ui.screens.start.LoginScreen
 import com.example.monarcasmarttravel.ui.screens.start.RecoverScreen
 import com.example.monarcasmarttravel.ui.screens.start.RegisterScreen
 import com.example.monarcasmarttravel.ui.screens.start.SplashScreen
+import com.example.monarcasmarttravel.ui.screens.start.VerifyEmailScreen
 import com.example.monarcasmarttravel.ui.screens.trip.AlbumScreen
 import com.example.monarcasmarttravel.ui.screens.trip.CreateTripScreen
 import com.example.monarcasmarttravel.ui.screens.trip.ItineraryScreen
@@ -103,6 +104,9 @@ fun AppNavigation() {
             }
             composable("login") {
                 LoginScreen(navController)
+            }
+            composable ("verifyEmail") {
+                VerifyEmailScreen(navController)
             }
             composable("recoverPassword") {
                 RecoverScreen(navController)
