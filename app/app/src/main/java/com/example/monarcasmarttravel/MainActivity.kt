@@ -76,17 +76,10 @@ fun AppNavigation() {
         ) {
             composable("splash") {
                 SplashScreen(onTimeout = {
-                    val isLoggedIn = authViewModel.isLoggedIn()
-                    val hasLocalData = authViewModel.user.value != null
-
-                    val startDestination = when {
-                        !isLoggedIn -> "login"
-                        !hasLocalData -> "register?isCompleting=true"
-                        else -> "home"
-                    }
-
-                    navController.navigate(startDestination) {
-                        popUpTo("splash") { inclusive = true }
+                    authViewModel.resolveStartDestination { dest ->
+                        navController.navigate(dest) {
+                            popUpTo("splash") { inclusive = true }
+                        }
                     }
                 })
             }

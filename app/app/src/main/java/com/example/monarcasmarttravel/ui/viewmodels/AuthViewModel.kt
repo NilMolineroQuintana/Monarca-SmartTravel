@@ -122,6 +122,18 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun resolveStartDestination(onResult: (String) -> Unit) {
+        viewModelScope.launch {
+            val dest = when {
+                !repository.isLoggedIn() -> "login"
+                repository.isEmailVerified() != AppError.OK -> "verifyEmail"
+                repository.getUser() == null -> "register?isCompleting=true"
+                else -> "home"
+            }
+            onResult(dest)
+        }
+    }
+
     fun resetState() {
         _registerState.value = RegisterState.Idle
         _authState.value = AuthState.Idle
