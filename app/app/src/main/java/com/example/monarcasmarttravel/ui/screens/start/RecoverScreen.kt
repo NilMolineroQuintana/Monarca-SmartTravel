@@ -48,7 +48,6 @@ fun RecoverScreen(navController: NavController, viewModel: AuthViewModel = hiltV
 
     val isEmailValid = email.matches(emailPattern)
 
-    /*
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.RecoverEmailSent -> {
@@ -57,13 +56,12 @@ fun RecoverScreen(navController: NavController, viewModel: AuthViewModel = hiltV
                 viewModel.resetState()
             }
             is AuthState.Error -> {
-                Toast.makeText(context, (authState as AuthState.Error).message, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, (authState as AuthState.Error).error.stringRes, Toast.LENGTH_LONG).show()
                 viewModel.resetState()
             }
             else -> {}
         }
     }
-    */
 
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.recover_password), onBackClick = { navController.popBackStack() }) }
@@ -93,7 +91,7 @@ fun RecoverScreen(navController: NavController, viewModel: AuthViewModel = hiltV
                     CircularProgressIndicator()
                 } else {
                     Button(
-                        onClick = { /* viewModel.recoverPassword(email) */ },
+                        onClick = { viewModel.recoverPassword(email) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),

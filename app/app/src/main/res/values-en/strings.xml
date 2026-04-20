@@ -175,7 +175,7 @@
     <string name="phone_num">Phone number</string>
     <string name="address">Address</string>
     <string name="confirm_password">Confirm password</string>
-    <string name="email_sent">A recuperation email has been sent</string>
+    <string name="email_sent">If an account exists, you will receive a recovery email in a few minutes.</string>
     <string name="missing_fields_explanation">To continue, please fill in the remaining details of your registration. It will only take a minute.</string>
     <string name="non_verified_email">Unverified email</string>
     <string name="verify_email">Verify your email</string>

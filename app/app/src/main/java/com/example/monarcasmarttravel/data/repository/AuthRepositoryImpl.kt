@@ -83,12 +83,13 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+    override suspend fun sendPasswordResetEmail(email: String): AppError {
         return try {
             auth.sendPasswordResetEmail(email).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+            AppError.OK
+        }
+        catch (e: Exception) {
+            AppError.FIREBASE_UNKNOWN_ERROR
         }
     }
 

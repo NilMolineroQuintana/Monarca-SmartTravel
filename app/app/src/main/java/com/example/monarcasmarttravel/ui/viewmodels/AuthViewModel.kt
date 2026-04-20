@@ -88,19 +88,17 @@ class AuthViewModel @Inject constructor(
             onResult(result)
         }
     }
-/*
     fun recoverPassword(email: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             val result = repository.sendPasswordResetEmail(email)
-            result.onSuccess {
+            if (result == AppError.OK) {
                 _authState.value = AuthState.RecoverEmailSent
-            }.onFailure {
-                _authState.value = AuthState.Error(it.message ?: "Error al enviar el correu de recuperació")
+            } else {
+                _authState.value = AuthState.Error(result)
             }
         }
     }
-*/
     fun logout(eraseUser: Boolean = false) {
         viewModelScope.launch {
             repository.logout(if (eraseUser) user.value else null)

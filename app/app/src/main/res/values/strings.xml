@@ -175,7 +175,7 @@
     <string name="phone_num">Número de telèfon</string>
     <string name="address">Adreça</string>
     <string name="confirm_password">Confirmar contrasenya</string>
-    <string name="email_sent">S\'ha enviat un correu de recuperació</string>
+    <string name="email_sent">Si el compte existeix, rebràs un correu de recuperació en uns minuts.</string>
     <string name="missing_fields_explanation">Per continuar, és necessari que omplis les dades restants del teu registre. Només et prendrà un minut.</string>
     <string name="non_verified_email">Email no verificat</string>
     <string name="verify_email">Verifica el teu email</string>

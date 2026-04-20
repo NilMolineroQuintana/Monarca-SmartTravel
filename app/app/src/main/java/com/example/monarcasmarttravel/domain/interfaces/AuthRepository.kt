@@ -8,7 +8,7 @@ interface AuthRepository {
     suspend fun login(email: String, password: String): AppError
     suspend fun getUser(): User?
     suspend fun updateUser(user: User): AppError
-    suspend fun sendPasswordResetEmail(email: String): Result<Unit>
+    suspend fun sendPasswordResetEmail(email: String): AppError
     suspend fun logout(eraseUser: User?): Boolean
     fun isLoggedIn(): Boolean
     suspend fun isEmailVerified(): AppError
