@@ -3,8 +3,8 @@ package com.example.monarcasmarttravel.domain.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.util.Date
 
 @Entity (
     tableName = "acces_history",
@@ -15,7 +15,8 @@ import java.util.Date
             childColumns = ["userId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["userId"])]
 )
 data class AccesHistory (
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

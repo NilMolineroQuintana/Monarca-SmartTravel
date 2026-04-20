@@ -178,7 +178,8 @@
     <string name="email_sent">Si la cuenta existe, recibirás un correo de recuperación en unos minutos.</string>
     <string name="missing_fields_explanation">Para continuar, es necesario que rellenes los datos restantes de tu registro. Solo te tomará un minuto.</string>
     <string name="non_verified_email">Email no verificat</string>
-    <string name="verify_email">Verifica el teu email</string>
-    <string name="verification_sent">Se t\'ha enviat un correu de verificació al teu email. Verifica per continuar.</string>
+    <string name="verify_email">Verifica tu email</string>
+    <string name="verification_sent">Se te ha enviado un correo de verificación a tu email. Verifica para continuar.</string>
     <string name="firebase_error">Ha ocurrido un error desconocido. Revisa tu conexión a internet.</string>
+    <string name="I_have_verified">Ya lo he verificado</string>
 </resources>

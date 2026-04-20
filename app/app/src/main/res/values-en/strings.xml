@@ -181,4 +181,5 @@
     <string name="verify_email">Verify your email</string>
     <string name="verification_sent">A verification email has been sent to your address. Please verify to continue.</string>
     <string name="firebase_error">An unknown error occurred. Please check your internet connection.</string>
+    <string name="I_have_verified">I\'ve already verified it</string>
 </resources>

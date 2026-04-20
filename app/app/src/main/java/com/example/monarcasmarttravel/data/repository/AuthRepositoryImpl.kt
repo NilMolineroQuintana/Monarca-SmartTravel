@@ -50,13 +50,12 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             Log.d("AuthRepositoryImpl", "before registerUser: $user")
             var uid = ""
+            val existingUser =  userDao.getUserByUsername(user.username)
+            if (existingUser != null) {
+                Log.i(TAG, "Usuari ja existent.")
+                return AppError.EXISTING_USERNAME
+            }
             if (!isCompleting) {
-                val existingUser =  userDao.getUserByUsername(user.username)
-                if (existingUser != null) {
-                    Log.i(TAG, "Usuari ja existent.")
-                    return AppError.EXISTING_USERNAME
-                }
-
                 val result = auth.createUserWithEmailAndPassword(user.email, user.password).await()
                 val firebaseUser = result.user ?: return AppError.UNKNOWN
 

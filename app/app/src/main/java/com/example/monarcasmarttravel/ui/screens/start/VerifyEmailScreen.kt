@@ -86,7 +86,7 @@ fun VerifyEmailScreen(navController: NavController) {
                     )
                 ) {
                     Text(
-                        text = stringResource(R.string.register),
+                        text = stringResource(R.string.I_have_verified),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
