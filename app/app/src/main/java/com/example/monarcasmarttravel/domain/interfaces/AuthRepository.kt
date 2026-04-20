@@ -9,7 +9,7 @@ interface AuthRepository {
     suspend fun getUser(): User?
     suspend fun updateUser(user: User): AppError
     suspend fun sendPasswordResetEmail(email: String): Result<Unit>
-    fun logout(): Boolean
+    suspend fun logout(eraseUser: User?): Boolean
     fun isLoggedIn(): Boolean
     suspend fun isEmailVerified(): AppError
 }

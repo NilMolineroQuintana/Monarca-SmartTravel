@@ -50,7 +50,12 @@ fun VerifyEmailScreen(navController: NavController) {
     }
 
     Scaffold(
-        topBar = { MyTopBar(stringResource(R.string.verify_email)) }
+        topBar = { MyTopBar(stringResource(R.string.verify_email), onBackClick = {
+            authViewModel.logout(true)
+            navController.navigate("login") {
+                popUpTo(0) { inclusive = true }
+            }
+        }) }
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

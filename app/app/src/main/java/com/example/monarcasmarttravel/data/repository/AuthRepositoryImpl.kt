@@ -19,15 +19,25 @@ class AuthRepositoryImpl @Inject constructor(
     private val userDao: UserDao
 ): AuthRepository {
 
+    private val TAG = "AuthRepositoryImpl"
+
     override suspend fun login(email: String, password: String): AppError {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val uid = result.user?.uid ?: return AppError.UNKNOWN
 
-            if (!result.user!!.isEmailVerified) return AppError.VERIFICATION_REQUIRED
+            if (!result.user!!.isEmailVerified) {
+                Log.i(TAG, "Usuari no verificat.")
+                return AppError.VERIFICATION_REQUIRED
+            }
 
-            userDao.getUserById(uid) ?: return AppError.MISSING_FIELDS
+            val user = userDao.getUserById(uid)
+            if (user == null) {
+                Log.i(TAG, "Usuari no trobat a la base de dades local.")
+                return AppError.MISSING_FIELDS
+            }
             userDao.registerAccess(uid)
+            Log.i(TAG, "Login correcte. (${uid})")
             AppError.OK
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             AppError.INVALID_CREDENTIALS
@@ -42,7 +52,10 @@ class AuthRepositoryImpl @Inject constructor(
             var uid = ""
             if (!isCompleting) {
                 val existingUser =  userDao.getUserByUsername(user.username)
-                if (existingUser != null) return AppError.EXISTING_USERNAME
+                if (existingUser != null) {
+                    Log.i(TAG, "Usuari ja existent.")
+                    return AppError.EXISTING_USERNAME
+                }
 
                 val result = auth.createUserWithEmailAndPassword(user.email, user.password).await()
                 val firebaseUser = result.user ?: return AppError.UNKNOWN
@@ -51,12 +64,14 @@ class AuthRepositoryImpl @Inject constructor(
                 uid = firebaseUser.uid
                 userDao.insertUser(user.copy(userId = uid, email = "", password = ""))
                 userDao.registerAccess(uid)
+                Log.i(TAG, "Registre correcte enviant a verificació. (${uid})")
                 return AppError.VERIFICATION_REQUIRED
             } else {
                 uid = auth.currentUser?.uid ?: return AppError.UNKNOWN
             }
             userDao.insertUser(user.copy(userId = uid, email = "", password = ""))
             userDao.registerAccess(uid)
+            Log.i(TAG, "Registre correcte. (${uid})")
             AppError.OK
         } catch (e: FirebaseAuthUserCollisionException) {
             AppError.EXISTING_EMAIL
@@ -77,8 +92,12 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun logout(): Boolean {
+    override suspend fun logout(eraseUser: User?): Boolean {
+        if (eraseUser != null) {
+            userDao.deleteUser(eraseUser)
+        }
         auth.signOut()
+        Log.i(TAG, "Logout correcte.")
         return true
     }
 
