@@ -2,6 +2,7 @@ package com.monarca.smarttravel.ui.screens.start
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -74,6 +76,7 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
     var country by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
+    var recieveEmails by rememberSaveable { mutableStateOf(true) }
 
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
     val isEmailValid = validateEmail(email)
@@ -246,13 +249,29 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
                 }
             }
             item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Checkbox(
+                        checked = recieveEmails,
+                        onCheckedChange = { recieveEmails = it }
+                    )
+
+                    Text(
+                        text = stringResource(R.string.recieve_emails_description),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+            item {
                 if (state is RegisterState.Loading) {
                     CircularProgressIndicator()
                 } else {
                     Button(
                         onClick = {
                             val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
-                            viewModel.registerUser(username, dateFormatted, email, phoneNum, country, address, password, isCompleting)
+                            viewModel.registerUser(username, dateFormatted, email, phoneNum, country, address, password, recieveEmails, isCompleting)
                         },
                         modifier = Modifier
                             .fillMaxWidth()

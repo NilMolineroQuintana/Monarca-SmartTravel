@@ -185,4 +185,6 @@
     <string name="select_country">Selecciona un país</string>
     <string name="search">Cerca…</string>
     <string name="country">Pais</string>
+    <string name="recieve_emails_description">Vull rebre correus electrònics amb novetats i promocions.</string>
+    <string name="recieve_emails">Rebre emails</string>
 </resources>

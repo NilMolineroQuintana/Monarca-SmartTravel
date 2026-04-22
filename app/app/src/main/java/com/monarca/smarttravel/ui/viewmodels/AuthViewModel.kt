@@ -61,8 +61,8 @@ class AuthViewModel @Inject constructor(
     }
 
 
-    fun registerUser(username: String, date: String, email: String, phoneNum: String, country: String, address: String, password: String, isCompleting: Boolean) {
-        val user = User(username = username, birthdate = date, email = email, phoneNum = phoneNum, country = country, address = address, password = password)
+    fun registerUser(username: String, date: String, email: String, phoneNum: String, country: String, address: String, password: String, recieveEmails: Boolean, isCompleting: Boolean) {
+        val user = User(username = username, birthdate = date, email = email, phoneNum = phoneNum, country = country, address = address, password = password, recieveEmails = recieveEmails)
 
         viewModelScope.launch {
             Log.d("AuthViewModel", "registerUser: $user")

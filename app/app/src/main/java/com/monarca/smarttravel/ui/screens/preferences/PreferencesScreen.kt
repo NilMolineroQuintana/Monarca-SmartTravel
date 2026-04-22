@@ -105,6 +105,7 @@ fun ProfileScreen(navController: NavController) {
     var country by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var recieveEmails by remember { mutableStateOf(true) }
     var selectedLanguage by remember { mutableStateOf(codeToLanguageMap[viewModel.language] ?: defaultLanguage) }
     var darkMode by remember { mutableStateOf(viewModel.isDarkMode) }
     var notifications by remember { mutableStateOf(viewModel.notifications) }
@@ -116,6 +117,7 @@ fun ProfileScreen(navController: NavController) {
             phoneNum = currentUser.phoneNum
             address = currentUser.address
             country = currentUser.country
+            recieveEmails = currentUser.recieveEmails
         }
     }
 
@@ -305,6 +307,33 @@ fun ProfileScreen(navController: NavController) {
                         color = buttonsColor,
                         action = WideOptionAction.Arrow,
                         onClick = { showAddressPopUp = true }
+                    )
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(
+                        ico = Icons.Filled.Email,
+                        text = stringResource(R.string.recieve_emails),
+                        secondaryText = stringResource(R.string.recieve_emails_description),
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Toggle(recieveEmails) { newValue ->
+                            user.value?.let { currentUser ->
+                                authViewModel.updateUser(currentUser.copy(recieveEmails = newValue)) { error ->
+                                    if (error == AppError.OK) {
+                                        recieveEmails = newValue
+                                    }
+                                }
+                            }
+                        },
+                        onClick = {
+                            val newValue = !recieveEmails
+                            user.value?.let { currentUser ->
+                                authViewModel.updateUser(currentUser.copy(recieveEmails = newValue)) { error ->
+                                    if (error == AppError.OK) {
+                                        recieveEmails = newValue
+                                    }
+                                }
+                            }
+                        }
                     )
                 }
             }

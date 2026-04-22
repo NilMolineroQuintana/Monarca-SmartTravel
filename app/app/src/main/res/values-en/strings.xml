@@ -185,4 +185,6 @@
     <string name="select_country">Select a country</string>
     <string name="search">Search…</string>
     <string name="country">Country</string>
+    <string name="recieve_emails_description">I would like to receive emails with news and promotions.</string>
+    <string name="recieve_emails">Receive emails</string>
 </resources>

@@ -26,7 +26,8 @@ data class User(
     val phoneNum: String,
     val country: String,
     val address: String,
-    val password: String
+    val password: String,
+    val recieveEmails: Boolean
 ) {
     /**
      * Registra un nou usuari al sistema.

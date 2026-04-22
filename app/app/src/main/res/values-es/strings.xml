@@ -185,4 +185,6 @@
     <string name="select_country">Selecciona un país</string>
     <string name="search">Buscar…</string>
     <string name="country">País</string>
+    <string name="recieve_emails_description">Deseo recibir correos electrónicos con novedades y promociones.</string>
+    <string name="recieve_emails">Recibir emails</string>
 </resources>
