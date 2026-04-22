@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.monarcasmarttravel"
+    namespace = "com.monarca.smarttravel"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.monarcasmarttravel"
+        applicationId = "com.monarca.smarttravel"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

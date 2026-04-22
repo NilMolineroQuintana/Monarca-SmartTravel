@@ -1,0 +1,1229 @@
+package com.monarca.smarttravel.ui
+
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowCircleRight
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FlightTakeoff
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Luggage
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.monarca.smarttravel.R
+import com.monarca.smarttravel.domain.model.Trip
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+/** Dimensions globals reutilitzables per mantenir la consistència d'espaiat a tota l'app. */
+object AppDimensions {
+    val PaddingSmall = 8.dp
+    val PaddingMedium = 16.dp
+    val PaddingLarge = 24.dp
+}
+
+/**
+ * Model d'una acció del menú de la barra superior.
+ *
+ * @param title Text visible al menú desplegable.
+ * @param onClick Acció a executar en seleccionar l'opció.
+ */
+data class TopBarAction(
+    val title: String,
+    val onClick: () -> Unit
+)
+
+/**
+ * Barra superior de l'aplicació.
+ *
+ * Mostra el títol de la pantalla, opcionalment un botó de retrocés i un menú de tres punts
+ * amb les accions indicades.
+ *
+ * @param title Text del títol. Si és buit, no es mostra.
+ * @param menuItems Llista d'accions del menú desplegable. Si és buida, no es mostra el menú.
+ * @param onBackClick Acció del botó de retrocés. Si és null, no es mostra el botó.
+ */
+@Composable
+fun MyTopBar(
+    title: String = "",
+    menuItems: List<TopBarAction> = emptyList(),
+    onBackClick: (() -> Unit)? = null
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                top = if (title.isNotEmpty()) 60.dp else 40.dp,
+                bottom = AppDimensions.PaddingMedium
+            )
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (onBackClick != null) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Enrere",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+            if (title.isNotEmpty()) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = if (onBackClick == null) AppDimensions.PaddingMedium else AppDimensions.PaddingSmall)
+                )
+            }
+        }
+
+        // Menú de tres punts, visible només si hi ha accions definides
+        if (menuItems.isNotEmpty()) {
+            Box(modifier = Modifier.padding(end = AppDimensions.PaddingSmall)) {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(imageVector = Icons.Filled.MoreVert, contentDescription = null)
+                }
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    menuItems.forEach { item ->
+                        DropdownMenuItem(
+                            text = { Text(text = item.title) },
+                            onClick = {
+                                expanded = false
+                                item.onClick()
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Barra de navegació inferior de l'aplicació.
+ *
+ * Conté tres elements de navegació: Inici, Viatges i Preferències. Ressalta l'element
+ * corresponent a la ruta activa i escala lleument la icona seleccionada.
+ *
+ * Les rutes fill de cada secció es mapegen al seu element de navegació per mantenir
+ * la selecció activa en navegar a pantalles internes.
+ *
+ * @param navController Controlador de navegació per detectar la ruta actual i navegar.
+ */
+@Composable
+fun MyBottomBar(navController: NavController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val isDark = isSystemInDarkTheme()
+
+    // Extreu la ruta base sense paràmetres
+    val baseRoute = currentRoute
+        ?.substringBefore("?")
+        ?.substringBefore("{")
+        ?.trimEnd('/')
+        ?: ""
+
+    // Rutes que pertanyen a la secció de viatges
+    val tripChilds = listOf("trips", "itinerary", "plan", "album", "createTrip")
+
+    // Rutes que pertanyen a la secció de perfil/preferències
+    val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
+
+    val barColor = if (isDark) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f)
+    } else {
+        MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+    }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(72.dp),
+        shape = RoundedCornerShape(
+            topStart = 24.dp,
+            topEnd = 24.dp
+        ),
+        color = barColor,
+        tonalElevation = if (isDark) 16.dp else 8.dp,
+        shadowElevation = 10.dp
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CustomNavItem(
+                selected = baseRoute == "home",
+                icon = Icons.Default.Home,
+                label = stringResource(R.string.bottom_menu_home),
+                onClick = { if (currentRoute != "home") navController.navigate("home") }
+            )
+            CustomNavItem(
+                selected = baseRoute in tripChilds,
+                icon = Icons.Default.Luggage,
+                label = stringResource(R.string.bottom_menu_trips),
+                onClick = { if (currentRoute != "trips") navController.navigate("trips") }
+            )
+            CustomNavItem(
+                selected = baseRoute in profileChilds,
+                icon = Icons.Default.Settings,
+                label = stringResource(R.string.preferences_text),
+                onClick = { if (currentRoute != "profile") navController.navigate("profile") }
+            )
+        }
+    }
+}
+
+/**
+ * Element individual de la barra de navegació inferior.
+ *
+ * Anima la mida de la icona i el seu color en funció de si és l'element seleccionat.
+ * L'etiqueta de text només s'mostra quan l'element és actiu.
+ *
+ * @param selected Indica si aquest element és l'actiu.
+ * @param icon Icona a mostrar.
+ * @param label Text descriptiu de la secció.
+ * @param onClick Acció en prémer l'element.
+ */
+@Composable
+private fun CustomNavItem(
+    selected: Boolean,
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit
+) {
+    // Animació d'escala: l'element actiu és lleugerament més gran
+    val scale by animateFloatAsState(targetValue = if (selected) 1.2f else 1.0f, label = "scale")
+
+    // Animació de color: actiu = color primari, inactiu = gris semitransparent
+    val color by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.primary else Color.Gray.copy(alpha = 0.6f),
+        label = "color"
+    )
+
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.graphicsLayer(scaleX = scale, scaleY = scale),
+            tint = color
+        )
+        // L'etiqueta apareix i desapareix amb animació segons si l'element és actiu
+        AnimatedVisibility(visible = selected) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = color,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+}
+
+/**
+ * Targeta de resum d'un viatge amb suport per a menú contextual en clic llarg.
+ *
+ * En fer clic llarg apareix un [OptionsPopUp] amb les opcions d'editar i eliminar,
+ * idèntic al patró usat per [ItineraryItemComponent].
+ * En confirmar l'eliminació s'obra un [PopUp] de confirmació.
+ *
+ * El text d'estat varia segons si el viatge és futur, imminent, comença avui o ja ha passat.
+ * El color del text d'estat es torna vermell si falten 7 dies o menys.
+ *
+ * @param trip Dades del viatge a mostrar.
+ * @param navController Controlador de navegació per a les accions d'editar i eliminar.
+ * @param onDeleted Callback opcional invocat després d'eliminar el viatge.
+ * @param modifier Modifier opcional per personalitzar el contenidor.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TripCard(
+    trip: Trip,
+    navController: NavController? = null,
+    onDeleted: (() -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
+    val TAG = "TripCard"
+
+    // Estat del menú d'opcions (clic llarg) i del PopUp de confirmació d'eliminació
+    var showOptions by remember { mutableStateOf(false) }
+    var showDeletePopUp by remember { mutableStateOf(false) }
+
+    val dateIn = trip.dateIn
+    val dateOut = trip.dateOut
+    val place = trip.title
+    val remainingDays = trip.getDaysUntilStart()
+    val daysUntilEnd = trip.getDaysUntilEnd()
+
+    // Text d'estat dinàmic segons la proximitat del viatge
+    val dateStatus = when {
+        remainingDays > 1 -> stringResource(R.string.falten_dies, remainingDays)
+        remainingDays == 1L -> stringResource(R.string.dema_viatge)
+        remainingDays == 0L -> stringResource(R.string.avui_viatge)
+        daysUntilEnd > 0 -> stringResource(R.string.ongoing)
+        else -> stringResource(R.string.viatge_realitzat)
+    }
+
+    val hasImage = trip.imageResId != null
+
+    val headerColor = if (hasImage) Color.White else MaterialTheme.colorScheme.primary
+    val textColor = if (hasImage) Color.White else MaterialTheme.colorScheme.onSurface
+    val secondaryTextColor = if (hasImage) Color.White.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onSurfaceVariant
+
+    val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+    val dateRange = "${dateFormat.format(dateIn)} - ${dateFormat.format(dateOut)}"
+
+    // ── Menú d'opcions: editar / eliminar ────────────────────────────────────
+    // Idèntic al patró de ItineraryItemComponent
+    OptionsPopUp(
+        show = showOptions,
+        title = stringResource(R.string.trip_options_title),
+        options = listOf(
+            Icons.Default.Edit   to stringResource(R.string.edit),
+            Icons.Default.Delete to stringResource(R.string.delete)
+        ),
+        onOptionSelected = { index ->
+            when (index) {
+                0 -> {
+                    // Navega a CreateTripScreen en mode edició, idèntic a com
+                    // ItineraryItemComponent navega a PlanScreen amb itemId
+                    navController?.navigate("createTrip?tripId=${trip.id}")
+                    Log.d(TAG, "TripCard: navegar a createTrip (edit) id=${trip.id}")
+                }
+                1 -> {
+                    // Mostra el PopUp de confirmació d'eliminació
+                    showOptions = false
+                    showDeletePopUp = true
+                    Log.d(TAG, "TripCard: sol·licitada eliminació id=${trip.id}")
+                }
+            }
+        },
+        onDismiss = { showOptions = false }
+    )
+
+    // ── PopUp de confirmació d'eliminació ────────────────────────────────────
+    PopUp(
+        show = showDeletePopUp,
+        title = stringResource(R.string.deleteTrip),
+        text = stringResource(R.string.popUp_deleteTrip_text),
+        acceptText = stringResource(R.string.delete),
+        onAccept = {
+            showDeletePopUp = false
+            onDeleted?.invoke()
+            Log.i(TAG, "TripCard: eliminació confirmada id=${trip.id}")
+        },
+        onDismiss = { showDeletePopUp = false }
+    )
+
+    // ── Targeta visual ───────────────────────────────────────────────────────
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (!hasImage)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surfaceVariant
+        ),
+        modifier = modifier
+            .fillMaxWidth()
+            // combinedClickable: clic simple navega a l'itinerari, clic llarg obre el menú
+            .clip(RoundedCornerShape(16.dp))
+            .combinedClickable(
+                onClick = { navController?.navigate("itinerary/${trip.id}") },
+                onLongClick = {
+                    // El menú d'opcions només apareix si hi ha navController (no en preview)
+                    if (navController != null) {
+                        showOptions = true
+                        Log.d(TAG, "TripCard: clic llarg id=${trip.id}")
+                    }
+                }
+            )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+        ) {
+            if (trip.imageResId != null) {
+                Image(
+                    painter = painterResource(id = trip.imageResId),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .blur(radius = 2.dp)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Black.copy(alpha = 0.4f),
+                                    Color.Black.copy(alpha = 0.75f)
+                                )
+                            )
+                        )
+                )
+            } else {
+                // Fons de color si no hi ha imatge
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = dateStatus,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.ExtraBold),
+                        color = headerColor
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = when {
+                            remainingDays >= 0 -> Icons.Filled.FlightTakeoff
+                            daysUntilEnd >= 0 -> Icons.Filled.LocationOn
+                            else -> Icons.Filled.CheckCircle
+                        },
+                        contentDescription = null,
+                        tint = headerColor,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = place,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = textColor
+                    )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = dateRange,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = secondaryTextColor
+                        )
+                        Text(text = "•", color = secondaryTextColor)
+                        // Color vermell si el viatge és en menys de 7 dies
+                        Text(
+                            text = stringResource(R.string.estada_dies, trip.getTripDuration()),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = if (hasImage) {
+                                Color.White
+                            } else {
+                                if (remainingDays in 0..7 && remainingDays >= 0) Color.Red else headerColor
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Sealed class que representa les possibles accions visuals d'una opció ampla ([WideOption]).
+ *
+ * - [Arrow]: mostra una fletxa a la dreta (navegació).
+ * - [None]: no mostra cap acció.
+ * - [Toggle]: mostra un interruptor (Switch) per activar/desactivar una opció.
+ * - [Menu]: mostra un selector desplegable amb diverses opcions.
+ */
+sealed class WideOptionAction {
+    object Arrow : WideOptionAction()
+    object None : WideOptionAction()
+    data class Toggle(val checked: Boolean, val onCheckedChange: (Boolean) -> Unit) : WideOptionAction()
+    data class Menu(
+        val currentSelection: String,
+        val options: List<String>,
+        val isExpanded: Boolean,
+        val onDismiss: () -> Unit,
+        val onOptionSelected: (String) -> Unit
+    ) : WideOptionAction()
+}
+
+/**
+ * Component d'opció ampla reutilitzable per a llistes de configuració o accions.
+ *
+ * Mostra una icona, un text principal, un text secundari opcional i una acció a la dreta
+ * determinada per [action].
+ *
+ * @param ico Icona de l'opció.
+ * @param text Text principal de l'opció.
+ * @param secondaryText Text descriptiu secundari. Opcional.
+ * @param rounded Si és true, aplica cantonades arrodonides; si no, és rectangular.
+ * @param color Color de fons del component.
+ * @param onClick Acció al prémer l'opció.
+ * @param action Tipus d'acció visual que es mostra a la dreta (Arrow, Toggle, Menu o None).
+ * @param modifier Modifier opcional addicional.
+ */
+@Composable
+fun WideOption(
+    ico: ImageVector,
+    text: String,
+    secondaryText: String = "",
+    rounded: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.surfaceVariant,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    action: WideOptionAction = WideOptionAction.Arrow,
+) {
+    val shape = if (rounded) RoundedCornerShape(12.dp) else RectangleShape
+
+    Surface(
+        onClick = onClick,
+        color = color,
+        shape = shape,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier.padding(16.dp)
+        ) {
+            Icon(ico, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                if (secondaryText.isNotEmpty()) {
+                    Text(secondaryText, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+
+            // Renderització de l'acció corresponent a la dreta de l'opció
+            when (action) {
+                is WideOptionAction.Arrow -> {
+                    Icon(
+                        Icons.Filled.ArrowCircleRight,
+                        null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.scale(1.2f)
+                    )
+                }
+                is WideOptionAction.Toggle -> {
+                    Switch(
+                        checked = action.checked,
+                        onCheckedChange = action.onCheckedChange,
+                        modifier = Modifier.scale(0.9f)
+                    )
+                }
+                is WideOptionAction.Menu -> {
+                    Box {
+                        // Selector amb el valor actual i una fletxa desplegable
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { onClick() }
+                        ) {
+                            Text(
+                                text = action.currentSelection,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Icon(Icons.Filled.ArrowDropDown, null, tint = MaterialTheme.colorScheme.primary)
+                        }
+
+                        // Menú desplegable amb les opcions disponibles
+                        DropdownMenu(
+                            expanded = action.isExpanded,
+                            onDismissRequest = { action.onDismiss() }
+                        ) {
+                            action.options.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        action.onOptionSelected(option)
+                                        action.onDismiss()
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+                is WideOptionAction.None -> { /* No es renderitza cap acció */ }
+            }
+        }
+    }
+}
+
+/**
+ * Camp de text amb contorn reutilitzable per a formularis de l'aplicació.
+ *
+ * Adapta el seu comportament segons si és un camp de contrasenya ([isPassword]),
+ * mostrant en aquest cas un botó per alternar la visibilitat. Suporta validació
+ * visual mitjançant [isError] i [errorMessage].
+ *
+ * @param value Valor actual del camp de text.
+ * @param onValueChange Callback invocat quan l'usuari modifica el contingut.
+ * @param label Etiqueta flotant que descriu el camp.
+ * @param placeholder Text d'exemple mostrat quan el camp és buit.
+ * @param leadingIcon Icona mostrada a l'esquerra del camp.
+ * @param modifier Modifier opcional addicional.
+ * @param isPassword Si és true, oculta el text i afegeix el botó de visibilitat.
+ * @param isError Si és true, aplica l'estil d'error al camp.
+ * @param errorMessage Missatge d'error mostrat sota el camp. Si és null, no es mostra res.
+ * @param keyboardType Tipus de teclat mostrat enfocar el camp.
+ * @param enabled Si el camp està actiu.
+ */
+@Composable
+fun AppTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String,
+    leadingIcon: ImageVector,
+    modifier: Modifier = Modifier,
+    isPassword: Boolean = false,
+    isError: Boolean = false,
+    errorMessage: String? = null,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    enabled: Boolean = true
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        placeholder = { Text(placeholder) },
+        leadingIcon = {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
+        trailingIcon = if (isPassword) {
+            {
+                IconButton(onClick = { passwordVisible = !passwordVisible }, enabled = enabled) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (passwordVisible) "Amagar contrasenya" else "Mostrar contrasenya"
+                    )
+                }
+            }
+        } else null,
+        visualTransformation = if (isPassword && !passwordVisible)
+            PasswordVisualTransformation() else VisualTransformation.None,
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        isError = isError,
+        supportingText = if (isError && errorMessage != null) {
+            {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        } else null,
+        shape = RoundedCornerShape(12.dp),
+        enabled = enabled
+    )
+}
+
+/**
+ * Diàleg de confirmació genèric reutilitzable.
+ *
+ * Mostra un AlertDialog amb títol, text, i botons d'acceptar i cancel·lar.
+ * Només es renderitza quan [show] és true.
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param title Títol del diàleg.
+ * @param text Missatge informatiu del diàleg.
+ * @param acceptText Text del botó de confirmació.
+ * @param cancelText Text del botó de cancel·lació.
+ * @param onAccept Acció en confirmar.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@Composable
+fun PopUp(
+    show: Boolean,
+    title: String,
+    text: String,
+    acceptText: String = stringResource(R.string.accept),
+    cancelText: String = stringResource(R.string.cancel),
+    onAccept: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(text = title) },
+            text = { Text(text = text) },
+            confirmButton = {
+                TextButton(onClick = onAccept) { Text(text = acceptText) }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) { Text(text = cancelText) }
+            }
+        )
+    }
+}
+
+/**
+ * Diàleg emergent per editar un camp de text.
+ *
+ * Mostra un [AlertDialog] amb un [OutlinedTextField] perquè l'usuari pugui
+ * modificar un valor de text. El camp s'inicialitza amb [initialValue] cada
+ * vegada que el diàleg es torna a obrir.
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param title Títol del diàleg.
+ * @param label Etiqueta del camp de text.
+ * @param placeholder Text d'exemple mostrat quan el camp és buit.
+ * @param initialValue Valor inicial del camp de text.
+ * @param acceptText Text del botó de confirmació.
+ * @param cancelText Text del botó de cancel·lació.
+ * @param onAccept Acció invocada amb el nou valor (String) en confirmar.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@Composable
+fun EditTextPopUp(
+    show: Boolean,
+    title: String,
+    label: String,
+    placeholder: String = "",
+    initialValue: String = "",
+    acceptText: String = stringResource(R.string.accept),
+    cancelText: String = stringResource(R.string.cancel),
+    validator: (String) -> Boolean = { it.isNotBlank() },
+    onAccept: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    var textValue by remember(initialValue) { mutableStateOf(initialValue) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            OutlinedTextField(
+                value = textValue,
+                onValueChange = { textValue = it },
+                label = { Text(label) },
+                placeholder = { Text(placeholder) },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onAccept(textValue.trim()) },
+                enabled = validator(textValue)
+            ) {
+                Text(acceptText)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(cancelText) }
+        }
+    )
+}
+
+/**
+ * Diàleg emergent amb un selector de data (DatePicker) de Material3.
+ *
+ * Component reutilitzable per seleccionar qualsevol data des de qualsevol
+ * punt de l'aplicació. La data triada es retorna com a [String] amb format
+ * "dd/MM/yyyy" al callback [onAccept].
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param title Títol mostrat a la capçalera del selector.
+ * @param initialDateMillis Data inicial en mil·lisegons (epoch UTC). Null = sense preselecció.
+ * @param acceptText Text del botó de confirmació.
+ * @param cancelText Text del botó de cancel·lació.
+ * @param onAccept Acció invocada amb la data seleccionada ("dd/MM/yyyy") en confirmar.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerPopUp(
+    show: Boolean,
+    title: String = stringResource(R.string.select_date),
+    initialDateMillis: Long? = null,
+    acceptText: String = stringResource(R.string.accept),
+    cancelText: String = stringResource(R.string.cancel),
+    blockPastDates: Boolean = false,
+    onAccept: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    val today = remember {
+        java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    val selectableDates = if (blockPastDates) {
+        object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis >= today
+            }
+        }
+    } else {
+        object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = true
+            override fun isSelectableYear(year: Int) = true
+        }
+    }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDateMillis,
+        selectableDates = selectableDates
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val millis = datePickerState.selectedDateMillis
+                    if (millis != null) {
+                        val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+                        onAccept(sdf.format(java.util.Date(millis)))
+                    }
+                },
+                enabled = datePickerState.selectedDateMillis != null
+            ) {
+                Text(acceptText)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(cancelText) }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState,
+            title = {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
+                )
+            },
+            showModeToggle = false
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateTimePickerPopUp(
+    show: Boolean,
+    title: String = stringResource(R.string.select_date),
+    initialDateMillis: Long? = null,
+    acceptText: String = stringResource(R.string.accept),
+    cancelText: String = stringResource(R.string.cancel),
+    blockPastDates: Boolean = false,
+    onAccept: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    var step by remember { mutableStateOf(1) }
+    var selectedDateMillis by remember { mutableStateOf(initialDateMillis) }
+
+    val today = remember {
+        java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
+    val selectableDates = if (blockPastDates) {
+        object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis >= today
+            }
+        }
+    } else {
+        object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = true
+            override fun isSelectableYear(year: Int) = true
+        }
+    }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDateMillis,
+        selectableDates = selectableDates
+    )
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = 10,
+        initialMinute = 0
+    )
+
+    if (step == 1) {
+        DatePickerDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        selectedDateMillis = datePickerState.selectedDateMillis
+                        step = 2
+                    },
+                    enabled = datePickerState.selectedDateMillis != null
+                ) { Text(stringResource(R.string.next)) }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) { Text(cancelText) }
+            }
+        ) {
+            DatePicker(
+                state = datePickerState,
+                title = {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)
+                    )
+                },
+                showModeToggle = false
+            )
+        }
+    } else {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(stringResource(R.string.select_time)) },
+            text = {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    TimePicker(state = timePickerState)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    val millis = selectedDateMillis ?: return@TextButton
+                    val dateStr = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        .format(Date(millis))
+                    val timeStr = String.format("%02d:%02d", timePickerState.hour, timePickerState.minute)
+                    onAccept("$dateStr $timeStr")
+                }) { Text(acceptText) }
+            },
+            dismissButton = {
+                TextButton(onClick = { step = 1 }) { Text(stringResource(R.string.back)) }
+            }
+        )
+    }
+}
+
+@Composable
+fun DateField(
+    value: String,
+    onDateSelected: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    initialDateMillis: Long? = null,
+    showTime: Boolean = true,
+    blockPastDates: Boolean = false,
+    enabled: Boolean = true
+) {
+    var showPicker by remember { mutableStateOf(false) }
+
+    if (showTime) {
+        DateTimePickerPopUp(
+            show = showPicker,
+            title = label,
+            initialDateMillis = initialDateMillis,
+            blockPastDates = blockPastDates,
+            onAccept = { dateTime ->
+                onDateSelected(dateTime)
+                showPicker = false
+            },
+            onDismiss = { showPicker = false }
+        )
+    } else {
+        DatePickerPopUp(
+            show = showPicker,
+            title = label,
+            initialDateMillis = initialDateMillis,
+            blockPastDates = blockPastDates,
+            onAccept = { date ->
+                onDateSelected(date)
+                showPicker = false
+            },
+            onDismiss = { showPicker = false }
+        )
+    }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = {},
+        label = { Text(label) },
+        placeholder = { Text("dd/MM/yyyy HH:mm") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.CalendarToday,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
+        readOnly = true,
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier.clickable(enabled = enabled) { showPicker = true },
+        enabled = false,
+        colors = OutlinedTextFieldDefaults.colors(
+            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledBorderColor = MaterialTheme.colorScheme.outline,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.primary,
+            disabledTrailingIconColor = MaterialTheme.colorScheme.primary,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    )
+}
+
+
+/**
+ * Diàleg emergent que mostra una llista d'opcions seleccionables.
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param title Títol del diàleg.
+ * @param options Llista de parells (icona, text) per a cada opció.
+ * @param onOptionSelected Acció invocada amb l'índex de l'opció seleccionada.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@Composable
+fun OptionsPopUp(
+    show: Boolean,
+    title: String,
+    options: List<Pair<ImageVector, String>>,
+    onOptionSelected: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = title) },
+        text = {
+            Column {
+                options.forEachIndexed { index, (icon, label) ->
+                    WideOption(
+                        ico = icon,
+                        text = label,
+                        color = Color.Transparent,
+                        rounded = false,
+                        onClick = {
+                            onOptionSelected(index)
+                            onDismiss()
+                        }
+                    )
+                    if (index < options.lastIndex) {
+                        HorizontalDivider(thickness = 1.dp)
+                    }
+                }
+            }
+        },
+        confirmButton = { }
+    )
+}
+
+/**
+ * Obté la versió de l'aplicació instal·lada al dispositiu a partir del PackageManager.
+ * Retorna "Desconegut" en cas d'error.
+ */
+@Composable
+fun getAppVersion(): String {
+    val context = LocalContext.current
+    return try {
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
+        } else {
+            @Suppress("DEPRECATION")
+            context.packageManager.getPackageInfo(context.packageName, 0)
+        }
+        packageInfo.versionName ?: "2.0.0"
+    } catch (e: Exception) {
+        stringResource(R.string.unknown)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun OptionsPopUpPreview() {
+    OptionsPopUp(
+        show = true,
+        title = "Selecciona una opció",
+        options = listOf(
+            Icons.Default.Edit    to "Editar",
+            Icons.Default.Delete  to "Eliminar",
+        ),
+        onOptionSelected = { index ->
+            when (index) {
+                0 -> { }
+                1 -> { }
+            }
+        },
+        onDismiss = { }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewMyTopBar() {
+    MyTopBar("Test")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewMyTopBarBackbutton() {
+    MyTopBar("Test", onBackClick = {})
+}
+
+@Preview
+@Composable
+fun PreviewWideOption() {
+    WideOption(Icons.Filled.Settings, "Configuració", onClick = {})
+}
+
+@Preview
+@Composable
+fun PreviewWideOptionSecondary() {
+    WideOption(Icons.Filled.Settings, "Configuració", secondaryText = "Test", onClick = {})
+}
+
+@Preview
+@Composable
+fun PreviewWideSquaredOption() {
+    WideOption(Icons.Filled.Settings, "Configuració", rounded = false, onClick = {})
+}
+
+@Preview
+@Composable
+fun PreviewLogOutPopUp() {
+    PopUp(show = true, title = "Title", text = "Text", acceptText = "Accept", cancelText = "Cancel", onAccept = {}, onDismiss = {})
+}
+
+@Preview
+@Composable
+fun PreviewWideOptionSquaredSecondary() {
+    WideOption(Icons.Filled.Settings, "Configuració", secondaryText = "Test", rounded = false, onClick = {})
+}
