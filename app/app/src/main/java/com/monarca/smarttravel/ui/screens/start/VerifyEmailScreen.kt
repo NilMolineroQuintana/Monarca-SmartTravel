@@ -1,6 +1,5 @@
-package com.example.monarcasmarttravel.ui.screens.start
+package com.monarca.smarttravel.ui.screens.start
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,11 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.monarcasmarttravel.R
-import com.example.monarcasmarttravel.ui.AppDimensions
-import com.example.monarcasmarttravel.ui.MyTopBar
-import com.example.monarcasmarttravel.ui.viewmodels.AuthViewModel
-import com.example.monarcasmarttravel.ui.viewmodels.RegisterState
+import com.monarca.smarttravel.R
+import com.monarca.smarttravel.ui.AppDimensions
+import com.monarca.smarttravel.ui.MyTopBar
+import com.monarca.smarttravel.ui.viewmodels.AuthViewModel
+import com.monarca.smarttravel.ui.viewmodels.RegisterState
 
 @Composable
 fun VerifyEmailScreen(navController: NavController) {

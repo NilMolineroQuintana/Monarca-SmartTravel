@@ -25,6 +25,7 @@ import com.monarca.smarttravel.ui.screens.start.LoginScreen
 import com.monarca.smarttravel.ui.screens.start.RecoverScreen
 import com.monarca.smarttravel.ui.screens.start.RegisterScreen
 import com.monarca.smarttravel.ui.screens.start.SplashScreen
+import com.monarca.smarttravel.ui.screens.start.VerifyEmailScreen
 import com.monarca.smarttravel.ui.screens.trip.AlbumScreen
 import com.monarca.smarttravel.ui.screens.trip.CreateTripScreen
 import com.monarca.smarttravel.ui.screens.trip.ItineraryScreen
