@@ -1,11 +1,11 @@
-package com.example.monarcasmarttravel.data
+package com.monarca.smarttravel.data
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.monarcasmarttravel.domain.model.ItineraryItem
+import com.monarca.smarttravel.domain.model.ItineraryItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao

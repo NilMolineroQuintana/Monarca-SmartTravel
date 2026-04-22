@@ -1,7 +1,7 @@
 package com.monarca.smarttravel.data.repository
 
 import android.util.Log
-import com.monarca.smarttravel.data.fakeDB.FakeItineraryItemDataSource
+import com.monarca.smarttravel.data.ItineraryDao
 import com.monarca.smarttravel.domain.interfaces.ItineraryRepository
 import com.monarca.smarttravel.domain.model.ItineraryItem
 import com.monarca.smarttravel.utils.AppError

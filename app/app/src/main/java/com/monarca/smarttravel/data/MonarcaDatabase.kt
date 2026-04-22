@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.monarca.smarttravel.domain.model.AccesHistory
+import com.monarca.smarttravel.domain.model.ItineraryItem
 import com.monarca.smarttravel.domain.model.User
 import com.monarca.smarttravel.utils.Converters
 

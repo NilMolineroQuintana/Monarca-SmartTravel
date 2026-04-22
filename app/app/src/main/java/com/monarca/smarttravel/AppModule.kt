@@ -3,7 +3,7 @@ package com.monarca.smarttravel
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
-import com.monarca.smarttravel.data.MonarcaDatabase
+import com.monarca.smarttravel.data.ItineraryDao
 import com.monarca.smarttravel.data.UserDao
 import com.monarca.smarttravel.data.repository.AuthRepositoryImpl
 import com.monarca.smarttravel.data.repository.ItineraryRepositoryImpl
@@ -13,6 +13,7 @@ import com.monarca.smarttravel.domain.interfaces.AuthRepository
 import com.monarca.smarttravel.domain.interfaces.ItineraryRepository
 import com.monarca.smarttravel.domain.interfaces.TripRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.monarca.smarttravel.data.MonarcaDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,9 +43,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideItineraryRepository(
-        tripRepository: TripRepository
+        itineraryDao: ItineraryDao
     ): ItineraryRepository =
-        ItineraryRepositoryImpl()
+        ItineraryRepositoryImpl(itineraryDao)
 
     @Provides
     @Singleton
