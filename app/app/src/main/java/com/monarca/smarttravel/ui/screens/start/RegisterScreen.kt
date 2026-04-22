@@ -41,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.ui.AppDimensions
 import com.monarca.smarttravel.ui.AppTextField
+import com.monarca.smarttravel.ui.CountryPickerField
 import com.monarca.smarttravel.ui.DateField
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.viewmodels.AuthViewModel
@@ -86,9 +87,11 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
             && isEmailValid
             && isPhoneValid
             && isPasswordValid
+            && country.isNotEmpty()
             && address.isNotEmpty()
 
     val IsFormValidCompleting = isPhoneValid
+            && country.isNotEmpty()
             && address.isNotEmpty()
             && validateBirthDate(birthdayText)
 
@@ -187,6 +190,13 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
                 )
             }
             item {
+                CountryPickerField(
+                    value = country,
+                    onCountrySelected = { country = it },
+                    label = stringResource(R.string.country)
+                )
+            }
+            item {
                 AppTextField(
                     value = address,
                     onValueChange = { address = it },
@@ -242,7 +252,7 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
                     Button(
                         onClick = {
                             val dateFormatted = birthdayDate?.let { sdf.format(it) } ?: ""
-                            viewModel.registerUser(username, dateFormatted, email, phoneNum, address, password, isCompleting)
+                            viewModel.registerUser(username, dateFormatted, email, phoneNum, country, address, password, isCompleting)
                         },
                         modifier = Modifier
                             .fillMaxWidth()

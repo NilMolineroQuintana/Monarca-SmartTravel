@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.ui.AppDimensions
+import com.monarca.smarttravel.ui.CountryPickerPopUp
 import com.monarca.smarttravel.ui.DatePickerPopUp
 import com.monarca.smarttravel.ui.EditTextPopUp
 import com.monarca.smarttravel.ui.MyBottomBar
@@ -92,6 +93,7 @@ fun ProfileScreen(navController: NavController) {
     var showUsernamePopUp by remember { mutableStateOf(false) }
     var showDatePickerPopUp by remember { mutableStateOf(false) }
     var showPhonePopUp by remember { mutableStateOf(false) }
+    var showCountryPopUp by remember { mutableStateOf(false) }
     var showAddressPopUp by remember { mutableStateOf(false) }
 
     // ── Estat del selector d'idioma ───────────────────────────────────────────
@@ -100,6 +102,7 @@ fun ProfileScreen(navController: NavController) {
     var username by remember { mutableStateOf("") }
     var dateOfBirth by remember { mutableStateOf("") }
     var phoneNum by remember { mutableStateOf("") }
+    var country by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var selectedLanguage by remember { mutableStateOf(codeToLanguageMap[viewModel.language] ?: defaultLanguage) }
@@ -112,6 +115,7 @@ fun ProfileScreen(navController: NavController) {
             dateOfBirth = currentUser.birthdate
             phoneNum = currentUser.phoneNum
             address = currentUser.address
+            country = currentUser.country
         }
     }
 
@@ -196,6 +200,22 @@ fun ProfileScreen(navController: NavController) {
             onDismiss = { showPhonePopUp = false }
         )
 
+        // ── Pop-up: editar pais ───────────────────────────────────────
+        CountryPickerPopUp(
+            show = showCountryPopUp,
+            onAccept = { newCountry ->
+                user.value?.let { currentUser ->
+                    authViewModel.updateUser(currentUser.copy(country = newCountry)) { error ->
+                        if (error == AppError.OK) {
+                            country = newCountry
+                            showCountryPopUp = false
+                        }
+                    }
+                }
+            },
+            onDismiss = { showCountryPopUp = false }
+        )
+
         // ── Pop-up: editar adreça ───────────────────────────────────────
         EditTextPopUp(
             show = showAddressPopUp,
@@ -261,6 +281,18 @@ fun ProfileScreen(navController: NavController) {
                         color = buttonsColor,
                         action = WideOptionAction.Arrow,
                         onClick = { showPhonePopUp = true }
+                    )
+                    HorizontalDivider(thickness = 1.dp)
+                    WideOption(
+                        ico = Icons.Default.Flag,
+                        text = stringResource(R.string.country),
+                        secondaryText = country.ifEmpty {
+                            stringResource(R.string.preferences_birthdate_empty)
+                        },
+                        rounded = false,
+                        color = buttonsColor,
+                        action = WideOptionAction.Arrow,
+                        onClick = { showCountryPopUp = true }
                     )
                     HorizontalDivider(thickness = 1.dp)
                     WideOption(

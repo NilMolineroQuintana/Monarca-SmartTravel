@@ -182,4 +182,7 @@
     <string name="verification_sent">A verification email has been sent to your address. Please verify to continue.</string>
     <string name="firebase_error">An unknown error occurred. Please check your internet connection.</string>
     <string name="I_have_verified">I\'ve already verified it</string>
+    <string name="select_country">Select a country</string>
+    <string name="search">Search…</string>
+    <string name="country">Country</string>
 </resources>

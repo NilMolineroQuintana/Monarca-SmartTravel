@@ -182,4 +182,7 @@
     <string name="verification_sent">Se te ha enviado un correo de verificación a tu email. Verifica para continuar.</string>
     <string name="firebase_error">Ha ocurrido un error desconocido. Revisa tu conexión a internet.</string>
     <string name="I_have_verified">Ya lo he verificado</string>
+    <string name="select_country">Selecciona un país</string>
+    <string name="search">Buscar…</string>
+    <string name="country">País</string>
 </resources>

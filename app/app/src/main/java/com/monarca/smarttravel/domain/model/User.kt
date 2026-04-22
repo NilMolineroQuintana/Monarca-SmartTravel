@@ -24,6 +24,7 @@ data class User(
     val birthdate: String,
     val email: String,
     val phoneNum: String,
+    val country: String,
     val address: String,
     val password: String
 ) {

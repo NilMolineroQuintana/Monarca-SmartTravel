@@ -182,4 +182,7 @@
     <string name="verification_sent">Se t\'ha enviat un correu de verificació al teu email. Verifica per continuar.</string>
     <string name="firebase_error">N\'hi ha hagut algun error desconegut. Revisa la teva connexió a internet.</string>
     <string name="I_have_verified">Ja l\'he verificat</string>
+    <string name="select_country">Selecciona un país</string>
+    <string name="search">Cerca…</string>
+    <string name="country">Pais</string>
 </resources>

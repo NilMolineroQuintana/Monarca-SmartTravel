@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -33,11 +35,13 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Luggage
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -1183,6 +1187,222 @@ fun OptionsPopUpPreview() {
             }
         },
         onDismiss = { }
+    )
+}
+
+/**
+ * Obté la llista de països únics disponibles a partir dels locales del sistema.
+ *
+ * Filtra entrades buides i duplicats, i ordena alfabèticament
+ * segons l'idioma actual del dispositiu.
+ *
+ * @return Llista ordenada de noms de país en l'idioma del dispositiu.
+ */
+fun getCountryList(): List<String> {
+    return Locale.getAvailableLocales()
+        .mapNotNull { locale ->
+            locale.getDisplayCountry(Locale.getDefault())
+                .takeIf { it.isNotBlank() }
+        }
+        .distinct()
+        .sorted()
+}
+
+/**
+ * Camp selector de país reutilitzable.
+ *
+ * Mostra un [OutlinedTextField] de només lectura (igual que [DateField]) que en prémer-lo
+ * obre un diàleg amb cercador i llista de tots els països obtinguts automàticament
+ * del sistema via [getCountryList].
+ *
+ * @param value País seleccionat actualment (text visible al camp).
+ * @param onCountrySelected Callback invocat amb el nom del país triat.
+ * @param label Etiqueta flotant del camp.
+ * @param modifier Modifier opcional addicional.
+ * @param leadingIcon Icona mostrada a l'esquerra del camp.
+ * @param enabled Si el camp és interactuable.
+ */
+@Composable
+fun CountryPickerField(
+    value: String,
+    onCountrySelected: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    leadingIcon: ImageVector = Icons.Default.Flag,
+    enabled: Boolean = true
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val countries = remember { getCountryList() }
+
+    if (showDialog) {
+        CountryPickerDialog(
+            countries = countries,
+            onCountrySelected = { country ->
+                onCountrySelected(country)
+                showDialog = false
+            },
+            onDismiss = { showDialog = false }
+        )
+    }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = {},
+        label = { Text(label) },
+        placeholder = { Text(label) },
+        leadingIcon = {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = null,
+                tint = androidx.compose.material3.MaterialTheme.colorScheme.primary
+            )
+        },
+        readOnly = true,
+        singleLine = true,
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(enabled = enabled) { showDialog = true },
+        enabled = false,
+        colors = OutlinedTextFieldDefaults.colors(
+            disabledTextColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+            disabledBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.outline,
+            disabledLeadingIconColor = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+            disabledLabelColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledPlaceholderColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    )
+}
+
+/**
+ * Diàleg intern del selector de país.
+ *
+ * Mostra un camp de cerca que filtra en temps real la llista de països,
+ * i una [LazyColumn] amb els resultats.
+ *
+ * @param countries Llista completa de països.
+ * @param onCountrySelected Callback invocat en seleccionar un país.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@Composable
+private fun CountryPickerDialog(
+    countries: List<String>,
+    onCountrySelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var query by remember { mutableStateOf("") }
+
+    val filtered = remember(query) {
+        if (query.isBlank()) countries
+        else countries.filter { it.contains(query, ignoreCase = true) }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.select_country)) },
+        text = {
+            androidx.compose.foundation.layout.Column {
+                // Camp de cerca
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    placeholder = { Text(stringResource(R.string.search)) },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = null)
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
+
+                // Llista filtrada de països
+                LazyColumn {
+                    items(filtered, key = { it }) { country ->
+                        Text(
+                            text = country,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onCountrySelected(country) }
+                                .padding(vertical = 12.dp, horizontal = 4.dp)
+                        )
+                        HorizontalDivider(thickness = 0.5.dp)
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
+}
+
+/**
+ * Diàleg emergent amb un selector de país.
+ *
+ * Reutilitza [CountryPickerDialog] per mostrar la llista filtrable de països.
+ * Segueix el mateix patró que [DatePickerPopUp].
+ *
+ * @param show Controla la visibilitat del diàleg.
+ * @param onAccept Acció invocada amb el país seleccionat.
+ * @param onDismiss Acció en cancel·lar o tancar el diàleg.
+ */
+@Composable
+fun CountryPickerPopUp(
+    show: Boolean,
+    onAccept: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (!show) return
+
+    val countries = remember { getCountryList() }
+    var query by remember { mutableStateOf("") }
+
+    val filtered = remember(query) {
+        if (query.isBlank()) countries
+        else countries.filter { it.contains(query, ignoreCase = true) }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.select_country)) },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    placeholder = { Text(stringResource(R.string.search)) },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = null)
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                )
+                LazyColumn {
+                    items(filtered, key = { it }) { country ->
+                        Text(
+                            text = country,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onAccept(country) }
+                                .padding(vertical = 12.dp, horizontal = 4.dp)
+                        )
+                        HorizontalDivider(thickness = 0.5.dp)
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
     )
 }
 
