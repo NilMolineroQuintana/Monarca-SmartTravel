@@ -179,6 +179,7 @@ fun RegisterScreen(navController: NavController, isCompleting: Boolean) {
                         birthdayDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                     },
                     showTime = false,
+                    blockFutureDates = true,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

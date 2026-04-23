@@ -866,6 +866,7 @@ fun DatePickerPopUp(
     acceptText: String = stringResource(R.string.accept),
     cancelText: String = stringResource(R.string.cancel),
     blockPastDates: Boolean = false,
+    blockFutureDates: Boolean = false,
     onAccept: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -880,14 +881,14 @@ fun DatePickerPopUp(
         }.timeInMillis
     }
 
-    val selectableDates = if (blockPastDates) {
-        object : androidx.compose.material3.SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                return utcTimeMillis >= today
-            }
+    val selectableDates = when {
+        blockPastDates -> object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis >= today
         }
-    } else {
-        object : androidx.compose.material3.SelectableDates {
+        blockFutureDates -> object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= today
+        }
+        else -> object : androidx.compose.material3.SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long) = true
             override fun isSelectableYear(year: Int) = true
         }
@@ -941,6 +942,7 @@ fun DateTimePickerPopUp(
     acceptText: String = stringResource(R.string.accept),
     cancelText: String = stringResource(R.string.cancel),
     blockPastDates: Boolean = false,
+    blockFutureDates: Boolean = false,
     onAccept: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -958,14 +960,14 @@ fun DateTimePickerPopUp(
         }.timeInMillis
     }
 
-    val selectableDates = if (blockPastDates) {
-        object : androidx.compose.material3.SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                return utcTimeMillis >= today
-            }
+    val selectableDates = when {
+        blockPastDates -> object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis >= today
         }
-    } else {
-        object : androidx.compose.material3.SelectableDates {
+        blockFutureDates -> object : androidx.compose.material3.SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= today
+        }
+        else -> object : androidx.compose.material3.SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long) = true
             override fun isSelectableYear(year: Int) = true
         }
@@ -1046,6 +1048,7 @@ fun DateField(
     initialDateMillis: Long? = null,
     showTime: Boolean = true,
     blockPastDates: Boolean = false,
+    blockFutureDates: Boolean = false,
     enabled: Boolean = true
 ) {
     var showPicker by remember { mutableStateOf(false) }
@@ -1056,6 +1059,7 @@ fun DateField(
             title = label,
             initialDateMillis = initialDateMillis,
             blockPastDates = blockPastDates,
+            blockFutureDates = blockFutureDates,
             onAccept = { dateTime ->
                 onDateSelected(dateTime)
                 showPicker = false
@@ -1068,6 +1072,7 @@ fun DateField(
             title = label,
             initialDateMillis = initialDateMillis,
             blockPastDates = blockPastDates,
+            blockFutureDates = blockFutureDates,
             onAccept = { date ->
                 onDateSelected(date)
                 showPicker = false
