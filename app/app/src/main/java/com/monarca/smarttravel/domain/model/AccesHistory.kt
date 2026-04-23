@@ -21,5 +21,6 @@ import androidx.room.PrimaryKey
 data class AccesHistory (
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val userId: String,
+    val action: String,
     @ColumnInfo(defaultValue = "(strftime('%s','now'))") val date: Long = System.currentTimeMillis()
 )

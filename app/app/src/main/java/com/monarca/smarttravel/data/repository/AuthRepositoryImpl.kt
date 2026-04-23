@@ -19,6 +19,8 @@ class AuthRepositoryImpl @Inject constructor(
 ): AuthRepository {
 
     private val TAG = "AuthRepositoryImpl"
+    private val LOGINACTION = "LOG IN"
+    private val LOGOUTACTION = "LOG OUT"
 
     override suspend fun login(email: String, password: String): AppError {
         return try {
@@ -35,7 +37,7 @@ class AuthRepositoryImpl @Inject constructor(
                 Log.i(TAG, "Usuari no trobat a la base de dades local.")
                 return AppError.MISSING_FIELDS
             }
-            userDao.registerAccess(uid)
+            userDao.registerAccess(uid, LOGINACTION)
             Log.i(TAG, "Login correcte. (${uid})")
             AppError.OK
         } catch (e: FirebaseAuthInvalidCredentialsException) {
@@ -61,14 +63,14 @@ class AuthRepositoryImpl @Inject constructor(
                 firebaseUser.sendEmailVerification().await()
                 uid = firebaseUser.uid
                 userDao.insertUser(user.copy(userId = uid, email = "", password = ""))
-                userDao.registerAccess(uid)
+                userDao.registerAccess(uid, LOGINACTION)
                 Log.i(TAG, "Registre correcte enviant a verificació. (${uid})")
                 return AppError.VERIFICATION_REQUIRED
             } else {
                 uid = auth.currentUser?.uid ?: return AppError.UNKNOWN
             }
             userDao.insertUser(user.copy(userId = uid, email = "", password = ""))
-            userDao.registerAccess(uid)
+            userDao.registerAccess(uid, LOGINACTION)
             Log.i(TAG, "Registre correcte. (${uid})")
             AppError.OK
         } catch (e: FirebaseAuthUserCollisionException) {
@@ -95,6 +97,7 @@ class AuthRepositoryImpl @Inject constructor(
         if (eraseUser != null) {
             userDao.deleteUser(eraseUser)
         }
+        userDao.registerAccess(auth.currentUser?.uid ?: "", LOGOUTACTION)
         auth.signOut()
         Log.i(TAG, "Logout correcte.")
         return true

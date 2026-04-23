@@ -14,8 +14,8 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertUser(user: User)
 
-    @Query("INSERT INTO acces_history (userId) VALUES (:userId)")
-    suspend fun registerAccess(userId: String)
+    @Query("INSERT INTO acces_history (userId, `action`) VALUES (:userId, :action)")
+    suspend fun registerAccess(userId: String, action: String)
 
     @Query("SELECT * FROM users")
     fun getAllUsers(): Flow<List<User>>
