@@ -50,7 +50,7 @@ fun VerifyEmailScreen(navController: NavController) {
 
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.verify_email), onBackClick = {
-            authViewModel.logout(true)
+            authViewModel.logout()
             navController.navigate("login") {
                 popUpTo(0) { inclusive = true }
             }

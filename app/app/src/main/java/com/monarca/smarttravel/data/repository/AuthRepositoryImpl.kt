@@ -93,11 +93,11 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(eraseUser: User?): Boolean {
-        if (eraseUser != null) {
-            userDao.deleteUser(eraseUser)
+    override suspend fun logout(): Boolean {
+        val uid = auth.currentUser?.uid
+        if (!uid.isNullOrEmpty() && userDao.getUserById(uid) != null) {
+            userDao.registerAccess(uid, LOGOUTACTION)
         }
-        userDao.registerAccess(auth.currentUser?.uid ?: "", LOGOUTACTION)
         auth.signOut()
         Log.i(TAG, "Logout correcte.")
         return true
