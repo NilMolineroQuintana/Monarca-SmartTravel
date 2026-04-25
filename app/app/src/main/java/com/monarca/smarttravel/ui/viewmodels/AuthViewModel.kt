@@ -99,9 +99,9 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
-    fun logout(eraseUser: Boolean = false) {
+    fun logout() {
         viewModelScope.launch {
-            repository.logout(if (eraseUser) user.value else null)
+            repository.logout()
             _authState.value = AuthState.Idle
         }
     }
