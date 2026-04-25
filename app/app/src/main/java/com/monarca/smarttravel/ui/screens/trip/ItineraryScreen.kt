@@ -40,7 +40,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.monarca.smarttravel.R
@@ -149,10 +149,11 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
     val tripViewModel: TripViewModel = hiltViewModel()
     val currentStatus = itineraryViewModel.status
 
-    // Obté el viatge real del repositori a través del ViewModel
-    val trip = tripViewModel.getTripById(tripId)
+    // Recollim la llista de viatges i busquem l'actual
+    val trips by tripViewModel.trips.collectAsStateWithLifecycle()
+    val trip = trips.find { it.id == tripId }
 
-    val items by itineraryViewModel.items.collectAsState()
+    val items by itineraryViewModel.items.collectAsStateWithLifecycle()
 
     var selectedDay by remember { mutableStateOf<String?>(null) }
 
@@ -225,6 +226,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 // Elimina el viatge via ViewModel i torna a la llista
                 tripViewModel.deleteTrip(tripId)
                 showPopUp = false
+                navController.popBackStack()
             },
             onDismiss = { showPopUp = false }
         )
@@ -345,9 +347,9 @@ fun Header(trip: Trip?) {
             Text(
                 text = stringResource(
                     R.string.days_of_duration,
-                    trip?.dateIn?.let { dateFormat.format(it) } ?: "Error",
-                    trip?.dateOut?.let { dateFormat.format(it) } ?: "Error",
-                    trip?.getTripDuration() ?: "Error"
+                    trip?.dateIn?.let { dateFormat.format(it) } ?: "...",
+                    trip?.dateOut?.let { dateFormat.format(it) } ?: "...",
+                    trip?.getTripDuration() ?: 0
                 ),
                 style = MaterialTheme.typography.titleSmall,
                 color = Color.White

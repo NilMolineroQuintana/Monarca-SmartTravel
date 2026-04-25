@@ -260,14 +260,20 @@ fun CreateTripScreen(
                     }
                     if (hasError) return@Button
 
-                    val success = if (isUpdateMode) {
-                        // Actualització
+                    val navigateBack = {
+                        navController.navigate("trips") {
+                            popUpTo("trips") { inclusive = true }
+                        }
+                    }
+
+                    if (isUpdateMode) {
                         viewModel.updateTrip(
                             tripId = tripId!!,
                             title = title.trim(),
                             description = description,
                             dateIn = startDate!!,
-                            dateOut = endDate!!
+                            dateOut = endDate!!,
+                            onSuccess = navigateBack
                         ).also { Log.i(TAG, "updateTrip: destí=$title, id=$tripId") }
                     } else {
                         // Creació
@@ -276,15 +282,9 @@ fun CreateTripScreen(
                             description = description,
                             dateIn = startDate!!,
                             dateOut = endDate!!,
-                            userId = 1 // TODO: substituir per l'ID de l'usuari autenticat
+                            userId = 1, // TODO: substituir per l'ID de l'usuari autenticat
+                            onSuccess = navigateBack
                         ).also { Log.i(TAG, "addTrip: destí=$title") }
-                    }
-
-                    if (success) {
-                        Log.i(TAG, "Viatge creat correctament -> destí=$title")
-                        navController.navigate("trips") {
-                            popUpTo("trips") { inclusive = true }
-                        }
                     }
                 },
                 modifier = Modifier

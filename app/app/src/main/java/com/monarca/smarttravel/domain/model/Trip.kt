@@ -1,5 +1,7 @@
 package com.monarca.smarttravel.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -14,8 +16,10 @@ import java.util.concurrent.TimeUnit
  * @param imageResId Recurs drawable opcional associat al destí.
  * @param userId Identificador únic del propietari del viatge.
  */
+
+@Entity(tableName = "trips")
 data class Trip(
-    val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val description: String,
     val dateIn: Date,

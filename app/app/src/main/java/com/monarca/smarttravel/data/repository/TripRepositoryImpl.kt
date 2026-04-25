@@ -1,105 +1,85 @@
 package com.monarca.smarttravel.data.repository
 
 import android.util.Log
-import com.monarca.smarttravel.data.fakeDB.FakeItineraryItemDataSource
-import com.monarca.smarttravel.data.fakeDB.FakeTripDataSource
+import com.monarca.smarttravel.data.ItineraryDao
+import com.monarca.smarttravel.data.TripDao
 import com.monarca.smarttravel.domain.interfaces.TripRepository
 import com.monarca.smarttravel.domain.model.Trip
-import com.monarca.smarttravel.utils.AppError
-import java.util.Date
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Implementació del repositori de viatges.
- *
- * Delega totes les operacions CRUD al [FakeTripDataSource] (in-memory).
+ * Implementació del repositori de viatges utilitzant Room.
  */
 @Singleton
-class TripRepositoryImpl @Inject constructor() : TripRepository {
+class TripRepositoryImpl @Inject constructor(
+    private val tripDao: TripDao,
+    private val itineraryDao: ItineraryDao
+) : TripRepository {
 
     private val TAG = "TripRepositoryImpl"
-    private val dataSource = FakeTripDataSource
-    private val itineraryDataSource = FakeItineraryItemDataSource
 
-    override fun getAllTrips(): List<Trip> = dataSource.getAllTrips()
+    override fun getAllTrips(): Flow<List<Trip>> = tripDao.getAllTrips()
 
-    override fun getTripById(tripId: Int): Trip? =
-        dataSource.getAllTrips().find { it.id == tripId }
+    override fun getTripsByUser(userId: Int): Flow<List<Trip>> = tripDao.getTripsByUser(userId)
+
+    override suspend fun getTripById(tripId: Int): Trip? = tripDao.getTripById(tripId)
 
     /**
-     * Valida i afegeix un nou viatge.
-     * Retorna el viatge creat, o null si les dades no superen la validació.
+     * Valida i afegeix un nou viatge a la base de dades.
      */
-    override fun addTrip(trip: Trip): Trip? {
-        if (!validateTrip(trip)) return null
-        val created = dataSource.addTrip(trip)
-        Log.i(TAG, "addTrip: creat id=${created.id}, títol=${created.title}")
-        return created
+    override suspend fun addTrip(trip: Trip): Long {
+        if (!validateTrip(trip)) return -1L
+        val id = tripDao.addTrip(trip)
+        Log.i(TAG, "addTrip: creat id=$id, títol=${trip.title}")
+        return id
     }
 
     /**
      * Valida i actualitza un viatge existent.
-     *
-     * A més de la validació de camps bàsica, comprova que cap element de
-     * l'itinerari existent quedi fora del nou rang de dates del viatge.
-     * Ampliar les dates sempre és permès; reduir-les només ho és si cap
-     * item queda fora del nou rang.
-     *
-     * @return El viatge actualitzat, o null si no s'ha trobat o la validació falla.
      */
-    override fun updateTrip(trip: Trip): Trip? {
-        if (!validateTrip(trip)) return null
-        if (!validateItineraryItemsInRange(trip)) return null
-        val status = dataSource.updateTrip(trip)
-        return if (status == AppError.OK.code) {
+    override suspend fun updateTrip(trip: Trip): Int {
+        if (!validateTrip(trip)) return 0
+        if (!validateItineraryItemsInRange(trip)) return 0
+        
+        val rowsAffected = tripDao.updateTrip(trip)
+        if (rowsAffected > 0) {
             Log.i(TAG, "updateTrip: actualitzat id=${trip.id}")
-            dataSource.getTripById(trip.id)
         } else {
             Log.w(TAG, "updateTrip: no s'ha trobat id=${trip.id}")
-            null
         }
+        return rowsAffected
     }
 
     /**
-     * Elimina un viatge i tots els elements de l'itinerari associats (cascade delete).
-     *
-     * @return true si el viatge s'ha eliminat correctament, false si no s'ha trobat.
+     * Elimina un viatge i els seus elements de l'itinerari associats (cascade delete).
      */
-    override fun deleteTrip(tripId: Int): Boolean {
-        // Obté els items de l'itinerari abans d'eliminar el viatge
-        val itemsToDelete = itineraryDataSource.getItemsByTrip(tripId)
+    override suspend fun deleteTrip(tripId: Int): Int {
+        // Eliminar elements de l'itinerari primer
+        val deletedItems = itineraryDao.deleteItemsByTrip(tripId)
+        Log.i(TAG, "deleteTrip: eliminats $deletedItems items de l'itinerari del viatge id=$tripId")
 
-        // Elimina cada item de l'itinerari associat al viatge (cascade)
-        itemsToDelete.forEach { item ->
-            itineraryDataSource.deleteItem(item.id)
-            Log.d(TAG, "deleteTrip: eliminat item id=${item.id} del viatge id=$tripId")
-        }
-        Log.i(TAG, "deleteTrip: eliminats ${itemsToDelete.size} items de l'itinerari del viatge id=$tripId")
-
-        // Elimina el viatge
-        val status = dataSource.deleteTrip(tripId)
-        return if (status == AppError.OK.code) {
+        // Eliminar el viatge
+        val deletedTrips = tripDao.deleteTripById(tripId)
+        if (deletedTrips > 0) {
             Log.i(TAG, "deleteTrip: viatge eliminat id=$tripId")
-            true
         } else {
             Log.w(TAG, "deleteTrip: no s'ha trobat el viatge id=$tripId")
-            false
         }
+        return deletedTrips
     }
 
     /**
      * Actualitza únicament la imatge d'un viatge existent.
      * @return El viatge actualitzat, o null si no s'ha trobat.
      */
-    override fun updateImage(tripId: Int, newImageResId: Int?): Trip? =
-        dataSource.updateImage(tripId, newImageResId)
+    override suspend fun updateImage(tripId: Int, newImageResId: Int?): Int {
+        return tripDao.updateImage(tripId, newImageResId)
+    }
 
-    override fun getNextUpcomingTrip(): Trip? {
-        val now = Date()
-        return dataSource.getAllTrips()
-            .filter { it.dateIn >= now }
-            .minByOrNull { it.dateIn }
+    override suspend fun getNextUpcomingTrip(): Trip? {
+        return tripDao.getNextUpcomingTrip(System.currentTimeMillis())
     }
 
     // ── Validació ───────────────────────────────────────────────────
@@ -135,8 +115,8 @@ class TripRepositoryImpl @Inject constructor() : TripRepository {
      *
      * @return true si tots els items estan dins del rang, false en cas contrari.
      */
-    private fun validateItineraryItemsInRange(trip: Trip): Boolean {
-        val items = itineraryDataSource.getItemsByTrip(trip.id)
+    private suspend fun validateItineraryItemsInRange(trip: Trip): Boolean {
+        val items = itineraryDao.getItemsByTripSync(trip.id)
             .filter { it.getInDate() != null }
 
         if (items.isEmpty()) return true

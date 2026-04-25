@@ -13,6 +13,10 @@ interface ItineraryDao {
     @Query("SELECT * FROM itinerary_items WHERE tripId = :tripId")
     fun getItemsByTrip(tripId: Int): Flow<List<ItineraryItem>>
 
+    // Serveix per a veure la llista sense estar pendent de canvis
+    @Query("SELECT * FROM itinerary_items WHERE tripId = :tripId")
+    suspend fun getItemsByTripSync(tripId: Int): List<ItineraryItem>
+
     @Query("SELECT * FROM itinerary_items WHERE id = :itemId")
     suspend fun getItemById(itemId: Int): ItineraryItem?
 
@@ -24,4 +28,7 @@ interface ItineraryDao {
 
     @Query("DELETE FROM itinerary_items WHERE id = :itemId")
     suspend fun deleteItem(itemId: Int): Int
+
+    @Query("DELETE FROM itinerary_items WHERE tripId = :tripId")
+    suspend fun deleteItemsByTrip(tripId: Int): Int
 }

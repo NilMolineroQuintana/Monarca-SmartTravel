@@ -14,6 +14,7 @@ import com.monarca.smarttravel.domain.interfaces.ItineraryRepository
 import com.monarca.smarttravel.domain.interfaces.TripRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.monarca.smarttravel.data.MonarcaDatabase
+import com.monarca.smarttravel.data.TripDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,14 +44,20 @@ object AppModule {
     @Provides
     @Singleton
     fun provideItineraryRepository(
-        itineraryDao: ItineraryDao
+        intineraryDao: ItineraryDao
     ): ItineraryRepository =
-        ItineraryRepositoryImpl(itineraryDao)
+        ItineraryRepositoryImpl(intineraryDao)
 
     @Provides
     @Singleton
-    fun provideTripRepository(): TripRepository =
-        TripRepositoryImpl()
+    fun provideTripRepository(
+        tripDao: TripDao,
+        intineraryDao: ItineraryDao
+    ): TripRepository =
+        TripRepositoryImpl(
+            tripDao,
+            intineraryDao
+        )
 
     @Provides
     @Singleton
@@ -82,5 +89,11 @@ object AppModule {
     @Provides
     fun provideItineraryDao(db: MonarcaDatabase): ItineraryDao {
         return db.itineraryDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideTripDao(db: MonarcaDatabase): TripDao {
+        return db.tripDao()
     }
 }
