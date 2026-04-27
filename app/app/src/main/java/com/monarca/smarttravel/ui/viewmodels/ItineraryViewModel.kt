@@ -13,6 +13,7 @@ import com.monarca.smarttravel.ui.screens.trip.PlanFormState
 import com.monarca.smarttravel.ui.screens.trip.PlanType
 import com.monarca.smarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -42,6 +43,7 @@ class ItineraryViewModel @Inject constructor(
 
     private val _currentTripId = MutableStateFlow<Int?>(null)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val items: StateFlow<List<ItineraryItem>> = _currentTripId
         .filterNotNull()
         .flatMapLatest { tripId -> repository.getItemsByTrip(tripId) }
@@ -50,9 +52,6 @@ class ItineraryViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
 
     private val transports = listOf("train", "boat", "flight")
     private val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())

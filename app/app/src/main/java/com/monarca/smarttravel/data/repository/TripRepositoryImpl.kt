@@ -5,7 +5,9 @@ import com.monarca.smarttravel.data.ItineraryDao
 import com.monarca.smarttravel.data.TripDao
 import com.monarca.smarttravel.domain.interfaces.TripRepository
 import com.monarca.smarttravel.domain.model.Trip
+import com.monarca.smarttravel.utils.AppError
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,27 +31,28 @@ class TripRepositoryImpl @Inject constructor(
     /**
      * Valida i afegeix un nou viatge a la base de dades.
      */
-    override suspend fun addTrip(trip: Trip): Long {
-        if (!validateTrip(trip)) return -1L
+    override suspend fun addTrip(trip: Trip): Int {
+        if (!validateTrip(trip)) return AppError.UNKNOWN.code
         val id = tripDao.addTrip(trip)
         Log.i(TAG, "addTrip: creat id=$id, títol=${trip.title}")
-        return id
+        return if (id > 0) AppError.OK.code else AppError.UNKNOWN.code
     }
 
     /**
      * Valida i actualitza un viatge existent.
      */
     override suspend fun updateTrip(trip: Trip): Int {
-        if (!validateTrip(trip)) return 0
-        if (!validateItineraryItemsInRange(trip)) return 0
+        if (!validateTrip(trip)) return AppError.UNKNOWN.code
+        if (!validateItineraryItemsInRange(trip)) return AppError.ITEM_OUT_OF_RANGE.code
         
         val rowsAffected = tripDao.updateTrip(trip)
         if (rowsAffected > 0) {
             Log.i(TAG, "updateTrip: actualitzat id=${trip.id}")
         } else {
             Log.w(TAG, "updateTrip: no s'ha trobat id=${trip.id}")
+            return AppError.NON_EXISTING_TRIP.code
         }
-        return rowsAffected
+        return AppError.OK.code
     }
 
     /**
@@ -66,16 +69,18 @@ class TripRepositoryImpl @Inject constructor(
             Log.i(TAG, "deleteTrip: viatge eliminat id=$tripId")
         } else {
             Log.w(TAG, "deleteTrip: no s'ha trobat el viatge id=$tripId")
+            return AppError.NON_EXISTING_TRIP.code
         }
-        return deletedTrips
+        return AppError.OK.code
     }
 
     /**
      * Actualitza únicament la imatge d'un viatge existent.
-     * @return El viatge actualitzat, o null si no s'ha trobat.
+     * @return El nombre de files afectades.
      */
     override suspend fun updateImage(tripId: Int, newImageResId: Int?): Int {
-        return tripDao.updateImage(tripId, newImageResId)
+        val affected = tripDao.updateImage(tripId, newImageResId)
+        return if (affected > 0) AppError.OK.code else AppError.NON_EXISTING_TRIP.code
     }
 
     override suspend fun getNextUpcomingTrip(): Trip? {
@@ -111,12 +116,10 @@ class TripRepositoryImpl @Inject constructor(
      * Els items estan ordenats per data, de manera que si el primer i l'últim
      * estan dins del rang, tots els del mig també ho estaran — no cal iterar-los.
      *
-     * Utilitza precisió de minuts per ser consistent amb [ItineraryViewModel.validateDate].
-     *
      * @return true si tots els items estan dins del rang, false en cas contrari.
      */
     private suspend fun validateItineraryItemsInRange(trip: Trip): Boolean {
-        val items = itineraryDao.getItemsByTripSync(trip.id)
+        val items = itineraryDao.getItemsByTrip(trip.id).first()
             .filter { it.getInDate() != null }
 
         if (items.isEmpty()) return true
@@ -124,17 +127,17 @@ class TripRepositoryImpl @Inject constructor(
         val tripStartMin = trip.dateIn.time  / 60_000
         val tripEndMin   = trip.dateOut.time / 60_000
 
-        val first = items.minByOrNull { it.getInDate()!!.time }!!
-        val last  = items.maxByOrNull { it.getInDate()!!.time }!!
+        val firstItem = items.minByOrNull { it.getInDate()!!.time }!!
+        val lastItem  = items.maxByOrNull { it.getInDate()!!.time }!!
 
-        if (first.getInDate()!!.time / 60_000 < tripStartMin) {
-            val label = first.locationName ?: first.origin ?: "id=${first.id}"
+        if ((firstItem.getInDate()!!.time / 60_000) < tripStartMin) {
+            val label = firstItem.locationName ?: firstItem.origin ?: "id=${firstItem.id}"
             Log.w(TAG, "validateItineraryItemsInRange: '$label' queda abans del nou inici -> viatge id=${trip.id}")
             return false
         }
 
-        if (last.getInDate()!!.time / 60_000 > tripEndMin) {
-            val label = last.locationName ?: last.origin ?: "id=${last.id}"
+        if ((lastItem.getInDate()!!.time / 60_000) > tripEndMin) {
+            val label = lastItem.locationName ?: lastItem.origin ?: "id=${lastItem.id}"
             Log.w(TAG, "validateItineraryItemsInRange: '$label' queda després del nou final -> viatge id=${trip.id}")
             return false
         }

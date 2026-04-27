@@ -158,6 +158,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
     var selectedDay by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(tripId) {
+        tripViewModel.loadTrip(tripId)
         itineraryViewModel.loadItemsByTrip(tripId)
     }
 

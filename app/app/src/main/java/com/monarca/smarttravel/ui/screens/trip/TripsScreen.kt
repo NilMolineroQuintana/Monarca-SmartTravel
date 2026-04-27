@@ -36,6 +36,7 @@ import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.TripCard
 import com.monarca.smarttravel.ui.viewmodels.TripViewModel
+import com.monarca.smarttravel.utils.AppError
 
 /**
  * Pantalla que mostra la llista de viatges de l'usuari.
@@ -57,10 +58,12 @@ fun TripsScreen(
     val trips by viewModel.trips.collectAsStateWithLifecycle()
 
     // Mostra errors del ViewModel com a Snackbar
-    LaunchedEffect(viewModel.errorMessage) {
-        viewModel.errorMessage?.let {
-            snackbarHostState.showSnackbar(it)
-            viewModel.clearError()
+    val status = viewModel.status
+    val message = status?.let { stringResource(it.stringRes) }
+    LaunchedEffect(viewModel.status) {
+        if (status != null) {
+            if (status != AppError.OK) snackbarHostState.showSnackbar(message!!)
+            viewModel.clearStatus()
         }
     }
 

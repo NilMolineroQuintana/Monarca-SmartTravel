@@ -13,9 +13,6 @@ interface TripDao {
     @Query("SELECT * FROM trips")
     fun getAllTrips(): Flow<List<Trip>>
 
-    @Query("SELECT * FROM trips")
-    suspend fun getAllTripsSync(): List<Trip>
-
     @Query("SELECT * FROM trips WHERE userId = :userId")
     fun getTripsByUser(userId: Int): Flow<List<Trip>>
 

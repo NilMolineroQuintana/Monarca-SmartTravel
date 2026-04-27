@@ -11,8 +11,12 @@ import com.monarca.smarttravel.domain.interfaces.TripRepository
 import com.monarca.smarttravel.domain.model.Trip
 import com.monarca.smarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -32,13 +36,26 @@ class TripViewModel @Inject constructor(
 
     private val TAG = "TripViewModel"
 
-    /** Llista reactiva de viatges obtinguda del repositori. */
+    var status by mutableStateOf<AppError?>(null)
+        private set
+
+    fun clearStatus() {
+        status = null
+    }
+
+    private val _currentTripId = MutableStateFlow<Int?>(null)
+
     val trips: StateFlow<List<Trip>> = repository.getAllTrips()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    fun loadTrip(tripId: Int) {
+        Log.d(TAG, "loadTrip: carregant viatge id=$tripId")
+        _currentTripId.value = tripId
+    }
 
     /** Viatge futur més proper o en curs. */
     val nextTrip: StateFlow<Trip?> = trips.map { list ->
@@ -50,10 +67,6 @@ class TripViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null
     )
-
-    /** Missatge d'error per mostrar com a Snackbar a la UI. */
-    var errorMessage by mutableStateOf<String?>(null)
-        private set
 
     /**
      * Mapeja paraules clau del destí a un drawable existent al projecte.
@@ -94,87 +107,86 @@ class TripViewModel @Inject constructor(
 
     /**
      * Crea un nou viatge.
-     * Valida les dades abans d'enviar-les al repositori.
-     * La imatge s'assigna automàticament si el destí coincideix
-     * amb una foto disponible al projecte.
      */
     fun addTrip(
         title: String,
         description: String,
         dateIn: Date,
         dateOut: Date,
-        userId: Int,
-        onSuccess: () -> Unit = {}
+        userId: Int
     ) {
         val validation = validateTripFields(title, description, dateIn, dateOut)
         if (validation != AppError.OK) {
-            errorMessage = validation.name
+            status = validation
             Log.e(TAG, "addTrip: validació fallida -> ${validation.name}")
             return
         }
 
         viewModelScope.launch {
-            val trip = Trip(
-                id = 0,
-                title = title.trim(),
-                description = description,
-                dateIn = dateIn,
-                dateOut = dateOut,
-                imageResId = resolveImageForDestination(title),
-                userId = userId
-            )
-            val id = repository.addTrip(trip)
-            if (id > 0) {
-                errorMessage = null
-                onSuccess()
-                Log.i(TAG, "addTrip: viatge creat -> id=$id")
-            } else {
-                errorMessage = AppError.UNKNOWN.name
+            try {
+                val trip = Trip(
+                    id = 0,
+                    title = title.trim(),
+                    description = description,
+                    dateIn = dateIn,
+                    dateOut = dateOut,
+                    imageResId = resolveImageForDestination(title),
+                    userId = userId
+                )
+                val resultCode = repository.addTrip(trip)
+                status = AppError.fromCode(resultCode)
+                if (status == AppError.OK) {
+                    Log.i(TAG, "addTrip: viatge creat correctament")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "addTrip: error al crear viatge", e)
+                status = AppError.UNKNOWN
             }
         }
     }
 
     /**
      * Actualitza els camps d'un viatge existent (títol, descripció i dates).
-     * Valida les dades abans d'enviar-les al repositori.
      */
     fun updateTrip(
         tripId: Int,
         title: String,
         description: String,
         dateIn: Date,
-        dateOut: Date,
-        onSuccess: () -> Unit = {}
+        dateOut: Date
     ) {
         val validation = validateTripFields(title, description, dateIn, dateOut)
         if (validation != AppError.OK) {
-            errorMessage = validation.name
+            status = validation
             Log.e(TAG, "updateTrip: validació fallida -> ${validation.name}")
             return
         }
 
         viewModelScope.launch {
-            val existing = repository.getTripById(tripId)
-            if (existing == null) {
-                errorMessage = AppError.NON_EXISTING_ITEM.name
-                Log.w(TAG, "updateTrip: no s'ha trobat id=$tripId")
-                return@launch
-            }
+            try {
+                val existing = repository.getTripById(tripId)
+                    ?: run {
+                        status = AppError.NON_EXISTING_TRIP
+                        Log.w(TAG, "updateTrip: no s'ha trobat id=$tripId")
+                        return@launch
+                    }
 
-            val updated = existing.copy(
-                title = title.trim(),
-                description = description,
-                dateIn = dateIn,
-                dateOut = dateOut,
-                imageResId = resolveImageForDestination(title) ?: existing.imageResId
-            )
-            val result = repository.updateTrip(updated)
-            if (result > 0) {
-                errorMessage = null
-                onSuccess()
-                Log.i(TAG, "updateTrip: viatge actualitzat -> id=$tripId")
-            } else {
-                errorMessage = AppError.UNKNOWN.name
+                val updated = existing.copy(
+                    title = title.trim(),
+                    description = description,
+                    dateIn = dateIn,
+                    dateOut = dateOut,
+                    imageResId = resolveImageForDestination(title) ?: existing.imageResId
+                )
+                val result = repository.updateTrip(updated)
+
+                status = AppError.fromCode(result)
+                if (status == AppError.OK) {
+                    Log.i(TAG, "updateTrip: viatge actualitzat -> id=$tripId")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "updateTrip: error al actualitzar viatge id=$tripId", e)
+                status = AppError.UNKNOWN
             }
         }
     }
@@ -183,14 +195,17 @@ class TripViewModel @Inject constructor(
      * Elimina un viatge.
      */
     fun deleteTrip(tripId: Int) {
+        Log.d(TAG, "deleteTrip: intent d'eliminar id=$tripId")
         viewModelScope.launch {
-            val result = repository.deleteTrip(tripId)
-            if (result > 0) {
-                errorMessage = null
-                Log.i(TAG, "deleteTrip: viatge eliminat -> id=$tripId")
-            } else {
-                Log.w(TAG, "deleteTrip: error en eliminar id=$tripId")
-                errorMessage = AppError.NON_EXISTING_ITEM.name
+            try {
+                val resultCode = repository.deleteTrip(tripId)
+                status = AppError.fromCode(resultCode)
+                if (status == AppError.OK) {
+                    Log.i(TAG, "deleteTrip: viatge eliminat -> id=$tripId")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "deleteTrip: error al eliminar id=$tripId", e)
+                status = AppError.UNKNOWN
             }
         }
     }
@@ -200,8 +215,8 @@ class TripViewModel @Inject constructor(
      */
     fun changeTripImage(tripId: Int, newImageResId: Int?) {
         viewModelScope.launch {
-            val result = repository.updateImage(tripId, newImageResId)
-            if (result > 0) {
+            val resultCode = repository.updateImage(tripId, newImageResId)
+            if (resultCode == AppError.OK.code) {
                 Log.i(TAG, "changeTripImage: imatge actualitzada -> id=$tripId")
             }
         }
@@ -209,11 +224,6 @@ class TripViewModel @Inject constructor(
 
     /**
      * Retorna el trip amb l'ID indicat, o null si no existeix.
-     * Usat per [ItineraryScreen] per obtenir les dades reals del viatge.
      */
     suspend fun getTripById(tripId: Int): Trip? = repository.getTripById(tripId)
-
-    fun clearError() {
-        errorMessage = null
-    }
 }
