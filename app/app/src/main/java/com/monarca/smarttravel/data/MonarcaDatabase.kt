@@ -11,7 +11,7 @@ import com.monarca.smarttravel.utils.Converters
 
 @Database(
     entities = [User::class, AccesHistory::class, ItineraryItem::class, Trip::class],
-    version = 1
+    version = 2
 )
 @TypeConverters(Converters::class)
 abstract class MonarcaDatabase : RoomDatabase() {
