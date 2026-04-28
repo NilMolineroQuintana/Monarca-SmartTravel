@@ -45,15 +45,25 @@ class TripViewModel @Inject constructor(
         status = null
     }
 
-    private val _currentTripId = MutableStateFlow<Int?>(null)
+    private val _userId = MutableStateFlow<String?>(null)
 
-    val trips: StateFlow<List<Trip>> = repository.getAllTrips()
+    init {
+        viewModelScope.launch {
+            _userId.value = authRepository.getLoggedUID()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val trips: StateFlow<List<Trip>> = _userId
+        .filterNotNull()
+        .flatMapLatest { userId -> repository.getTripsByUser(userId) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
+    private val _currentTripId = MutableStateFlow<Int?>(null)
     fun loadTrip(tripId: Int) {
         Log.d(TAG, "loadTrip: carregant viatge id=$tripId")
         _currentTripId.value = tripId
