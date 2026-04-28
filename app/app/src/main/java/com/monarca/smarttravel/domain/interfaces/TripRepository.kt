@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface TripRepository {
     fun getAllTrips(): Flow<List<Trip>>
-    fun getTripsByUser(userId: Int): Flow<List<Trip>>
+    fun getTripsByUser(userId: String): Flow<List<Trip>>
     suspend fun getTripById(tripId: Int): Trip?
     suspend fun addTrip(trip: Trip): Int
     suspend fun updateTrip(trip: Trip): Int

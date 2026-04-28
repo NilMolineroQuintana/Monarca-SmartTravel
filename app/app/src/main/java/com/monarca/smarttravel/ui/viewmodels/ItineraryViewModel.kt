@@ -94,7 +94,7 @@ class ItineraryViewModel @Inject constructor(
             try {
                 val result = repository.addItineraryItem(newItem)
                 Log.i(TAG, "addItem: item creat correctament")
-                status = AppError.fromCode(result.toInt())
+                status = AppError.fromCode(result)
             } catch (e: Exception) {
                 Log.e(TAG, "addItem: error al crear item", e)
                 status = AppError.UNKNOWN

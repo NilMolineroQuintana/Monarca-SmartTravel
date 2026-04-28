@@ -282,8 +282,7 @@ fun CreateTripScreen(
                             title = title.trim(),
                             description = description,
                             dateIn = startDate!!,
-                            dateOut = endDate!!,
-                            userId = 1 // TODO: substituir per l'ID de l'usuari autenticat
+                            dateOut = endDate!!
                         )
                         Log.i(TAG, "addTrip: destí=$title")
                     }

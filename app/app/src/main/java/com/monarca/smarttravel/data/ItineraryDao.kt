@@ -24,7 +24,4 @@ interface ItineraryDao {
 
     @Query("DELETE FROM itinerary_items WHERE id = :itemId")
     suspend fun deleteItem(itemId: Int): Int
-
-    @Query("DELETE FROM itinerary_items WHERE tripId = :tripId")
-    suspend fun deleteItemsByTrip(tripId: Int): Int
 }

@@ -24,7 +24,7 @@ class TripRepositoryImpl @Inject constructor(
 
     override fun getAllTrips(): Flow<List<Trip>> = tripDao.getAllTrips()
 
-    override fun getTripsByUser(userId: Int): Flow<List<Trip>> = tripDao.getTripsByUser(userId)
+    override fun getTripsByUser(userId: String): Flow<List<Trip>> = tripDao.getTripsByUser(userId)
 
     override suspend fun getTripById(tripId: Int): Trip? = tripDao.getTripById(tripId)
 
@@ -59,10 +59,6 @@ class TripRepositoryImpl @Inject constructor(
      * Elimina un viatge i els seus elements de l'itinerari associats (cascade delete).
      */
     override suspend fun deleteTrip(tripId: Int): Int {
-        // Eliminar elements de l'itinerari primer
-        val deletedItems = itineraryDao.deleteItemsByTrip(tripId)
-        Log.i(TAG, "deleteTrip: eliminats $deletedItems items de l'itinerari del viatge id=$tripId")
-
         // Eliminar el viatge
         val deletedTrips = tripDao.deleteTripById(tripId)
         if (deletedTrips > 0) {

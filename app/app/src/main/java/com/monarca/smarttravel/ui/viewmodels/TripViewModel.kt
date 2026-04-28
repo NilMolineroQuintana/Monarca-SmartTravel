@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.monarca.smarttravel.R
+import com.monarca.smarttravel.domain.interfaces.AuthRepository
 import com.monarca.smarttravel.domain.interfaces.TripRepository
 import com.monarca.smarttravel.domain.model.Trip
 import com.monarca.smarttravel.utils.AppError
@@ -31,7 +32,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class TripViewModel @Inject constructor(
-    private val repository: TripRepository
+    private val repository: TripRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val TAG = "TripViewModel"
@@ -112,8 +114,7 @@ class TripViewModel @Inject constructor(
         title: String,
         description: String,
         dateIn: Date,
-        dateOut: Date,
-        userId: Int
+        dateOut: Date
     ) {
         val validation = validateTripFields(title, description, dateIn, dateOut)
         if (validation != AppError.OK) {
@@ -124,6 +125,13 @@ class TripViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                val userId = authRepository.getLoggedUID()
+                if (userId == null) {
+                    status = AppError.UNKNOWN
+                    Log.w(TAG, "addTrip: usuari no autenticat")
+                    return@launch
+                }
+
                 val trip = Trip(
                     id = 0,
                     title = title.trim(),
