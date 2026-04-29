@@ -6,6 +6,7 @@ import com.monarca.smarttravel.R
 import com.monarca.smarttravel.ui.screens.trip.PlanType
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -36,6 +37,9 @@ import java.util.Locale
 
 @Entity(
     tableName = "itinerary_items",
+    indices = [
+        Index(value = ["tripId"]),
+    ],
     foreignKeys = [
         ForeignKey(
             entity = Trip::class,

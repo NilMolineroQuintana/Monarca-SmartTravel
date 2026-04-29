@@ -2,6 +2,7 @@ package com.monarca.smarttravel.domain.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -20,6 +21,9 @@ import java.util.concurrent.TimeUnit
 
 @Entity(
     tableName = "trips",
+    indices = [
+        Index(value = ["userId"]),
+    ],
     foreignKeys = [
         ForeignKey(
             entity = User::class,

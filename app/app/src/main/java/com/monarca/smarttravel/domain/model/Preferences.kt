@@ -13,12 +13,4 @@ data class Preferences(
     val notificationEnabled: Boolean,
     val preferredLanguage: String,
     val theme: String
-) {
-    /**
-     * Actualitza les preferències de l'usuari al backend o emmagatzematge local.
-     * Pendent d'implementar.
-     */
-    fun updatePreferences() {
-        // @TODO Implement update preferences
-    }
-}
+)
