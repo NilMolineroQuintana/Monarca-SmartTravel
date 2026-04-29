@@ -6,11 +6,16 @@ import androidx.room.TypeConverters
 import com.monarca.smarttravel.domain.model.AccesHistory
 import com.monarca.smarttravel.domain.model.ItineraryItem
 import com.monarca.smarttravel.domain.model.User
+import com.monarca.smarttravel.domain.model.Trip
 import com.monarca.smarttravel.utils.Converters
 
-@Database(entities = [User::class, AccesHistory::class, ItineraryItem::class], version = 1)
+@Database(
+    entities = [User::class, AccesHistory::class, ItineraryItem::class, Trip::class],
+    version = 2
+)
 @TypeConverters(Converters::class)
 abstract class MonarcaDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun itineraryDao(): ItineraryDao
+    abstract fun tripDao(): TripDao
 }

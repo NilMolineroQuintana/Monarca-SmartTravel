@@ -120,6 +120,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getLoggedUID(): String? {
+        return auth.currentUser?.uid
+    }
+
     override suspend fun getUser(): User? {
         val uid = auth.currentUser?.uid ?: return null
         return userDao.getUserById(uid)

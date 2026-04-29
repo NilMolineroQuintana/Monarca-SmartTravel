@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.monarca.smarttravel.R
@@ -30,7 +32,6 @@ import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.TripCard
 import com.monarca.smarttravel.ui.WideOption
 import com.monarca.smarttravel.ui.viewmodels.TripViewModel
-import java.util.Date
 
 /**
  * Pantalla principal de l'aplicació.
@@ -49,12 +50,8 @@ fun HomeScreen(
     navController: NavController,
     viewModel: TripViewModel = hiltViewModel()
 ) {
-    // Viatge futur més proper; null si no n'hi ha cap
-    val today = Date()
-
-    val nextTrip = viewModel.trips
-        .filter { it.dateOut >= today }
-        .minByOrNull { it.dateIn }
+    // Viatge futur més proper
+    val nextTrip by viewModel.nextTrip.collectAsStateWithLifecycle()
 
     Scaffold(
         bottomBar = { MyBottomBar(navController) }
@@ -72,9 +69,9 @@ fun HomeScreen(
             // Mostra la targeta del pròxim viatge només si existeix.
             if (nextTrip != null) {
                 TripCard(
-                    trip = nextTrip,
+                    trip = nextTrip!!,
                     navController = navController,
-                    onDeleted = { viewModel.deleteTrip(nextTrip.id) }
+                    onDeleted = { viewModel.deleteTrip(nextTrip!!.id) }
                 )
             }
 

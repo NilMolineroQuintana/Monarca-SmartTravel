@@ -18,6 +18,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.monarca.smarttravel.R
@@ -34,13 +36,12 @@ import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.TripCard
 import com.monarca.smarttravel.ui.viewmodels.TripViewModel
+import com.monarca.smarttravel.utils.AppError
 
 /**
  * Pantalla que mostra la llista de viatges de l'usuari.
  *
- * Observa el [TripViewModel]: qualsevol operació CRUD es reflecteix
- * automàticament gràcies a mutableStateOf. La llista s'inicialitza amb
- * el fake dataset del repositori.
+ * Observa el [TripViewModel]: qualsevol operació CRUD es reflecteix automàticament
  *
  * Cada [TripCard] suporta clic llarg per mostrar un menú contextual (editar/eliminar)
  *
@@ -53,12 +54,16 @@ fun TripsScreen(
     viewModel: TripViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    
+    val trips by viewModel.trips.collectAsStateWithLifecycle()
 
     // Mostra errors del ViewModel com a Snackbar
-    LaunchedEffect(viewModel.errorMessage) {
-        viewModel.errorMessage?.let {
-            snackbarHostState.showSnackbar(it)
-            viewModel.clearError()
+    val status = viewModel.status
+    val message = status?.let { stringResource(it.stringRes) }
+    LaunchedEffect(viewModel.status) {
+        if (status != null) {
+            if (status != AppError.OK) snackbarHostState.showSnackbar(message!!)
+            viewModel.clearStatus()
         }
     }
 
@@ -72,7 +77,7 @@ fun TripsScreen(
             }
         }
     ) { innerPadding ->
-        if (viewModel.trips.isEmpty()) {
+        if (trips.isEmpty()) {
             // Estat buit: guia l'usuari a crear el primer viatge
             Column(
                 modifier = Modifier
@@ -114,7 +119,7 @@ fun TripsScreen(
                     bottom = AppDimensions.PaddingLarge
                 )
             ) {
-                items(viewModel.trips, key = { it.id }) { trip ->
+                items(trips, key = { it.id }) { trip ->
                     TripCard(
                         trip = trip,
                         navController = navController,

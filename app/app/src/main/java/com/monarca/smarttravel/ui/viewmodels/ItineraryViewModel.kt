@@ -13,6 +13,7 @@ import com.monarca.smarttravel.ui.screens.trip.PlanFormState
 import com.monarca.smarttravel.ui.screens.trip.PlanType
 import com.monarca.smarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -42,6 +43,7 @@ class ItineraryViewModel @Inject constructor(
 
     private val _currentTripId = MutableStateFlow<Int?>(null)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val items: StateFlow<List<ItineraryItem>> = _currentTripId
         .filterNotNull()
         .flatMapLatest { tripId -> repository.getItemsByTrip(tripId) }
@@ -50,9 +52,6 @@ class ItineraryViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
 
     private val transports = listOf("train", "boat", "flight")
     private val dateTimeFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
@@ -69,32 +68,29 @@ class ItineraryViewModel @Inject constructor(
         return item
     }
 
-    fun addItem(tripId: Int, ruta: String, form: PlanFormState) : Unit {
+    fun addItem(tripId: Int, ruta: String, form: PlanFormState) {
         Log.d(TAG, "addItem: intent d'afegir item -> tripId=$tripId, ruta=$ruta")
-
-        val planType = PlanType.entries.find { it.route == ruta }
-            ?: run {
-                Log.e(TAG, "addItem: ruta desconeguda -> '$ruta'")
-                status = AppError.UNKNOWN
-                return
-            }
-        val parsedDate = parseDate(form.checkInDate)
-            ?: run {
-                Log.w(TAG, "addItem: format de data invàlid -> '${form.checkInDate}'")
-                status = AppError.NON_EXISTING_DATE
-                return
-            }
-
-        val validationStatus = validateDate(parsedDate, tripId)
-        if (validationStatus.code != AppError.OK.code) {
-            Log.w(TAG, "addItem: data fora del rang del viatge -> $parsedDate (tripId=$tripId)")
-            status = validationStatus
-            return
-        }
-
-        val newItem = buildItineraryItem(tripId = tripId, ruta = ruta, planType = planType, form = form, date = parsedDate)
-
         viewModelScope.launch {
+            val planType = PlanType.entries.find { it.route == ruta }
+                ?: run {
+                    Log.e(TAG, "addItem: ruta desconeguda -> '$ruta'")
+                    status = AppError.UNKNOWN
+                    return@launch
+                }
+            val parsedDate = parseDate(form.checkInDate)
+                ?: run {
+                    Log.w(TAG, "addItem: format de data invàlid -> '${form.checkInDate}'")
+                    status = AppError.NON_EXISTING_DATE
+                    return@launch
+                }
+
+            val validationStatus = validateDate(parsedDate, tripId)
+            if (validationStatus.code != AppError.OK.code) {
+                Log.w(TAG, "addItem: data fora del rang del viatge -> $parsedDate (tripId=$tripId)")
+                status = validationStatus
+                return@launch
+            }
+            val newItem = buildItineraryItem(tripId = tripId, ruta = ruta, planType = planType, form = form, date = parsedDate)
             try {
                 val result = repository.addItineraryItem(newItem)
                 Log.i(TAG, "addItem: item creat correctament")
@@ -159,7 +155,7 @@ class ItineraryViewModel @Inject constructor(
         }
     }
 
-    fun deleteItem(item: ItineraryItem): Unit {
+    fun deleteItem(item: ItineraryItem) {
         Log.d(TAG, "deleteItem: intent d'eliminar item id=${item.id}, tipus=${item.type}")
         viewModelScope.launch {
             try {
@@ -195,10 +191,10 @@ class ItineraryViewModel @Inject constructor(
             )
         }
 
+    // ── Validació ───────────────────────────────────────────────────
     private fun Date.toMinutes() = time / 60000
 
-    // ── Validació ───────────────────────────────────────────────────
-    private fun validateDate(date: Date, tripId: Int): AppError {
+    private suspend fun validateDate(date: Date, tripId: Int): AppError {
         val trip = tripRepository.getTripById(tripId) ?: return AppError.NON_EXISTING_TRIP
 
         if (date.toMinutes() !in trip.dateIn.toMinutes()..trip.dateOut.toMinutes()) {

@@ -5,6 +5,7 @@ import androidx.compose.ui.res.stringResource
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.ui.screens.trip.PlanType
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -33,7 +34,16 @@ import java.util.Locale
  * @param checkInDate Data d'entrada o visita (no transport).
  */
 
-@Entity(tableName = "itinerary_items")
+@Entity(
+    tableName = "itinerary_items",
+    foreignKeys = [
+        ForeignKey(
+            entity = Trip::class,
+            parentColumns = ["id"],
+            childColumns = ["tripId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ])
 data class ItineraryItem(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val tripId: Int,

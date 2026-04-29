@@ -1,5 +1,8 @@
 package com.monarca.smarttravel.domain.model
 
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -14,14 +17,26 @@ import java.util.concurrent.TimeUnit
  * @param imageResId Recurs drawable opcional associat al destí.
  * @param userId Identificador únic del propietari del viatge.
  */
+
+@Entity(
+    tableName = "trips",
+    foreignKeys = [
+        ForeignKey(
+            entity = User::class,
+            parentColumns = ["userId"],
+            childColumns = ["userId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class Trip(
-    val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val description: String,
     val dateIn: Date,
     val dateOut: Date,
     val imageResId: Int? = null,
-    val userId: Int
+    val userId: String
 ) {
     /**
      * Calcula la durada total del viatge en dies.

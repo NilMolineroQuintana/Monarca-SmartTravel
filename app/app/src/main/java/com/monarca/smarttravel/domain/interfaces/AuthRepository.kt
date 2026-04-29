@@ -6,6 +6,7 @@ import com.monarca.smarttravel.utils.AppError
 interface AuthRepository {
     suspend fun registerUser(user: User, isCompleting: Boolean): AppError
     suspend fun login(email: String, password: String): AppError
+    suspend fun getLoggedUID(): String?
     suspend fun getUser(): User?
     suspend fun updateUser(user: User): AppError
     suspend fun sendPasswordResetEmail(email: String): AppError

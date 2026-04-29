@@ -41,6 +41,7 @@ import com.monarca.smarttravel.ui.AppDimensions
 import com.monarca.smarttravel.ui.DateField
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.viewmodels.TripViewModel
+import com.monarca.smarttravel.utils.AppError
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -106,11 +107,17 @@ fun CreateTripScreen(
         Log.d(TAG, "Mode actualització: pre-omplert viatge id=$tripId")
     }
 
-    // Mostra els errors del domini/repositori com a Toast
-    LaunchedEffect(viewModel.errorMessage) {
-        viewModel.errorMessage?.let {
-            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-            viewModel.clearError()
+    // Mostra els errors del domini/repositori com a Toast i gestiona la navegació en èxit
+    LaunchedEffect(viewModel.status) {
+        viewModel.status?.let { status ->
+            if (status != AppError.OK) {
+                Toast.makeText(context, status.stringRes, Toast.LENGTH_LONG).show()
+            } else {
+                navController.navigate("trips") {
+                    popUpTo("trips") { inclusive = true }
+                }
+            }
+            viewModel.clearStatus()
         }
     }
 
@@ -260,31 +267,24 @@ fun CreateTripScreen(
                     }
                     if (hasError) return@Button
 
-                    val success = if (isUpdateMode) {
-                        // Actualització
+                    if (isUpdateMode) {
                         viewModel.updateTrip(
                             tripId = tripId!!,
                             title = title.trim(),
                             description = description,
                             dateIn = startDate!!,
                             dateOut = endDate!!
-                        ).also { Log.i(TAG, "updateTrip: destí=$title, id=$tripId") }
+                        )
+                        Log.i(TAG, "updateTrip: destí=$title, id=$tripId")
                     } else {
                         // Creació
                         viewModel.addTrip(
                             title = title.trim(),
                             description = description,
                             dateIn = startDate!!,
-                            dateOut = endDate!!,
-                            userId = 1 // TODO: substituir per l'ID de l'usuari autenticat
-                        ).also { Log.i(TAG, "addTrip: destí=$title") }
-                    }
-
-                    if (success) {
-                        Log.i(TAG, "Viatge creat correctament -> destí=$title")
-                        navController.navigate("trips") {
-                            popUpTo("trips") { inclusive = true }
-                        }
+                            dateOut = endDate!!
+                        )
+                        Log.i(TAG, "addTrip: destí=$title")
                     }
                 },
                 modifier = Modifier
