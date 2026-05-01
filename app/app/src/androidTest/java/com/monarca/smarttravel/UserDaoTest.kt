@@ -143,7 +143,7 @@ class UserDaoTest {
         assertEquals(1, userTripsBefore.size)
 
         val cursorBefore = db.query("SELECT * FROM acces_history WHERE userId = '${user.userId}'", null)
-        assertTrue("Debería existir un registro de acceso", cursorBefore.moveToFirst())
+        assertTrue("Hauria d'existir un registre d'accés", cursorBefore.moveToFirst())
         cursorBefore.close()
 
         userDao.deleteUser(user)
@@ -151,10 +151,10 @@ class UserDaoTest {
         assertNull(userDao.getUserById(user.userId))
 
         val userTripsAfter = tripDao.getTripsByUser(user.userId).first()
-        assertTrue("La lista de viajes debería estar vacía", userTripsAfter.isEmpty())
+        assertTrue("La llista de viatges hauria d'estar buida", userTripsAfter.isEmpty())
 
         val cursorAfter = db.query("SELECT * FROM acces_history WHERE userId = '${user.userId}'", null)
-        assertFalse("No debería quedar ningún registro de acceso", cursorAfter.moveToFirst())
+        assertFalse("No hauria de quedar cap registre d'accés", cursorAfter.moveToFirst())
         cursorAfter.close()
     }
 }
