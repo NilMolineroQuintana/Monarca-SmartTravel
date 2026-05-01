@@ -42,7 +42,7 @@ The main goal of Sprint 03 was successfully achieved. The in-memory fake data so
 ---
 
 ## 3. Deviations
-
+No deviations have been made in the development and all is going acording to the planning.
 
 
 ---
@@ -75,11 +75,50 @@ The main goal of Sprint 03 was successfully achieved. The in-memory fake data so
 
 ### Room DAO Tests
 
+#### TripDaoTest
 
+| Test | Result |
+|------|--------|
+| `addTrip should add trip to list` | ✅ Pass |
+| `getTripById with valid id should return correct trip` | ✅ Pass |
+| `getTripById with invalid id should return null` | ✅ Pass |
+| `getAllTrips should return all inserted trips` | ✅ Pass |
+| `updateTrip should modify existing trip` | ✅ Pass |
+| `updateTrip with non existing id should return zero rows affected` | ✅ Pass |
+| `deleteTrip should remove only that trip` | ✅ Pass |
+| `deleteTrip with non existing id should return zero rows affected` | ✅ Pass |
+| `getTripsByUser should return only user trips` | ✅ Pass |
+| `updateImage should update trip image` | ✅ Pass |
+| `getNextUpcomingTrip should return closest future trip` | ✅ Pass |
 
-### Authentication Flow Tests
+#### ItineraryDaoTest
 
+| Test | Result |
+|------|--------|
+| `addItem should add item to trip` | ✅ Pass |
+| `getItemsByTrip should return only that trips items` | ✅ Pass |
+| `getItemsByTrip with invalid tripId should return empty list` | ✅ Pass |
+| `getItemById with valid id should return correct item` | ✅ Pass |
+| `getItemById with invalid id should return null` | ✅ Pass |
+| `updateItem should modify existing item` | ✅ Pass |
+| `updateItem with non existing id should return zero rows affected` | ✅ Pass |
+| `deleteItem should remove only that item` | ✅ Pass |
+| `deleteItem with non existing id should return zero rows affected` | ✅ Pass |
+| `deleteTrip should cascade delete its items` | ✅ Pass |
 
+#### UserDaoTest
+
+| Test | Result |
+|------|--------|
+| `insertUser and getUserById should return correct user` | ✅ Pass |
+| `getUserByUsername should return correct user` | ✅ Pass |
+| `updateUser should modify existing user` | ✅ Pass |
+| `deleteUser should remove user` | ✅ Pass |
+| `getAllUsers should return all inserted users` | ✅ Pass |
+| `registerAccess should not throw exception` | ✅ Pass |
+| `deleteUser should cascade delete trips and access history` | ✅ Pass |
 
 ### Fixes applied during testing
 
+- Registration of access logs does not break SQL constraints for valid users.
+- Implemented cascade deletion carefully to ensure that deleting a user correctly removes all associated trips and access history records from the local Room database to prevent orphaned data.
