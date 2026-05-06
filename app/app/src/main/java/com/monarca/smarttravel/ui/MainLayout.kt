@@ -1169,7 +1169,7 @@ fun getAppVersion(): String {
             @Suppress("DEPRECATION")
             context.packageManager.getPackageInfo(context.packageName, 0)
         }
-        packageInfo.versionName ?: "3.0.0"
+        packageInfo.versionName ?: "Unknown version"
     } catch (e: Exception) {
         stringResource(R.string.unknown)
     }
