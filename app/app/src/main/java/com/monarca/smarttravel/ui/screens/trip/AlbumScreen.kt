@@ -19,6 +19,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,12 +34,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.domain.model.Image
 import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.PopUp
+import com.monarca.smarttravel.ui.viewmodels.ImageViewModel
 import java.util.Calendar
 
 /**
@@ -54,30 +58,14 @@ import java.util.Calendar
 @Composable
 fun AlbumScreen(navController: NavController, tripId: Int) {
 
-    /*
-    // Mock-up data
-    val mockData = remember(tripId) {
-        when (tripId) {
-            1 -> // KYOTO
-                listOf(
-                    Image(id = 1, tripId = tripId, imageId = R.drawable.kyoto, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 2, tripId = tripId, imageId = R.drawable.kyoto_2, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 3, tripId = tripId, imageId = R.drawable.kyoto_3, dateUploaded = Calendar.getInstance().time),
-                    Image(id = 4, tripId = tripId, imageId = R.drawable.kyoto_4, dateUploaded = Calendar.getInstance().time)
-                )
-            2 -> // PARÍS
-                listOf(
-                    Image(id = 1, tripId = tripId, imageId = R.drawable.paris, dateUploaded = Calendar.getInstance().time),
-                )
-            3 -> // NOVA YORK
-                listOf(
-                    Image(id = 1, tripId = tripId, imageId = R.drawable.newyork, dateUploaded = Calendar.getInstance().time),
-                )
-            else -> // Per defecte
-                listOf()
-        }
+    val imageViewModel: ImageViewModel = viewModel()
+
+    val images by imageViewModel.images.collectAsStateWithLifecycle()
+
+    LaunchedEffect(tripId) {
+        imageViewModel.loadImagesByTrip(tripId)
     }
-    */
+
     val context = LocalContext.current
 
     // Imatge seleccionada per mostrar en el visor a pantalla completa
