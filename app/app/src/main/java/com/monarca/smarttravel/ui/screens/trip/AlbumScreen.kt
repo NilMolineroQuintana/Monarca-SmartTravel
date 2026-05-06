@@ -54,6 +54,7 @@ import java.util.Calendar
 @Composable
 fun AlbumScreen(navController: NavController, tripId: Int) {
 
+    /*
     // Mock-up data
     val mockData = remember(tripId) {
         when (tripId) {
@@ -76,7 +77,7 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
                 listOf()
         }
     }
-
+    */
     val context = LocalContext.current
 
     // Imatge seleccionada per mostrar en el visor a pantalla completa
@@ -120,6 +121,7 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.fillMaxSize()
         ) {
+            /*
             items(mockData) { img ->
                 Image(
                     painter = painterResource(id = img.imageId),
@@ -133,9 +135,11 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
                     contentScale = ContentScale.Crop
                 )
             }
+            */
         }
     }
 
+    /*
     // Visor d'imatge a pantalla completa; es tanca en fer clic sobre la imatge
     selectedImage?.let { img ->
         Dialog(
@@ -158,4 +162,5 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             }
         }
     }
+    */
 }

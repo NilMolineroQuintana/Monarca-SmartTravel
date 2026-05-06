@@ -1,5 +1,8 @@
 package com.monarca.smarttravel.domain.model
 
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 import java.util.Date
 
 /**
@@ -7,13 +10,24 @@ import java.util.Date
  *
  * @param id Identificador únic de la imatge.
  * @param tripId Identificador del viatge al qual pertany la imatge.
- * @param imageId Referència al recurs drawable de la imatge (R.drawable.*).
+ * @param imagePath Referència a la imatge.
  * @param dateUploaded Data en què es va pujar la imatge.
  */
+@Entity(
+    tableName = "images",
+    foreignKeys = [
+        ForeignKey(
+            entity = Trip::class,
+            parentColumns = ["id"],
+            childColumns = ["tripId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class Image(
-    val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     val tripId: Int,
-    val imageId: Int,
+    val imagePath: String,
     val dateUploaded: Date,
 ) {
     /**

@@ -4,13 +4,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.monarca.smarttravel.domain.model.AccesHistory
+import com.monarca.smarttravel.domain.model.Image
 import com.monarca.smarttravel.domain.model.ItineraryItem
 import com.monarca.smarttravel.domain.model.User
 import com.monarca.smarttravel.domain.model.Trip
 import com.monarca.smarttravel.utils.Converters
 
 @Database(
-    entities = [User::class, AccesHistory::class, ItineraryItem::class, Trip::class],
+    entities = [User::class, AccesHistory::class, ItineraryItem::class, Trip::class, Image::class],
     version = 2
 )
 @TypeConverters(Converters::class)
