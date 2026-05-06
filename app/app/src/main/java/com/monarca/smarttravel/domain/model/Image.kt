@@ -2,6 +2,7 @@ package com.monarca.smarttravel.domain.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.Date
 
@@ -15,6 +16,9 @@ import java.util.Date
  */
 @Entity(
     tableName = "images",
+    indices = [
+        Index(value = ["tripId"])
+    ],
     foreignKeys = [
         ForeignKey(
             entity = Trip::class,
@@ -25,7 +29,7 @@ import java.util.Date
     ]
 )
 data class Image(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val tripId: Int,
     val imagePath: String,
     val dateUploaded: Date,

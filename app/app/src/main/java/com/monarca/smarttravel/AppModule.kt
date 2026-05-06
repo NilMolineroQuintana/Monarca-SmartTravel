@@ -13,8 +13,11 @@ import com.monarca.smarttravel.domain.interfaces.AuthRepository
 import com.monarca.smarttravel.domain.interfaces.ItineraryRepository
 import com.monarca.smarttravel.domain.interfaces.TripRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.monarca.smarttravel.data.ImageDao
 import com.monarca.smarttravel.data.MonarcaDatabase
 import com.monarca.smarttravel.data.TripDao
+import com.monarca.smarttravel.data.repository.ImageRepositoryImpl
+import com.monarca.smarttravel.domain.interfaces.ImageRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -66,6 +69,11 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideImageRepository(imageDao: ImageDao): ImageRepository =
+        ImageRepositoryImpl(imageDao)
+
+    @Provides
+    @Singleton
     fun provideFirebaseAuth(): FirebaseAuth =
         FirebaseAuth.getInstance()
 
@@ -95,5 +103,11 @@ object AppModule {
     @Provides
     fun provideTripDao(db: MonarcaDatabase): TripDao {
         return db.tripDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideImageDao(db: MonarcaDatabase): ImageDao {
+        return db.imageDao()
     }
 }

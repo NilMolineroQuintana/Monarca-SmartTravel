@@ -19,4 +19,5 @@ abstract class MonarcaDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun itineraryDao(): ItineraryDao
     abstract fun tripDao(): TripDao
+    abstract fun imageDao(): ImageDao
 }
