@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -168,6 +169,7 @@ fun ProfileScreen(navController: NavController) {
         DatePickerPopUp(
             show = showDatePickerPopUp,
             title = stringResource(R.string.preferences_birthdate_popup_title),
+            blockFutureDates = true,
             onAccept = { newDate ->
                 user.value?.let { currentUser ->
                     authViewModel.updateUser(currentUser.copy(birthdate = newDate)) { error ->
@@ -189,6 +191,7 @@ fun ProfileScreen(navController: NavController) {
             placeholder = "123456789",
             initialValue = phoneNum,
             validator = { text -> validatePhone(text) },
+            keyboardType = KeyboardType.Phone,
             onAccept = { newPhone ->
                 user.value?.let { currentUser ->
                     authViewModel.updateUser(currentUser.copy(phoneNum = newPhone)) { error ->

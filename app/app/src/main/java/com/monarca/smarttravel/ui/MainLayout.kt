@@ -807,6 +807,7 @@ fun EditTextPopUp(
     acceptText: String = stringResource(R.string.accept),
     cancelText: String = stringResource(R.string.cancel),
     validator: (String) -> Boolean = { it.isNotBlank() },
+    keyboardType: KeyboardType = KeyboardType.Text,
     onAccept: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -825,6 +826,7 @@ fun EditTextPopUp(
                 placeholder = { Text(placeholder) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
                 modifier = Modifier.fillMaxWidth()
             )
         },
