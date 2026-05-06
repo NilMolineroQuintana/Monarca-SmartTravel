@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ImageRepository {
     fun getImagesByTrip(tripId: Int): Flow<List<Image>>
+    suspend fun addImage(image: Image): Int
+    suspend fun deleteImage(image: Image): Int
 }

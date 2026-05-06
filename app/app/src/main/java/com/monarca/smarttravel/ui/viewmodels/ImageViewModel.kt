@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.io.File
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,5 +38,21 @@ class ImageViewModel @Inject constructor(
     fun loadImagesByTrip(tripId: Int) {
         Log.d(TAG, "loadImagesByTrip: observant imatges del viatge id=$tripId")
         _currentTripId.value = tripId
+    }
+
+    fun addImage(tripId: Int, path: String) {
+        Log.d(TAG, "addImage: intent d'afegir imatge -> tripId=$tripId, path=$path")
+        val newImage = Image(tripId = tripId, imagePath = path, dateUploaded = Calendar.getInstance().time)
+        viewModelScope.launch {
+            repository.addImage(newImage)
+        }
+    }
+
+    fun deleteImage(image: Image) {
+        viewModelScope.launch {
+            File(image.imagePath).delete()
+            repository.deleteImage(image)
+        }
+
     }
 }

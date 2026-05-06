@@ -1,6 +1,12 @@
 package com.monarca.smarttravel.ui.screens.trip
 
+import android.Manifest
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,15 +40,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.domain.model.Image
 import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.PopUp
 import com.monarca.smarttravel.ui.viewmodels.ImageViewModel
+import com.monarca.smarttravel.utils.saveImageToInternalStorage
+import java.io.File
 import java.util.Calendar
 
 /**
@@ -58,7 +68,7 @@ import java.util.Calendar
 @Composable
 fun AlbumScreen(navController: NavController, tripId: Int) {
 
-    val imageViewModel: ImageViewModel = viewModel()
+    val imageViewModel: ImageViewModel = hiltViewModel()
 
     val images by imageViewModel.images.collectAsStateWithLifecycle()
 
@@ -68,8 +78,18 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
 
     val context = LocalContext.current
 
+    val imageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia()
+    ) { uris: List<Uri> ->
+        uris.forEach { uri ->
+            val path = saveImageToInternalStorage(context, uri)
+            if (path != null) imageViewModel.addImage(tripId, path)
+        }
+    }
+
     // Imatge seleccionada per mostrar en el visor a pantalla completa
     var selectedImage by remember { mutableStateOf<Image?>(null) }
+    var imageToDelete by remember { mutableStateOf<Image?>(null) }
 
     // Controla la visibilitat del diàleg de confirmació d'eliminació
     var showPopUp by remember { mutableStateOf(false) }
@@ -78,13 +98,10 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
         topBar = { MyTopBar(stringResource(R.string.album), onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) },
         floatingActionButton = {
-            // Botó per pujar noves imatges (funcionalitat pendent d'implementar)
             FloatingActionButton(onClick = {
-                Toast.makeText(
-                    context,
-                    R.string.coming_soon,
-                    Toast.LENGTH_SHORT
-                ).show()
+                imageLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
             }) {
                 Icon(imageVector = Icons.Filled.Upload, contentDescription = null)
             }
@@ -97,8 +114,15 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             title = stringResource(R.string.deleteImage),
             text = stringResource(R.string.popUp_deleteImage_text),
             acceptText = stringResource(R.string.delete),
-            onAccept = { showPopUp = false },
-            onDismiss = { showPopUp = false }
+            onAccept = {
+                imageToDelete?.let { imageViewModel.deleteImage(it) }
+                showPopUp = false
+                imageToDelete = null
+            },
+            onDismiss = {
+                showPopUp = false
+                imageToDelete = null
+            }
         )
 
         // Graella de 3 columnes amb les imatges del viatge
@@ -109,25 +133,25 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            /*
-            items(mockData) { img ->
-                Image(
-                    painter = painterResource(id = img.imageId),
+            items(images, key = { it.id }) { img ->
+                AsyncImage(
+                    model = File(img.imagePath),
                     contentDescription = null,
                     modifier = Modifier
                         .aspectRatio(1f)
                         .combinedClickable(
-                            onClick = { selectedImage = img },       // Obre el visor
-                            onLongClick = { showPopUp = true }      // Demana confirmació per eliminar
+                            onClick = { selectedImage = img },
+                            onLongClick = {
+                                imageToDelete = img
+                                showPopUp = true
+                            }
                         ),
                     contentScale = ContentScale.Crop
                 )
             }
-            */
         }
     }
 
-    /*
     // Visor d'imatge a pantalla completa; es tanca en fer clic sobre la imatge
     selectedImage?.let { img ->
         Dialog(
@@ -141,8 +165,8 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
                     .clickable { selectedImage = null },
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = img.imageId),
+                AsyncImage(
+                    model = File(img.imagePath),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(0.95f),
                     contentScale = ContentScale.Fit
@@ -150,5 +174,4 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             }
         }
     }
-    */
 }
