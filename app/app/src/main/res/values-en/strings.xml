@@ -183,8 +183,11 @@
     <string name="firebase_error">An unknown error occurred. Please check your internet connection.</string>
     <string name="I_have_verified">I\'ve already verified it</string>
     <string name="select_country">Select a country</string>
-    <string name="search">Search…</string>
+    <string name="search">Search</string>
     <string name="country">Country</string>
     <string name="recieve_emails_description">I would like to receive emails with news and promotions.</string>
     <string name="recieve_emails">Receive emails</string>
+    <string name="book">Book</string>
+    <string name="where_book">Where do you want to stay?</string>
+    <string name="when_book">When are you going?</string>
 </resources>

@@ -217,6 +217,9 @@ fun MyBottomBar(navController: NavController) {
     // Rutes que pertanyen a la secció de viatges
     val tripChilds = listOf("trips", "itinerary", "plan", "album", "createTrip")
 
+    // Rutes que pertanyen a la secció de reserva
+    val bookChilds = listOf("book", "bookDetails")
+
     // Rutes que pertanyen a la secció de perfil/preferències
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
 
@@ -254,6 +257,12 @@ fun MyBottomBar(navController: NavController) {
                 icon = Icons.Default.Luggage,
                 label = stringResource(R.string.bottom_menu_trips),
                 onClick = { if (currentRoute != "trips") navController.navigate("trips") }
+            )
+            CustomNavItem(
+                selected = baseRoute in bookChilds,
+                icon = Icons.Default.CalendarToday,
+                label = stringResource(R.string.book),
+                onClick = { if (currentRoute != "book") navController.navigate("book") }
             )
             CustomNavItem(
                 selected = baseRoute in profileChilds,

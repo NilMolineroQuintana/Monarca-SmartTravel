@@ -183,8 +183,11 @@
     <string name="firebase_error">N\'hi ha hagut algun error desconegut. Revisa la teva connexió a internet.</string>
     <string name="I_have_verified">Ja l\'he verificat</string>
     <string name="select_country">Selecciona un país</string>
-    <string name="search">Cerca…</string>
+    <string name="search">Cerca</string>
     <string name="country">Pais</string>
     <string name="recieve_emails_description">Vull rebre correus electrònics amb novetats i promocions.</string>
     <string name="recieve_emails">Rebre emails</string>
+    <string name="book">Reservar</string>
+    <string name="where_book">On vols allotjar-te?</string>
+    <string name="when_book">Quan hi vas?</string>
 </resources>

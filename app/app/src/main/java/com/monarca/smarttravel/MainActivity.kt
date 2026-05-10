@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.monarca.smarttravel.data.repository.PreferencesManager
+import com.monarca.smarttravel.ui.screens.booking.BookingScreen
 import com.monarca.smarttravel.ui.screens.preferences.AboutUsScreen
 import com.monarca.smarttravel.ui.screens.preferences.ProfileScreen
 import com.monarca.smarttravel.ui.screens.preferences.TermsAndConditionsScreen
@@ -109,6 +110,9 @@ fun AppNavigation() {
             }
             composable("trips") {
                 TripsScreen(navController)
+            }
+            composable("book") {
+                BookingScreen(navController)
             }
             composable("profile") {
                 ProfileScreen(navController)

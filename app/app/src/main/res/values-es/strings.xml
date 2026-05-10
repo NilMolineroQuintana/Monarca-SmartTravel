@@ -183,8 +183,11 @@
     <string name="firebase_error">Ha ocurrido un error desconocido. Revisa tu conexión a internet.</string>
     <string name="I_have_verified">Ya lo he verificado</string>
     <string name="select_country">Selecciona un país</string>
-    <string name="search">Buscar…</string>
+    <string name="search">Buscar</string>
     <string name="country">País</string>
     <string name="recieve_emails_description">Deseo recibir correos electrónicos con novedades y promociones.</string>
     <string name="recieve_emails">Recibir emails</string>
+    <string name="book">Reservar</string>
+    <string name="where_book">¿Dónde quieres alojarte?</string>
+    <string name="when_book">¿Cuándo vas?</string>
 </resources>
