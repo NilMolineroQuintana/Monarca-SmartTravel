@@ -17,13 +17,21 @@ import com.monarca.smarttravel.data.ImageDao
 import com.monarca.smarttravel.data.MonarcaDatabase
 import com.monarca.smarttravel.data.TripDao
 import com.monarca.smarttravel.data.repository.ImageRepositoryImpl
+import com.monarca.smarttravel.data.remote.HotelAPIService
+import com.monarca.smarttravel.data.repository.BookingRepositoryImpl
+import com.monarca.smarttravel.domain.interfaces.BookingRepository
 import com.monarca.smarttravel.domain.interfaces.ImageRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+import kotlin.jvm.java
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -74,6 +82,11 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideBookingRepository(hotelAPIService: HotelAPIService): BookingRepository =
+        BookingRepositoryImpl(hotelAPIService)
+
+    @Provides
+    @Singleton
     fun provideFirebaseAuth(): FirebaseAuth =
         FirebaseAuth.getInstance()
 
@@ -86,6 +99,26 @@ object AppModule {
             "monarca_db"
         ).build()
     }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("http://15.224.84.148:8090/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(
+                OkHttpClient.Builder()
+                    .addInterceptor(HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    })
+                    .build()
+            )
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): HotelAPIService =
+        retrofit.create(HotelAPIService::class.java)
 
     @Singleton
     @Provides

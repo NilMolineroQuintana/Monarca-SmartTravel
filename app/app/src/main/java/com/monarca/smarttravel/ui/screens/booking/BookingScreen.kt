@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.monarca.smarttravel.R
@@ -50,25 +51,27 @@ import com.monarca.smarttravel.ui.AppDimensions
 import com.monarca.smarttravel.ui.DateField
 import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
+import com.monarca.smarttravel.ui.viewmodels.BookingViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-val cities = listOf(
-    "Paris",
-    "Barcelona",
-    "Londres"
+val cities = mapOf(
+    "Paris" to "PAR",
+    "Barcelona" to "BCN",
+    "Londres" to "LON"
 )
 
-private const val DATE_FORMAT = "dd/MM/yyyy"
+private const val DATE_FORMAT = "yyyy-MM-dd"
 
 @Composable
 fun BookingScreen(navController: NavController) {
+
+    val viewModel: BookingViewModel = hiltViewModel()
+
     var selected by rememberSaveable { mutableStateOf("") }
     var startDateText by rememberSaveable() { mutableStateOf("") }
     var endDateText by rememberSaveable() { mutableStateOf("") }
-    var startDate     by remember { mutableStateOf<Date?>(null) }
-    var endDate       by remember { mutableStateOf<Date?>(null) }
 
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
@@ -95,7 +98,7 @@ fun BookingScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(bottom = AppDimensions.PaddingMedium)
             ) {
-                cities.forEach { city ->
+                cities.keys.forEach { city ->
                     CityCard(
                         city = city,
                         modifier = Modifier.weight(1f),
@@ -121,7 +124,6 @@ fun BookingScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     onDateSelected = { dateStr ->
                         startDateText = dateStr
-                        startDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                     },
                     blockPastDates = true,
                     showTime = false
@@ -132,7 +134,6 @@ fun BookingScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     onDateSelected = { dateStr ->
                         endDateText = dateStr
-                        endDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                     },
                     blockPastDates = true,
                     showTime = false
@@ -147,7 +148,14 @@ fun BookingScreen(navController: NavController) {
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
-                onClick = { }
+                onClick = {
+                    val cityCode = cities[selected] ?: ""
+
+                    val apiStartDate = startDateText.split("/").reversed().joinToString("-")
+                    val apiEndDate = endDateText.split("/").reversed().joinToString("-")
+
+                    viewModel.getAvailable(apiStartDate, apiEndDate, cityCode)
+                }
             ) {
                 Text(
                     text = stringResource(R.string.search),
