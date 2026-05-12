@@ -2,15 +2,11 @@ package com.monarca.smarttravel.ui.screens.trip
 
 import android.Manifest
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -25,12 +21,15 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
@@ -46,26 +45,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.domain.model.Image
 import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
-import com.monarca.smarttravel.ui.PopUp
 import com.monarca.smarttravel.ui.viewmodels.ImageViewModel
 import com.monarca.smarttravel.utils.saveImageToInternalStorage
 import java.io.File
-import java.util.Calendar
-import kotlin.let
 
 /**
  * Pantalla de l'àlbum fotogràfic associat a un viatge concret.
@@ -134,8 +128,8 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
     var selectedImage by remember { mutableStateOf<Image?>(null) }
     var imageToDelete by remember { mutableStateOf<Image?>(null) }
 
-    // Controla la visibilitat del diàleg de confirmació d'eliminació
-    var showPopUp by remember { mutableStateOf(false) }
+    var selectedIds by remember { mutableStateOf(emptySet<Int>()) }
+    val inSelectionMode = selectedIds.isNotEmpty()
 
 
     Scaffold(
@@ -146,6 +140,19 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                if (inSelectionMode) {
+                    SmallFloatingActionButton(
+                        onClick = {
+                            selectedIds.forEach { id ->
+                                images.find { it.id == id }?.let { imageViewModel.deleteImage(it) }
+                            }
+                            selectedIds = emptySet()
+                        },
+                        containerColor = MaterialTheme.colorScheme.error
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = null, tint = Color.White)
+                    }
+                }
                 // Botó petit: càmera
                 SmallFloatingActionButton(onClick = {
                     permissionLauncher.launch(Manifest.permission.CAMERA)
@@ -167,23 +174,6 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
         },
     ) { innerPadding ->
 
-        // Diàleg de confirmació per eliminar una imatge
-        PopUp(
-            show = showPopUp,
-            title = stringResource(R.string.deleteImage),
-            text = stringResource(R.string.popUp_deleteImage_text),
-            acceptText = stringResource(R.string.delete),
-            onAccept = {
-                imageToDelete?.let { imageViewModel.deleteImage(it) }
-                showPopUp = false
-                imageToDelete = null
-            },
-            onDismiss = {
-                showPopUp = false
-                imageToDelete = null
-            }
-        )
-
         // Graella de 3 columnes amb les imatges del viatge
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
@@ -193,20 +183,37 @@ fun AlbumScreen(navController: NavController, tripId: Int) {
             modifier = Modifier.fillMaxSize()
         ) {
             items(images, key = { it.id }) { img ->
-                AsyncImage(
-                    model = File(img.imagePath),
-                    contentDescription = null,
+                Box(
                     modifier = Modifier
                         .aspectRatio(1f)
                         .combinedClickable(
-                            onClick = { selectedImage = img },
-                            onLongClick = {
-                                imageToDelete = img
-                                showPopUp = true
-                            }
-                        ),
-                    contentScale = ContentScale.Crop
-                )
+                            onClick = {
+                                if (inSelectionMode)
+                                    selectedIds = if (img.id in selectedIds)
+                                        selectedIds - img.id else selectedIds + img.id
+                                else selectedImage = img
+                            },
+                            onLongClick = { selectedIds = selectedIds + img.id }
+                        )
+                ) {
+                    AsyncImage(
+                        model = File(img.imagePath),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                    if (img.id in selectedIds) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.45f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.White,
+                                modifier = Modifier.size(32.dp))
+                        }
+                    }
+                }
             }
         }
     }
