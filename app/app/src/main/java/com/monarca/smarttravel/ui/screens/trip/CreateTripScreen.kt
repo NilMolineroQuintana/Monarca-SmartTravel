@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationCity
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -39,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.ui.AppDimensions
 import com.monarca.smarttravel.ui.DateField
+import com.monarca.smarttravel.ui.ImagePickerDialog
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.viewmodels.TripViewModel
 import com.monarca.smarttravel.utils.AppError
@@ -77,12 +80,15 @@ fun CreateTripScreen(
     val context = LocalContext.current
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
+    var showImagePicker by remember { mutableStateOf(false) }
+
     var title       by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var startDateText by remember { mutableStateOf("") }
     var endDateText   by remember { mutableStateOf("") }
     var startDate     by remember { mutableStateOf<Date?>(null) }
     var endDate       by remember { mutableStateOf<Date?>(null) }
+    var imageURL      by remember { mutableStateOf<String?>(null) }
 
     // Errors en línia per a cada camp (validació capa UI)
     var titleError       by remember { mutableStateOf<String?>(null) }
@@ -104,6 +110,7 @@ fun CreateTripScreen(
         endDateText   = sdf.format(existing.dateOut)
         startDate     = existing.dateIn
         endDate       = existing.dateOut
+        imageURL = existing.imageURL
         Log.d(TAG, "Mode actualització: pre-omplert viatge id=$tripId")
     }
 
@@ -250,6 +257,35 @@ fun CreateTripScreen(
                 )
             }
 
+            if (tripId != null) {
+
+                Spacer(Modifier.height(AppDimensions.PaddingMedium))
+
+                Button(
+                    onClick = { showImagePicker = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                ) {
+                    Row(
+                    ) {
+                        Icon(imageVector = Icons.Default.Upload, contentDescription = null)
+                        Text(text = stringResource(R.string.upload_image))
+                    }
+                }
+            }
+
+            if (tripId != null && showImagePicker) {
+                ImagePickerDialog(
+                    tripId = tripId,
+                    onImageSelected = { path ->
+                        imageURL = path
+                        showImagePicker = false
+                    },
+                    onDismiss = { showImagePicker = false }
+                )
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             // ── Botó de crear / guardar ──────────────────────────────────────
@@ -273,7 +309,8 @@ fun CreateTripScreen(
                             title = title.trim(),
                             description = description,
                             dateIn = startDate!!,
-                            dateOut = endDate!!
+                            dateOut = endDate!!,
+                            imageURL = imageURL
                         )
                         Log.i(TAG, "updateTrip: destí=$title, id=$tripId")
                     } else {
@@ -282,7 +319,7 @@ fun CreateTripScreen(
                             title = title.trim(),
                             description = description,
                             dateIn = startDate!!,
-                            dateOut = endDate!!
+                            dateOut = endDate!!,
                         )
                         Log.i(TAG, "addTrip: destí=$title")
                     }

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
  * @param description Descripció del viatge.
  * @param dateIn Data d'inici del viatge.
  * @param dateOut Data de finalització del viatge.
- * @param imageResId Recurs drawable opcional associat al destí.
+ * @param imageURL Recurs drawable opcional associat al destí.
  * @param userId Identificador únic del propietari del viatge.
  */
 
@@ -39,7 +39,7 @@ data class Trip(
     val description: String,
     val dateIn: Date,
     val dateOut: Date,
-    val imageResId: Int? = null,
+    val imageURL: String? = null,
     val userId: String
 ) {
     /**

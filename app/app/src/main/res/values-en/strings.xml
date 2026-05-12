@@ -187,4 +187,5 @@
     <string name="country">Country</string>
     <string name="recieve_emails_description">I would like to receive emails with news and promotions.</string>
     <string name="recieve_emails">Receive emails</string>
+    <string name="upload_image">Upload image</string>
 </resources>

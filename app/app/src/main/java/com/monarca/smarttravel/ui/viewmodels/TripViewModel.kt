@@ -81,23 +81,6 @@ class TripViewModel @Inject constructor(
     )
 
     /**
-     * Mapeja paraules clau del destí a un drawable existent al projecte.
-     * Retorna null si no coincideix cap destí conegut.
-     */
-    fun resolveImageForDestination(destination: String): Int? {
-        val lower = destination.lowercase()
-        return when {
-            lower.contains("kyoto") || lower.contains("japó") || lower.contains("japo") ||
-                    lower.contains("japon") || lower.contains("japan") -> R.drawable.kyoto
-            lower.contains("paris") || lower.contains("parís") ||
-                    lower.contains("frança") || lower.contains("france") || lower.contains("francia") -> R.drawable.paris
-            lower.contains("new york") || lower.contains("nova york") ||
-                    lower.contains("nyc") -> R.drawable.newyork
-            else -> null
-        }
-    }
-
-    /**
      * Valida els camps d'un viatge i retorna el [AppError] corresponent.
      * Retorna [AppError.OK] si totes les validacions passen.
      */
@@ -148,7 +131,7 @@ class TripViewModel @Inject constructor(
                     description = description,
                     dateIn = dateIn,
                     dateOut = dateOut,
-                    imageResId = resolveImageForDestination(title),
+                    imageURL = null,
                     userId = userId
                 )
                 val resultCode = repository.addTrip(trip)
@@ -171,7 +154,8 @@ class TripViewModel @Inject constructor(
         title: String,
         description: String,
         dateIn: Date,
-        dateOut: Date
+        dateOut: Date,
+        imageURL: String? = null
     ) {
         val validation = validateTripFields(title, description, dateIn, dateOut)
         if (validation != AppError.OK) {
@@ -194,7 +178,7 @@ class TripViewModel @Inject constructor(
                     description = description,
                     dateIn = dateIn,
                     dateOut = dateOut,
-                    imageResId = resolveImageForDestination(title) ?: existing.imageResId
+                    imageURL = imageURL
                 )
                 val result = repository.updateTrip(updated)
 

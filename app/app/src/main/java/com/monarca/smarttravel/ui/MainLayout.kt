@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +25,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -67,6 +71,7 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -91,10 +96,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import coil.compose.AsyncImage
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.domain.model.Trip
+import com.monarca.smarttravel.ui.viewmodels.ImageViewModel
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -362,7 +372,7 @@ fun TripCard(
         else -> stringResource(R.string.viatge_realitzat)
     }
 
-    val hasImage = trip.imageResId != null
+    val hasImage = trip.imageURL != null
 
     val headerColor = if (hasImage) Color.White else MaterialTheme.colorScheme.primary
     val textColor = if (hasImage) Color.White else MaterialTheme.colorScheme.onSurface
@@ -442,9 +452,9 @@ fun TripCard(
                 .fillMaxWidth()
                 .height(150.dp)
         ) {
-            if (trip.imageResId != null) {
-                Image(
-                    painter = painterResource(id = trip.imageResId),
+            if (trip.imageURL != null) {
+                AsyncImage(
+                    model = trip.imageURL,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -1407,6 +1417,47 @@ fun CountryPickerPopUp(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.cancel))
             }
+        }
+    )
+}
+
+@Composable
+fun ImagePickerDialog(
+    tripId: Int,
+    onImageSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val imageViewModel: ImageViewModel = hiltViewModel()
+    val images by imageViewModel.images.collectAsStateWithLifecycle()
+
+    LaunchedEffect(tripId) {
+        imageViewModel.loadImagesByTrip(tripId)
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Selecciona una foto de portada") },
+        text = {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items(images, key = { it.id }) { img ->
+                    AsyncImage(
+                        model = File(img.imagePath),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onImageSelected(img.imagePath) }
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
     )
 }

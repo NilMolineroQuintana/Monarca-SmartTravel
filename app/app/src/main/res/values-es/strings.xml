@@ -187,4 +187,5 @@
     <string name="country">País</string>
     <string name="recieve_emails_description">Deseo recibir correos electrónicos con novedades y promociones.</string>
     <string name="recieve_emails">Recibir emails</string>
+    <string name="upload_image">Subir imagen</string>
 </resources>
