@@ -188,4 +188,5 @@
     <string name="recieve_emails_description">Vull rebre correus electrònics amb novetats i promocions.</string>
     <string name="recieve_emails">Rebre emails</string>
     <string name="upload_image">Pujar imatge</string>
+    <string name="change_header_image">Cambiar imatge de portada</string>
 </resources>

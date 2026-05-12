@@ -215,7 +215,7 @@ class TripViewModel @Inject constructor(
     /**
      * Canvia la imatge d'un viatge.
      */
-    fun changeTripImage(tripId: Int, newImageResId: Int?) {
+    fun changeTripImage(tripId: Int, newImageResId: String?) {
         viewModelScope.launch {
             val resultCode = repository.updateImage(tripId, newImageResId)
             if (resultCode == AppError.OK.code) {

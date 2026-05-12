@@ -74,7 +74,7 @@ class TripRepositoryImpl @Inject constructor(
      * Actualitza únicament la imatge d'un viatge existent.
      * @return El nombre de files afectades.
      */
-    override suspend fun updateImage(tripId: Int, newImageResId: Int?): Int {
+    override suspend fun updateImage(tripId: Int, newImageResId: String?): Int {
         val affected = tripDao.updateImage(tripId, newImageResId)
         return if (affected > 0) AppError.OK.code else AppError.NON_EXISTING_TRIP.code
     }

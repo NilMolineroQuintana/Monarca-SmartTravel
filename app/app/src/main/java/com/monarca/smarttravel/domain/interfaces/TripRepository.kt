@@ -13,6 +13,6 @@ interface TripRepository {
     suspend fun addTrip(trip: Trip): Int
     suspend fun updateTrip(trip: Trip): Int
     suspend fun deleteTrip(tripId: Int): Int
-    suspend fun updateImage(tripId: Int, newImageResId: Int?): Int
+    suspend fun updateImage(tripId: Int, newImageResId: String?): Int
     suspend fun getNextUpcomingTrip(): Trip?
 }

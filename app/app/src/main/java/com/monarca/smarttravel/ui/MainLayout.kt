@@ -1423,6 +1423,7 @@ fun CountryPickerPopUp(
 
 @Composable
 fun ImagePickerDialog(
+    show: Boolean,
     tripId: Int,
     onImageSelected: (String) -> Unit,
     onDismiss: () -> Unit
@@ -1434,32 +1435,34 @@ fun ImagePickerDialog(
         imageViewModel.loadImagesByTrip(tripId)
     }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Selecciona una foto de portada") },
-        text = {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(images, key = { it.id }) { img ->
-                    AsyncImage(
-                        model = File(img.imagePath),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .aspectRatio(1f)
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable { onImageSelected(img.imagePath) }
-                    )
+    if (show) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Selecciona una foto de portada") },
+            text = {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    items(images, key = { it.id }) { img ->
+                        AsyncImage(
+                            model = File(img.imagePath),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable { onImageSelected(img.imagePath) }
+                        )
+                    }
                 }
+            },
+            confirmButton = {
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
             }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
-        }
-    )
+        )
+    }
 }
 
 @Preview(showBackground = true)

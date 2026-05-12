@@ -80,15 +80,12 @@ fun CreateTripScreen(
     val context = LocalContext.current
     val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
 
-    var showImagePicker by remember { mutableStateOf(false) }
-
     var title       by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var startDateText by remember { mutableStateOf("") }
     var endDateText   by remember { mutableStateOf("") }
     var startDate     by remember { mutableStateOf<Date?>(null) }
     var endDate       by remember { mutableStateOf<Date?>(null) }
-    var imageURL      by remember { mutableStateOf<String?>(null) }
 
     // Errors en línia per a cada camp (validació capa UI)
     var titleError       by remember { mutableStateOf<String?>(null) }
@@ -110,7 +107,6 @@ fun CreateTripScreen(
         endDateText   = sdf.format(existing.dateOut)
         startDate     = existing.dateIn
         endDate       = existing.dateOut
-        imageURL = existing.imageURL
         Log.d(TAG, "Mode actualització: pre-omplert viatge id=$tripId")
     }
 
@@ -257,35 +253,6 @@ fun CreateTripScreen(
                 )
             }
 
-            if (tripId != null) {
-
-                Spacer(Modifier.height(AppDimensions.PaddingMedium))
-
-                Button(
-                    onClick = { showImagePicker = true },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                ) {
-                    Row(
-                    ) {
-                        Icon(imageVector = Icons.Default.Upload, contentDescription = null)
-                        Text(text = stringResource(R.string.upload_image))
-                    }
-                }
-            }
-
-            if (tripId != null && showImagePicker) {
-                ImagePickerDialog(
-                    tripId = tripId,
-                    onImageSelected = { path ->
-                        imageURL = path
-                        showImagePicker = false
-                    },
-                    onDismiss = { showImagePicker = false }
-                )
-            }
-
             Spacer(modifier = Modifier.height(24.dp))
 
             // ── Botó de crear / guardar ──────────────────────────────────────
@@ -310,7 +277,6 @@ fun CreateTripScreen(
                             description = description,
                             dateIn = startDate!!,
                             dateOut = endDate!!,
-                            imageURL = imageURL
                         )
                         Log.i(TAG, "updateTrip: destí=$title, id=$tripId")
                     } else {

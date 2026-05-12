@@ -66,6 +66,7 @@ import com.monarca.smarttravel.R
 import com.monarca.smarttravel.domain.model.ItineraryItem
 import com.monarca.smarttravel.domain.model.Trip
 import com.monarca.smarttravel.ui.AppDimensions
+import com.monarca.smarttravel.ui.ImagePickerDialog
 import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.OptionsPopUp
@@ -158,6 +159,8 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
 
     var selectedDay by remember { mutableStateOf<String?>(null) }
 
+    var imagePopUp by remember { mutableStateOf(false) }
+
     LaunchedEffect(tripId) {
         tripViewModel.loadTrip(tripId)
         itineraryViewModel.loadItemsByTrip(tripId)
@@ -196,6 +199,10 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                         onClick = { navController.navigate("createTrip?tripId=$tripId") }
                     ),
                     TopBarAction(
+                        stringResource(R.string.change_header_image),
+                        onClick = { imagePopUp = true }
+                    ),
+                    TopBarAction(
                         stringResource(R.string.deleteTrip),
                         onClick = { showPopUp = true }
                     ),
@@ -231,6 +238,16 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                 navController.popBackStack()
             },
             onDismiss = { showPopUp = false }
+        )
+
+        ImagePickerDialog (
+            show = imagePopUp,
+            tripId = trip?.id ?: return@Scaffold,
+            onDismiss = { imagePopUp = false },
+            onImageSelected = {
+                tripViewModel.changeTripImage(tripId, it)
+                imagePopUp = false
+            }
         )
 
         LazyColumn(
