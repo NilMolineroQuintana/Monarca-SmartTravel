@@ -67,6 +67,7 @@ dependencies {
     implementation("androidx.room:room-runtime:2.8.4")
     implementation("androidx.room:room-ktx:2.8.4")
     implementation(libs.firebase.auth.ktx)
+    implementation("io.coil-kt:coil-compose:2.6.0")
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging)

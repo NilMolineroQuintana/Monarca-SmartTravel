@@ -73,6 +73,7 @@ import com.monarca.smarttravel.ui.PopUp
 import com.monarca.smarttravel.ui.TopBarAction
 import com.monarca.smarttravel.ui.viewmodels.ItineraryViewModel
 import com.monarca.smarttravel.ui.viewmodels.TripViewModel
+import com.monarca.smarttravel.utils.Constants
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -493,7 +494,7 @@ fun ItineraryItemComponent(
                     text = enterTime,
                     style = MaterialTheme.typography.titleMedium,
                 )
-                // Contenidor de la icona amb color de fons personalitzat per tipus de pla
+
                 Surface(
                     modifier = Modifier.size(35.dp),
                     shape = RoundedCornerShape(12.dp),
@@ -517,8 +518,8 @@ fun ItineraryItemComponent(
                     maxLines = 1,
                     modifier = Modifier.basicMarquee(
                         iterations = Int.MAX_VALUE,
-                        repeatDelayMillis = 1000,
-                        initialDelayMillis = 5000
+                        repeatDelayMillis = Constants.marqueeRepeat,
+                        initialDelayMillis = Constants.marqueeDelay
                     )
                 )
                 Text(text = secondaryText, style = MaterialTheme.typography.bodySmall)

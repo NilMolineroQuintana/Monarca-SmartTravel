@@ -21,6 +21,7 @@ import com.monarca.smarttravel.data.remote.HotelAPIService
 import com.monarca.smarttravel.data.repository.BookingRepositoryImpl
 import com.monarca.smarttravel.domain.interfaces.BookingRepository
 import com.monarca.smarttravel.domain.interfaces.ImageRepository
+import com.monarca.smarttravel.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -104,7 +105,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit =
         Retrofit.Builder()
-            .baseUrl("http://15.224.84.148:8090/")
+            .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(
                 OkHttpClient.Builder()

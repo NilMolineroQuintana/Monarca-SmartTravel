@@ -27,6 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.monarca.smarttravel.R
@@ -51,6 +54,7 @@ import com.monarca.smarttravel.ui.AppDimensions
 import com.monarca.smarttravel.ui.DateField
 import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
+import com.monarca.smarttravel.ui.viewmodels.BookingUiState
 import com.monarca.smarttravel.ui.viewmodels.BookingViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -73,7 +77,21 @@ fun BookingScreen(navController: NavController) {
     var startDateText by rememberSaveable() { mutableStateOf("") }
     var endDateText by rememberSaveable() { mutableStateOf("") }
 
-    val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is BookingUiState.Success -> {
+                navController.navigate("bookList")
+                viewModel.resetState()
+            }
+            is BookingUiState.Error -> {
+                Log.e("BookingScreen", "Error: ${(uiState as BookingUiState.Error).error.name}")
+                viewModel.resetState()
+            }
+            else -> {}
+        }
+    }
 
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.book)) },
