@@ -71,6 +71,7 @@ fun HomeScreen(
                 TripCard(
                     trip = nextTrip!!,
                     navController = navController,
+                    tripViewModel = viewModel,
                     onDeleted = { viewModel.deleteTrip(nextTrip!!.id) }
                 )
             }

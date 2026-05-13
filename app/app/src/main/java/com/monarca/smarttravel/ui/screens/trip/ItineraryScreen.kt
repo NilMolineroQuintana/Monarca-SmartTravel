@@ -72,6 +72,7 @@ import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.OptionsPopUp
 import com.monarca.smarttravel.ui.PopUp
 import com.monarca.smarttravel.ui.TopBarAction
+import com.monarca.smarttravel.ui.fileValidation
 import com.monarca.smarttravel.ui.viewmodels.ItineraryViewModel
 import com.monarca.smarttravel.ui.viewmodels.TripViewModel
 import java.text.SimpleDateFormat
@@ -254,7 +255,7 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            item { Header(trip) }
+            item { Header(trip, tripViewModel) }
 
             if (numItems == 0) {
                 item {
@@ -310,17 +311,27 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
  * un degradat fosc a la part inferior, i el nom del destí amb les dates del viatge.
  */
 @Composable
-fun Header(trip: Trip?) {
+fun Header(trip: Trip?, tripViewModel: TripViewModel) {
     // Fallback per si el viatge no s'ha trobat (no hauria de passar en condicions normals)
     val destinationName = trip?.title ?: stringResource(R.string.trip)
     val headerImg = trip?.imageURL
+
+    val isImageValid = fileValidation(
+        headerImg,
+        onInvalidate = {
+            trip?.id?.let { safeId ->
+                tripViewModel.changeTripImage(safeId, null)
+            }
+        }
+    )
+
     Box(
         contentAlignment = Alignment.BottomStart,
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
     ) {
-        if (headerImg != null) {
+        if (isImageValid && headerImg != null) {
             AsyncImage(
                 model = headerImg,
                 contentDescription = null,

@@ -104,6 +104,9 @@ import coil.compose.AsyncImage
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.domain.model.Trip
 import com.monarca.smarttravel.ui.viewmodels.ImageViewModel
+import com.monarca.smarttravel.ui.viewmodels.TripViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -349,6 +352,7 @@ fun TripCard(
     trip: Trip,
     navController: NavController? = null,
     onDeleted: (() -> Unit)? = null,
+    tripViewModel: TripViewModel,
     modifier: Modifier = Modifier
 ) {
     val TAG = "TripCard"
@@ -373,6 +377,11 @@ fun TripCard(
     }
 
     val hasImage = trip.imageURL != null
+            && fileValidation(
+        trip.imageURL,
+        onInvalidate = {
+            tripViewModel.changeTripImage(trip.id,null)
+    })
 
     val headerColor = if (hasImage) Color.White else MaterialTheme.colorScheme.primary
     val textColor = if (hasImage) Color.White else MaterialTheme.colorScheme.onSurface
@@ -1463,6 +1472,43 @@ fun ImagePickerDialog(
             }
         )
     }
+}
+
+/**
+ * Valida la existencia de una imagen y ejecuta una acción si no es válida.
+ *
+ * @param imagePath La ruta o URI de la imagen.
+ * @param onInvalidate Acción a ejecutar si el archivo no existe (ej. actualizar BD).
+ * @return true si la imagen es válida o se está comprobando, false si ya se sabe que es inválida.
+ */
+@Composable
+fun fileValidation(
+    imagePath: String?,
+    onInvalidate: () -> Unit
+): Boolean {
+    var isValid by remember(imagePath) { mutableStateOf(!imagePath.isNullOrBlank()) }
+
+    LaunchedEffect(imagePath) {
+        if (!imagePath.isNullOrBlank()) {
+            val exists = withContext(Dispatchers.IO) {
+                try {
+                    val file = File(imagePath)
+                    file.exists() && file.length() > 0
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            if (!exists) {
+                isValid = false
+                onInvalidate()
+            } else {
+                isValid = true
+            }
+        }
+    }
+
+    return isValid
 }
 
 @Preview(showBackground = true)
