@@ -93,7 +93,7 @@ fun HotelComponent(hotel: Hotel) {
                 model = Constants.BASE_URL + hotel.image_url,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.paris),
+                placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
                 error = painterResource(id = R.drawable.paris),
                 modifier = Modifier
                     .width(100.dp)

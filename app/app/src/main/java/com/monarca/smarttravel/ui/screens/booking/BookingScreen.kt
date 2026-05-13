@@ -63,7 +63,7 @@ import java.util.Locale
 val cities = mapOf(
     "Paris" to "PAR",
     "Barcelona" to "BCN",
-    "Londres" to "LON"
+    "London" to "LON"
 )
 
 private const val DATE_FORMAT = "yyyy-MM-dd"
@@ -196,6 +196,13 @@ fun CityCard(
     val borderColor = if (selected) MaterialTheme.colorScheme.primary
     else Color.Transparent
 
+    val imageId = when(city) {
+        "Paris" -> R.drawable.paris
+        "Barcelona" -> R.drawable.barcelona
+        "London" -> R.drawable.london
+        else -> R.drawable.ic_launcher_foreground
+    }
+
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
@@ -212,7 +219,7 @@ fun CityCard(
                 .padding(6.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.paris),
+                painter = painterResource(id = imageId),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -244,5 +251,5 @@ fun BookingScreenPreview(){
 @Preview
 @Composable
 fun CityCardPreview() {
-    CityCard("Paris")
+    CityCard("London")
 }
