@@ -190,4 +190,6 @@
     <string name="book">Reservar</string>
     <string name="where_book">¿Dónde quieres alojarte?</string>
     <string name="when_book">¿Cuándo vas?</string>
+    <string name="upload_image">Subir imagen</string>
+    <string name="change_header_image">Cambiar imagen de portada</string>
 </resources>

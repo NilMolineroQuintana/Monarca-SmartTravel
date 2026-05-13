@@ -28,8 +28,8 @@ interface TripDao {
     @Query("DELETE FROM trips WHERE id = :tripId")
     suspend fun deleteTripById(tripId: Int): Int
 
-    @Query("UPDATE trips SET imageResId = :newImageResId WHERE id = :tripId")
-    suspend fun updateImage(tripId: Int, newImageResId: Int?): Int
+    @Query("UPDATE trips SET imageURL = :newImageResId WHERE id = :tripId")
+    suspend fun updateImage(tripId: Int, newImageResId: String?): Int
 
     @Query("SELECT * FROM trips WHERE dateIn >= :now ORDER BY dateIn ASC LIMIT 1")
     suspend fun getNextUpcomingTrip(now: Long): Trip?

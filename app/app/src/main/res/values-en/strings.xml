@@ -190,4 +190,6 @@
     <string name="book">Book</string>
     <string name="where_book">Where do you want to stay?</string>
     <string name="when_book">When are you going?</string>
+    <string name="upload_image">Upload image</string>
+    <string name="change_header_image">Change header image</string>
 </resources>

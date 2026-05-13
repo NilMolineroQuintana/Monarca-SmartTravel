@@ -123,6 +123,7 @@ fun TripsScreen(
                     TripCard(
                         trip = trip,
                         navController = navController,
+                        tripViewModel = viewModel,
                         onDeleted = { viewModel.deleteTrip(trip.id) }
                     )
                 }

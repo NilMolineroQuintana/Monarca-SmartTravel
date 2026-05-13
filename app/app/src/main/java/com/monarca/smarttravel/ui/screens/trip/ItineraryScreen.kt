@@ -40,7 +40,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,15 +61,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.monarca.smarttravel.R
 import com.monarca.smarttravel.domain.model.ItineraryItem
 import com.monarca.smarttravel.domain.model.Trip
 import com.monarca.smarttravel.ui.AppDimensions
+import com.monarca.smarttravel.ui.ImagePickerDialog
 import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.OptionsPopUp
 import com.monarca.smarttravel.ui.PopUp
 import com.monarca.smarttravel.ui.TopBarAction
+import com.monarca.smarttravel.ui.fileValidation
 import com.monarca.smarttravel.ui.viewmodels.ItineraryViewModel
 import com.monarca.smarttravel.ui.viewmodels.TripViewModel
 import com.monarca.smarttravel.utils.Constants
@@ -159,6 +161,8 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
 
     var selectedDay by remember { mutableStateOf<String?>(null) }
 
+    var imagePopUp by remember { mutableStateOf(false) }
+
     LaunchedEffect(tripId) {
         tripViewModel.loadTrip(tripId)
         itineraryViewModel.loadItemsByTrip(tripId)
@@ -195,6 +199,10 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
                     TopBarAction(
                         stringResource(R.string.edit_trip),
                         onClick = { navController.navigate("createTrip?tripId=$tripId") }
+                    ),
+                    TopBarAction(
+                        stringResource(R.string.change_header_image),
+                        onClick = { imagePopUp = true }
                     ),
                     TopBarAction(
                         stringResource(R.string.deleteTrip),
@@ -234,11 +242,21 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
             onDismiss = { showPopUp = false }
         )
 
+        ImagePickerDialog (
+            show = imagePopUp,
+            tripId = trip?.id ?: return@Scaffold,
+            onDismiss = { imagePopUp = false },
+            onImageSelected = {
+                tripViewModel.changeTripImage(tripId, it)
+                imagePopUp = false
+            }
+        )
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            item { Header(trip) }
+            item { Header(trip, tripViewModel) }
 
             if (numItems == 0) {
                 item {
@@ -294,19 +312,29 @@ fun ItineraryScreen(navController: NavController, tripId: Int) {
  * un degradat fosc a la part inferior, i el nom del destí amb les dates del viatge.
  */
 @Composable
-fun Header(trip: Trip?) {
+fun Header(trip: Trip?, tripViewModel: TripViewModel) {
     // Fallback per si el viatge no s'ha trobat (no hauria de passar en condicions normals)
     val destinationName = trip?.title ?: stringResource(R.string.trip)
-    val headerImg = trip?.imageResId
+    val headerImg = trip?.imageURL
+
+    val isImageValid = fileValidation(
+        headerImg,
+        onInvalidate = {
+            trip?.id?.let { safeId ->
+                tripViewModel.changeTripImage(safeId, null)
+            }
+        }
+    )
+
     Box(
         contentAlignment = Alignment.BottomStart,
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
     ) {
-        if (headerImg != null) {
-            Image(
-                painter = painterResource(id = headerImg),
+        if (isImageValid && headerImg != null) {
+            AsyncImage(
+                model = headerImg,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

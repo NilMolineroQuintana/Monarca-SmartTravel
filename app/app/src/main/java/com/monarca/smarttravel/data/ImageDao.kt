@@ -1,6 +1,7 @@
 package com.monarca.smarttravel.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,8 +17,8 @@ interface ImageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertImage(image: Image): Long
 
-    @Query("DELETE FROM images WHERE id = :imageId")
-    suspend fun deleteImage(imageId: Int): Int
+    @Delete
+    suspend fun deleteImage(image: Image): Int
 
     @Query("DELETE FROM images WHERE tripId = :tripId")
     suspend fun deleteAllImagesFromTrip(tripId: Int): Int

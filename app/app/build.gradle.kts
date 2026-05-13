@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging)
+    implementation("io.coil-kt:coil-compose:2.6.0")
     ksp("androidx.room:room-compiler:2.8.4")
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
