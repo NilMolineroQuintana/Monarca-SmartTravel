@@ -178,7 +178,7 @@ class TripDaoTest {
             Trip(title = "Test Imatge", description = "", dateIn = validDateIn, dateOut = validDateOut, userId = testUser.userId)
         ).toInt()
 
-        val rowsAffected = tripDao.updateImage(tripId, 12345)
+        val rowsAffected = tripDao.updateImage(tripId, "12345")
         assertEquals(1, rowsAffected)
 
         val updatedTrip = tripDao.getTripById(tripId)
