@@ -3,6 +3,8 @@ package com.monarca.smarttravel.data.repository
 import android.util.Log
 import com.monarca.smarttravel.data.remote.HotelAPIService
 import com.monarca.smarttravel.domain.interfaces.BookingRepository
+import com.monarca.smarttravel.domain.model.BookingData
+import com.monarca.smarttravel.domain.model.BookingResponse
 import com.monarca.smarttravel.domain.model.Hotel
 import javax.inject.Inject
 
@@ -21,6 +23,17 @@ class BookingRepositoryImpl @Inject constructor(
         Log.d("BookingRepositoryImpl", "getAvailable: $hotelList")
 
         return hotelList
+    }
+
+    override suspend fun bookRoom(bookingRequest: BookingData): BookingResponse? {
+        val response = hotelApiService.bookRoom(gid, bookingRequest)
+
+        if (!response.isSuccessful) {
+            Log.e("BookingRepositoryImpl", "bookRoom error: ${response.errorBody()?.string()}")
+            return null
+        }
+
+        return response.body()
     }
 
 }

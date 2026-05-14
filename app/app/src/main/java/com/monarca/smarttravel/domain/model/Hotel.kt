@@ -1,7 +1,5 @@
 package com.monarca.smarttravel.domain.model
 
-import okhttp3.Address
-
 data class HotelResponse(
     val available_hotels: List<Hotel>
 )
@@ -20,4 +18,20 @@ data class Room(
     val room_type: String,
     val price: Double,
     val images: List<String>
+)
+
+data class BookingData(
+    val id: String? = null,
+    val hotel_id: String,
+    val room_id: String,
+    val start_date: String,
+    val end_date: String,
+    val guest_name: String,
+    val guest_email: String
+)
+
+data class BookingResponse(
+    val message: String,
+    val nights: Int,
+    val reservation: BookingData
 )

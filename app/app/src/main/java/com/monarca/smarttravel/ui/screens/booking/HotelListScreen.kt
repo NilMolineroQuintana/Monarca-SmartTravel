@@ -66,7 +66,10 @@ fun HotelListScreen(navController: NavController) {
                 .padding(horizontal = AppDimensions.PaddingMedium)
         ) {
             items(hotels ?: emptyList()) { hotel ->
-                HotelComponent(hotel)
+                HotelComponent(hotel, onClick = {
+                    viewModel.selectHotel(hotel)
+                    navController.navigate("bookRooms")
+                })
             }
 
             item {
@@ -78,12 +81,13 @@ fun HotelListScreen(navController: NavController) {
 }
 
 @Composable
-fun HotelComponent(hotel: Hotel) {
+fun HotelComponent(hotel: Hotel, onClick: () -> Unit) {
 
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -142,6 +146,7 @@ fun HotelComponentPreview() {
             rating = 3,
             image_url = "",
             rooms = emptyList()
-        )
+        ),
+        onClick = {}
     )
 }
