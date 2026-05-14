@@ -1,11 +1,16 @@
 package com.monarca.smarttravel.ui.screens.booking
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Directions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,6 +54,10 @@ fun HotelRoomScreen(navController: NavController) {
                 }
             )
         },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { openMaps(navController.context, hotel?.address ?: "") }) {
+                Icon(imageVector = Icons.Filled.Directions, contentDescription = null)
+            }  },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         Column(
@@ -232,5 +241,20 @@ fun RoomComponent(room: Room, onSelect: () -> Unit) {
                 )
             }
         }
+    }
+}
+
+fun openMaps(context: Context, address: String) {
+    val encodedAddress = Uri.encode(address)
+    val mapIntentUri = Uri.parse("geo:0,0?q=$encodedAddress")
+
+    val mapIntent = Intent(Intent.ACTION_VIEW, mapIntentUri)
+    mapIntent.setPackage("com.google.android.apps.maps")
+
+    if (mapIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(mapIntent)
+    } else {
+        val genericIntent = Intent(Intent.ACTION_VIEW, mapIntentUri)
+        context.startActivity(genericIntent)
     }
 }
