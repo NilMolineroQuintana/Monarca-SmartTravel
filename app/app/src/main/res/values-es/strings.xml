@@ -192,4 +192,5 @@
     <string name="when_book">¿Cuándo vas?</string>
     <string name="upload_image">Subir imagen</string>
     <string name="change_header_image">Cambiar imagen de portada</string>
+    <string name="hotel_list">Lista de hoteles</string>
 </resources>

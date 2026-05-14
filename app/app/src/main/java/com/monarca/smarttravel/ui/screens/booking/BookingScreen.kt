@@ -66,16 +66,23 @@ val cities = mapOf(
     "London" to "LON"
 )
 
-private const val DATE_FORMAT = "yyyy-MM-dd"
+private const val DATE_FORMAT = "dd/MM/yyyy"
 
 @Composable
 fun BookingScreen(navController: NavController) {
 
     val viewModel: BookingViewModel = hiltViewModel()
 
-    var selected by rememberSaveable { mutableStateOf("") }
-    var startDateText by rememberSaveable() { mutableStateOf("") }
-    var endDateText by rememberSaveable() { mutableStateOf("") }
+    var selected by remember { mutableStateOf("") }
+    var startDateText by remember() { mutableStateOf("") }
+    var endDateText by remember() { mutableStateOf("") }
+    var startDate     by remember() { mutableStateOf<Date?>(null) }
+    var endDate       by remember() { mutableStateOf<Date?>(null) }
+
+    val sdf = remember { SimpleDateFormat(DATE_FORMAT, Locale.getDefault()) }
+    var dateRangeError by remember { mutableStateOf<String?>(null) }
+
+    val errorDateRange = stringResource(R.string.error_date_range)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -92,6 +99,17 @@ fun BookingScreen(navController: NavController) {
             else -> {}
         }
     }
+
+    LaunchedEffect(startDate, endDate) {
+        dateRangeError = if (startDate != null && endDate != null && !endDate!!.after(startDate)) {
+            errorDateRange
+        } else null
+    }
+
+    val isFormValid = startDate != null
+            && endDate != null
+            && dateRangeError == null
+            && selected.isNotBlank()
 
     Scaffold(
         topBar = { MyTopBar(stringResource(R.string.book)) },
@@ -142,6 +160,7 @@ fun BookingScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     onDateSelected = { dateStr ->
                         startDateText = dateStr
+                        startDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                     },
                     blockPastDates = true,
                     showTime = false
@@ -152,10 +171,20 @@ fun BookingScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     onDateSelected = { dateStr ->
                         endDateText = dateStr
+                        endDate = runCatching { sdf.parse(dateStr) }.getOrNull()
                     },
                     blockPastDates = true,
                     showTime = false
                 )
+                // Missatge d'error en línia per al rang de dates (validació capa UI)
+                if (dateRangeError != null) {
+                    Text(
+                        text = dateRangeError!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
             }
             Button(
                 modifier = Modifier
@@ -166,6 +195,7 @@ fun BookingScreen(navController: NavController) {
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
+                enabled = isFormValid,
                 onClick = {
                     val cityCode = cities[selected] ?: ""
 
