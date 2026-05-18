@@ -11,6 +11,10 @@ jobs:
     name: Run Unit & Instrumented Tests
     runs-on: macos-latest 
 
+    defaults:
+      run:
+        working-directory: ./app
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -37,5 +41,5 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          # Este es el comando que ejecuta tus tests de Room
+          working-directory: ./app 
           script: ./gradlew connectedAndroidTest
