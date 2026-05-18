@@ -182,7 +182,7 @@ class TripDaoTest {
         assertEquals(1, rowsAffected)
 
         val updatedTrip = tripDao.getTripById(tripId)
-        assertEquals(12345, updatedTrip?.imageURL)
+        assertEquals("12345", updatedTrip?.imageURL)
     }
 
     @Test
