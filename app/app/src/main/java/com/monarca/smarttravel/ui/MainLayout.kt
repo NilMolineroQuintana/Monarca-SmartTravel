@@ -231,7 +231,7 @@ fun MyBottomBar(navController: NavController) {
     val tripChilds = listOf("trips", "itinerary", "plan", "album", "createTrip")
 
     // Rutes que pertanyen a la secció de reserva
-    val bookChilds = listOf("book", "bookDetails")
+    val bookChilds = listOf("book", "bookDetails", "bookList", "bookRooms", "bookConfirm")
 
     // Rutes que pertanyen a la secció de perfil/preferències
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
