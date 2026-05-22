@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.monarca.smarttravel.domain.interfaces.BookingRepository
 import com.monarca.smarttravel.domain.model.BookingData
+import com.monarca.smarttravel.domain.model.BookingResponse
 import com.monarca.smarttravel.domain.model.Hotel
 import com.monarca.smarttravel.domain.model.Room
 import com.monarca.smarttravel.utils.AppError
@@ -42,8 +43,14 @@ class BookingViewModel @Inject constructor(
     private val _endDate = MutableStateFlow("")
     val endDate = _endDate.asStateFlow()
 
+    private val _selectedCity = MutableStateFlow("")
+    val selectedCity = _selectedCity.asStateFlow()
+
     private val _uiState = MutableStateFlow<BookingUiState>(BookingUiState.Idle)
     val uiState: StateFlow<BookingUiState> = _uiState.asStateFlow()
+
+    private val _lastBookingResponse = MutableStateFlow<BookingResponse?>(null)
+    val lastBookingResponse: StateFlow<BookingResponse?> = _lastBookingResponse.asStateFlow()
 
     fun resetState() { _uiState.value = BookingUiState.Idle }
 
@@ -55,9 +62,10 @@ class BookingViewModel @Inject constructor(
         _selectedRoom.value = room
     }
 
-    fun getAvailable(start_date: String, end_date: String, city: String) {
+    fun getAvailable(start_date: String, end_date: String, city: String, cityName: String = "") {
         _startDate.value = start_date
         _endDate.value = end_date
+        _selectedCity.value = cityName
         viewModelScope.launch {
             _uiState.value = BookingUiState.Loading
             try {
@@ -93,6 +101,7 @@ class BookingViewModel @Inject constructor(
                 
                 if (response != null) {
                     Log.d("BookingViewModel", "Reserva confirmada amb ID: ${response.reservation.id}")
+                    _lastBookingResponse.value = response
                     _uiState.value = BookingUiState.Success
                 } else {
                     _uiState.value = BookingUiState.Error(AppError.UNKNOWN)

@@ -62,23 +62,26 @@ class AuthRepositoryImpl @Inject constructor(
 
                 firebaseUser.sendEmailVerification().await()
                 uid = firebaseUser.uid
-                userDao.insertUser(user.copy(userId = uid, email = "", password = ""))
+                userDao.insertUser(user.copy(userId = uid, password = ""))
                 userDao.registerAccess(uid, LOGINACTION)
                 Log.i(TAG, "Registre correcte enviant a verificació. (${uid})")
                 return AppError.VERIFICATION_REQUIRED
             } else {
-                uid = auth.currentUser?.uid ?: return AppError.UNKNOWN
+                val firebaseUser = auth.currentUser ?: return AppError.UNKNOWN
+                uid = firebaseUser.uid
+                val finalEmail = if (user.email.isBlank()) firebaseUser.email ?: "" else user.email
+                userDao.insertUser(user.copy(userId = uid, email = finalEmail, password = ""))
+                userDao.registerAccess(uid, LOGINACTION)
+                Log.i(TAG, "Registre correcte. (${uid})")
+                return AppError.OK
             }
-            userDao.insertUser(user.copy(userId = uid, email = "", password = ""))
-            userDao.registerAccess(uid, LOGINACTION)
-            Log.i(TAG, "Registre correcte. (${uid})")
-            AppError.OK
         } catch (e: FirebaseAuthUserCollisionException) {
             AppError.EXISTING_EMAIL
         } catch (e: FirebaseAuthWeakPasswordException) {
             AppError.REQUIREMENTS_PASSWORD
         }
         catch (e: Exception) {
+            Log.e(TAG, "Error a registerUser", e)
             AppError.FIREBASE_UNKNOWN_ERROR
         }
     }
@@ -125,8 +128,14 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUser(): User? {
-        val uid = auth.currentUser?.uid ?: return null
-        return userDao.getUserById(uid)
+        val firebaseUser = auth.currentUser ?: return null
+        val dbUser = userDao.getUserById(firebaseUser.uid) ?: return null
+        return if (dbUser.email.isBlank() && !firebaseUser.email.isNullOrBlank()) {
+            val updatedUser = dbUser.copy(email = firebaseUser.email!!)
+            updatedUser
+        } else {
+            dbUser
+        }
     }
 
     override suspend fun updateUser(user: User): AppError {

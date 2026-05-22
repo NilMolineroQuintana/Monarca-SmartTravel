@@ -36,4 +36,14 @@ class BookingRepositoryImpl @Inject constructor(
         return response.body()
     }
 
+    override suspend fun cancelReservation(reservationId: String): Boolean {
+        return try {
+            val response = hotelApiService.cancelReservation(reservationId)
+            response.isSuccessful
+        } catch (e: Exception) {
+            Log.e("BookingRepositoryImpl", "cancelReservation error", e)
+            false
+        }
+    }
+
 }

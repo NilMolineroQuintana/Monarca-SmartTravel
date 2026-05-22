@@ -40,7 +40,11 @@ data class Trip(
     val dateIn: Date,
     val dateOut: Date,
     val imageURL: String? = null,
-    val userId: String
+    val userId: String,
+    val reservationId: String? = null,
+    val hotelImageUrl: String? = null,
+    val roomType: String? = null,
+    val hotelName: String? = null
 ) {
     /**
      * Calcula la durada total del viatge en dies.

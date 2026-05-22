@@ -65,6 +65,7 @@ data class ItineraryItem(
     val locationName: String? = null,
     val address: String? = null,
     val checkInDate: Date? = null,
+    val isFromReservation: Boolean = false
 ) {
      /**
      * Retorna la data d'entrada rellevant per a aquest element:

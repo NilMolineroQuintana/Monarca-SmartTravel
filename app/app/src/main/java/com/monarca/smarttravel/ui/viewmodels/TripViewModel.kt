@@ -6,10 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.monarca.smarttravel.R
 import com.monarca.smarttravel.domain.interfaces.AuthRepository
+import com.monarca.smarttravel.domain.interfaces.BookingRepository
+import com.monarca.smarttravel.domain.interfaces.ItineraryRepository
 import com.monarca.smarttravel.domain.interfaces.TripRepository
+import com.monarca.smarttravel.domain.model.ItineraryItem
 import com.monarca.smarttravel.domain.model.Trip
+import com.monarca.smarttravel.ui.screens.trip.PlanType
 import com.monarca.smarttravel.utils.AppError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,7 +36,9 @@ import javax.inject.Inject
 @HiltViewModel
 class TripViewModel @Inject constructor(
     private val repository: TripRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val bookingRepository: BookingRepository,
+    private val itineraryRepository: ItineraryRepository
 ) : ViewModel() {
 
     private val TAG = "TripViewModel"
@@ -80,6 +85,15 @@ class TripViewModel @Inject constructor(
         initialValue = null
     )
 
+    /** Viatges creats des d'una reserva d'hotel. */
+    val reservations: StateFlow<List<Trip>> = trips
+        .map { list -> list.filter { it.reservationId != null } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
     /**
      * Valida els camps d'un viatge i retorna el [AppError] corresponent.
      * Retorna [AppError.OK] si totes les validacions passen.
@@ -118,13 +132,11 @@ class TripViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val userId = authRepository.getLoggedUID()
-                if (userId == null) {
+                val userId = authRepository.getLoggedUID() ?: run {
                     status = AppError.UNKNOWN
                     Log.w(TAG, "addTrip: usuari no autenticat")
                     return@launch
                 }
-
                 val trip = Trip(
                     id = 0,
                     title = title.trim(),
@@ -134,11 +146,9 @@ class TripViewModel @Inject constructor(
                     imageURL = null,
                     userId = userId
                 )
-                val resultCode = repository.addTrip(trip)
-                status = AppError.fromCode(resultCode)
-                if (status == AppError.OK) {
-                    Log.i(TAG, "addTrip: viatge creat correctament")
-                }
+                val newId = repository.addTrip(trip)
+                status = if (newId > 0) AppError.OK else AppError.UNKNOWN
+                if (status == AppError.OK) Log.i(TAG, "addTrip: viatge creat correctament")
             } catch (e: Exception) {
                 Log.e(TAG, "addTrip: error al crear viatge", e)
                 status = AppError.UNKNOWN
@@ -200,6 +210,11 @@ class TripViewModel @Inject constructor(
         Log.d(TAG, "deleteTrip: intent d'eliminar id=$tripId")
         viewModelScope.launch {
             try {
+                val trip = repository.getTripById(tripId)
+                if (trip?.reservationId != null) {
+                    val cancelled = bookingRepository.cancelReservation(trip.reservationId)
+                    Log.i(TAG, "deleteTrip: cancel·lació API -> $cancelled (reservationId=${trip.reservationId})")
+                }
                 val resultCode = repository.deleteTrip(tripId)
                 status = AppError.fromCode(resultCode)
                 if (status == AppError.OK) {
@@ -228,4 +243,67 @@ class TripViewModel @Inject constructor(
      * Retorna el trip amb l'ID indicat, o null si no existeix.
      */
     suspend fun getTripById(tripId: Int): Trip? = repository.getTripById(tripId)
+
+    /**
+     * Crea un nou viatge a partir d'una reserva d'hotel confirmada.
+     */
+    fun addTripFromBooking(
+        hotelName: String,
+        hotelAddress: String,
+        roomType: String,
+        dateIn: Date,
+        dateOut: Date,
+        reservationId: String,
+        hotelImageUrl: String?,
+        totalPrice: Double,
+        cityName: String = ""
+    ) {
+        viewModelScope.launch {
+            try {
+                val userId = authRepository.getLoggedUID() ?: run {
+                    status = AppError.UNKNOWN
+                    return@launch
+                }
+
+                val tripTitle = if (cityName.isNotEmpty()) "Viaje a $cityName" else hotelName
+
+                val trip = Trip(
+                    id = 0,
+                    title = tripTitle,
+                    description = "Reserva: $roomType",
+                    dateIn = dateIn,
+                    dateOut = dateOut,
+                    imageURL = hotelImageUrl,
+                    userId = userId,
+                    reservationId = reservationId,
+                    hotelImageUrl = hotelImageUrl,
+                    roomType = roomType,
+                    hotelName = hotelName
+                )
+                val newTripId = repository.addTrip(trip)
+                if (newTripId <= 0) {
+                    status = AppError.UNKNOWN
+                    return@launch
+                }
+                Log.i(TAG, "addTripFromBooking: trip creat id=$newTripId")
+
+                val hotelItem = ItineraryItem(
+                    id = 0,
+                    tripId = newTripId.toInt(),
+                    type = PlanType.HOTEL,
+                    price = totalPrice,
+                    locationName = hotelName,
+                    address = hotelAddress,
+                    checkInDate = dateIn,
+                    isFromReservation = true
+                )
+                itineraryRepository.addItineraryItem(hotelItem)
+                Log.i(TAG, "addTripFromBooking: itinerary item HOTEL creat per tripId=$newTripId")
+
+            } catch (e: Exception) {
+                Log.e(TAG, "addTripFromBooking: error", e)
+                status = AppError.UNKNOWN
+            }
+        }
+    }
 }

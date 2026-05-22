@@ -5,6 +5,7 @@ import com.monarca.smarttravel.domain.model.BookingResponse
 import com.monarca.smarttravel.domain.model.HotelResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -25,4 +26,9 @@ interface HotelAPIService {
         @Path("gid") gid: String,
         @Body bookingRequest: BookingData
     ): Response<BookingResponse>
+
+    @DELETE("reservations/{res_id}")
+    suspend fun cancelReservation(
+        @Path("res_id") reservationId: String
+    ): Response<Unit>
 }

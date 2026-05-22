@@ -32,6 +32,7 @@ import com.monarca.smarttravel.ui.MyBottomBar
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.viewmodels.BookingViewModel
 import com.monarca.smarttravel.utils.Constants
+import java.util.Locale
 
 @Composable
 fun HotelRoomScreen(navController: NavController) {
@@ -47,7 +48,11 @@ fun HotelRoomScreen(navController: NavController) {
     Scaffold(
         topBar = {
             MyTopBar(
-                title = if (isDetailMode) selectedRoom?.room_type ?: "Detall" else hotel?.name ?: "Habitacions",
+                title = if (isDetailMode) selectedRoom?.room_type?.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.ROOT
+                    ) else it.toString()
+                } ?: "Detall" else hotel?.name ?: "Habitacions",
                 onBackClick = {
                     if (isDetailMode) isDetailMode = false
                     else navController.popBackStack()
@@ -148,7 +153,7 @@ fun RoomDetailContent(room: Room, onReservar: () -> Unit) {
         }
 
         Text(
-            text = room.room_type,
+            text = room.room_type.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
@@ -228,7 +233,11 @@ fun RoomComponent(room: Room, onSelect: () -> Unit) {
                     .padding(AppDimensions.PaddingMedium)
             ) {
                 Text(
-                    text = room.room_type,
+                    text = room.room_type.replaceFirstChar {
+                        if (it.isLowerCase()) it.titlecase(
+                            Locale.ROOT
+                        ) else it.toString()
+                    },
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1

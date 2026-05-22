@@ -582,7 +582,7 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }, navC
             "${item.origin ?: "-"} → ${item.destination ?: "-"}",
             "${item.transportNumber ?: "-"} (${item.company ?: "-"})",
             tertiaryText = "${item.price}€",
-            onLongClick = { showOptions = true }
+            onLongClick = { if (!item.isFromReservation) showOptions = true }
         )
         // Allotjament / punt d'interès: mostra nom i adreça
         "hotel", "location", "restaurant" -> ItineraryItemComponent(
@@ -593,40 +593,42 @@ fun ItineraryItemComponent(item: ItineraryItem, onDelete: () -> Unit = { }, navC
             item.locationName ?: "",
             item.address ?: "",
             tertiaryText = "${item.price}€",
-            onLongClick = { showOptions = true }
+            onLongClick = { if (!item.isFromReservation) showOptions = true }
         )
     }
 
-    PopUp(
-        show = showPopUp,
-        title = stringResource(R.string.delete_plan),
-        text = stringResource(R.string.delete_plan_description),
-        acceptText = stringResource(R.string.delete),
-        onAccept = {
-            onDelete()
-            showPopUp = false
-        },
-        onDismiss = { showPopUp = false }
-    )
+    if (!item.isFromReservation) {
+        PopUp(
+            show = showPopUp,
+            title = stringResource(R.string.delete_plan),
+            text = stringResource(R.string.delete_plan_description),
+            acceptText = stringResource(R.string.delete),
+            onAccept = {
+                onDelete()
+                showPopUp = false
+            },
+            onDismiss = { showPopUp = false }
+        )
 
-    OptionsPopUp(
-        show = showOptions,
-        title = stringResource(R.string.choose_option_title),
-        options = listOf(
-            Icons.Default.Edit    to stringResource(R.string.edit),
-            Icons.Default.Delete  to stringResource(R.string.delete),
-        ),
-        onOptionSelected = { index ->
-            when (index) {
-                0 -> { navController.navigate("plan/${item.type.route}/${item.tripId}/${item.id}") }
-                1 -> {
-                    showOptions = false
-                    showPopUp = true
+        OptionsPopUp(
+            show = showOptions,
+            title = stringResource(R.string.choose_option_title),
+            options = listOf(
+                Icons.Default.Edit   to stringResource(R.string.edit),
+                Icons.Default.Delete to stringResource(R.string.delete),
+            ),
+            onOptionSelected = { index ->
+                when (index) {
+                    0 -> navController.navigate("plan/${item.type.route}/${item.tripId}/${item.id}")
+                    1 -> {
+                        showOptions = false
+                        showPopUp = true
+                    }
                 }
-            }
-        },
-        onDismiss = { showOptions = false }
-    )
+            },
+            onDismiss = { showOptions = false }
+        )
+    }
 }
 
 @Composable

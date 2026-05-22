@@ -19,8 +19,13 @@ import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.viewmodels.AuthViewModel
 import com.monarca.smarttravel.ui.viewmodels.BookingUiState
 import com.monarca.smarttravel.ui.viewmodels.BookingViewModel
+import com.monarca.smarttravel.ui.viewmodels.TripViewModel
+import com.monarca.smarttravel.utils.Constants
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.util.Date
+import java.util.Locale
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -30,11 +35,14 @@ fun BookingConfirmationScreen(navController: NavController) {
     }
     val viewModel: BookingViewModel = hiltViewModel(parentEntry)
     val authViewModel: AuthViewModel = hiltViewModel()
+    val tripViewModel: TripViewModel = hiltViewModel()
+    val lastBookingResponse by viewModel.lastBookingResponse.collectAsStateWithLifecycle()
     
     val hotel by viewModel.selectedHotel.collectAsStateWithLifecycle()
     val room by viewModel.selectedRoom.collectAsStateWithLifecycle()
     val startDate by viewModel.startDate.collectAsStateWithLifecycle()
     val endDate by viewModel.endDate.collectAsStateWithLifecycle()
+    val selectedCity by viewModel.selectedCity.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val user by authViewModel.user.collectAsStateWithLifecycle()
 
@@ -55,6 +63,21 @@ fun BookingConfirmationScreen(navController: NavController) {
     LaunchedEffect(uiState) {
         when (uiState) {
             is BookingUiState.Success -> {
+                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val dateIn = runCatching { sdf.parse(startDate) }.getOrNull() ?: Date()
+                val dateOut = runCatching { sdf.parse(endDate) }.getOrNull() ?: Date()
+
+                tripViewModel.addTripFromBooking(
+                    hotelName = hotel?.name ?: "Hotel",
+                    hotelAddress = hotel?.address ?: "",
+                    roomType = room?.room_type ?: "Habitació",
+                    dateIn = dateIn,
+                    dateOut = dateOut,
+                    reservationId = lastBookingResponse?.reservation?.id ?: "",
+                    hotelImageUrl = hotel?.image_url?.let { Constants.BASE_URL + it },
+                    totalPrice = totalPrice,
+                    cityName = selectedCity
+                )
                 navController.navigate("home") {
                     popUpTo("book") { inclusive = true }
                 }

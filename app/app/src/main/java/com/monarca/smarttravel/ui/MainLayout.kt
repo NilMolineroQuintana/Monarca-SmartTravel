@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,6 +43,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Luggage
 import androidx.compose.material.icons.filled.MoreVert
@@ -111,6 +113,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.Locale.getDefault
 
 /** Dimensions globals reutilitzables per mantenir la consistència d'espaiat a tota l'app. */
 object AppDimensions {
@@ -231,7 +234,7 @@ fun MyBottomBar(navController: NavController) {
     val tripChilds = listOf("trips", "itinerary", "plan", "album", "createTrip")
 
     // Rutes que pertanyen a la secció de reserva
-    val bookChilds = listOf("book", "bookDetails", "bookList", "bookRooms", "bookConfirm")
+    val bookChilds = listOf("book", "bookReservations", "bookDetails", "bookList", "bookRooms", "bookConfirm")
 
     // Rutes que pertanyen a la secció de perfil/preferències
     val profileChilds = listOf("profile", "notifications", "preferences", "aboutUs", "termsAndConditions")
@@ -468,7 +471,7 @@ fun TripCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
+                .heightIn(min = 150.dp)
         ) {
             if (trip.imageURL != null) {
                 AsyncImage(
@@ -561,6 +564,35 @@ fun TripCard(
                                 if (remainingDays in 0..7 && remainingDays >= 0) Color.Red else headerColor
                             }
                         )
+                    }
+
+                    if (trip.reservationId != null) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f),
+                            shape = RoundedCornerShape(6.dp),
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Hotel,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    modifier = Modifier.size(12.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = trip.roomType?.replaceFirstChar {
+                                        if (it.isLowerCase()) it.titlecase(
+                                            getDefault()
+                                        ) else it.toString()
+                                    } ?: "Reserva hotel",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                        }
                     }
                 }
             }

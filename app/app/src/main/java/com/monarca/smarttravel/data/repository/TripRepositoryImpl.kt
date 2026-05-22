@@ -31,11 +31,11 @@ class TripRepositoryImpl @Inject constructor(
     /**
      * Valida i afegeix un nou viatge a la base de dades.
      */
-    override suspend fun addTrip(trip: Trip): Int {
-        if (!validateTrip(trip)) return AppError.UNKNOWN.code
+    override suspend fun addTrip(trip: Trip): Long {
+        if (!validateTrip(trip)) return -1L
         val id = tripDao.addTrip(trip)
         Log.i(TAG, "addTrip: creat id=$id, títol=${trip.title}")
-        return if (id > 0) AppError.OK.code else AppError.UNKNOWN.code
+        return id
     }
 
     /**

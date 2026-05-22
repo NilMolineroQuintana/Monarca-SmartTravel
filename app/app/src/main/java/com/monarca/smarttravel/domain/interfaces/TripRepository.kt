@@ -10,7 +10,7 @@ interface TripRepository {
     fun getAllTrips(): Flow<List<Trip>>
     fun getTripsByUser(userId: String): Flow<List<Trip>>
     suspend fun getTripById(tripId: Int): Trip?
-    suspend fun addTrip(trip: Trip): Int
+    suspend fun addTrip(trip: Trip): Long
     suspend fun updateTrip(trip: Trip): Int
     suspend fun deleteTrip(tripId: Int): Int
     suspend fun updateImage(tripId: Int, newImageResId: String?): Int
