@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,7 +53,7 @@ fun HotelRoomScreen(navController: NavController) {
                     if (it.isLowerCase()) it.titlecase(
                         Locale.ROOT
                     ) else it.toString()
-                } ?: "Detall" else hotel?.name ?: "Habitacions",
+                } ?: stringResource(R.string.detail) else hotel?.name ?: stringResource(R.string.rooms),
                 onBackClick = {
                     if (isDetailMode) isDetailMode = false
                     else navController.popBackStack()
@@ -86,7 +87,7 @@ fun HotelRoomScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.height(AppDimensions.PaddingMedium))
                     Text(
-                        text = "Habitacions disponibles",
+                        text = stringResource(R.string.available_rooms),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -159,14 +160,14 @@ fun RoomDetailContent(room: Room, onReservar: () -> Unit) {
         )
 
         Text(
-            text = "${room.price}€ / nit",
+            text = stringResource(R.string.price_per_night, room.price),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold
         )
 
         Text(
-            text = "Aquesta habitació ofereix totes les comoditats necessàries per a una estada agradable, amb un disseny modern i funcional.",
+            text = stringResource(R.string.room_description_default),
             style = MaterialTheme.typography.bodyLarge
         )
 
@@ -179,7 +180,7 @@ fun RoomDetailContent(room: Room, onReservar: () -> Unit) {
                 .height(56.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Reservar", style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(R.string.book), style = MaterialTheme.typography.titleMedium)
         }
         Spacer(modifier = Modifier.height(AppDimensions.PaddingMedium))
     }
@@ -244,7 +245,7 @@ fun RoomComponent(room: Room, onSelect: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${room.price}€ / nit",
+                    text = stringResource(R.string.price_per_night, room.price),
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold
                 )

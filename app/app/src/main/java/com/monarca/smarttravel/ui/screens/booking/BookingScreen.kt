@@ -219,7 +219,7 @@ fun BookingScreen(navController: NavController) {
                     Icons.AutoMirrored.Filled.Assignment, contentDescription = null,
                     modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Les meves reserves")
+                Text(stringResource(R.string.my_reservations))
             }
             Spacer(modifier = Modifier.size(innerPadding.calculateBottomPadding()))
         }

@@ -226,7 +226,7 @@ fun ProfileScreen(navController: NavController) {
             show = showAddressPopUp,
             title = stringResource(R.string.address),
             label = stringResource(R.string.address),
-            placeholder = "Carrer...",
+            placeholder = stringResource(R.string.address_example),
             initialValue = address,
             onAccept = { newAddress ->
                 user.value?.let { currentUser ->
@@ -485,9 +485,9 @@ fun OptionGroup(
 @Preview(showBackground = true)
 @Composable
 fun ItemGroupPreview() {
-    OptionGroup(title = "Compte") {
-        WideOption(Icons.Default.Person, "Perfil", rounded = false, onClick = { })
-        WideOption(Icons.Default.Email, "Cambiar correo", rounded = false, onClick = { })
+    OptionGroup(title = stringResource(R.string.preferences_account)) {
+        WideOption(Icons.Default.Person, stringResource(R.string.name_label), rounded = false, onClick = { })
+        WideOption(Icons.Default.Email, stringResource(R.string.email), rounded = false, onClick = { })
     }
 }
 

@@ -3,8 +3,8 @@
     <string name="version">Versió: %1$s</string>
     <string name="bottom_menu_home">Inici</string>
     <string name="bottom_menu_trips">Viatges</string>
-    <string name="accept">Aceptar</string>
-    <string name="cancel">Cancelar</string>
+    <string name="accept">Acceptar</string>
+    <string name="cancel">Cancel·lar</string>
     <string name="delete">Eliminar</string>
     <string name="add">Afegir</string>
     <string name="edit">Editar</string>
@@ -12,11 +12,11 @@
     <string name="next">Següent</string>
     <string name="back">Enrere</string>
     <string name="more">Més</string>
-    <string name="unknown">Desconocida</string>
+    <string name="unknown">Desconeguda</string>
     <string name="last_update">Última actualització: Març 2026</string>
-    <string name="coming_soon">Funció que s\'implementarà més endevant</string>
+    <string name="coming_soon">Funció que s\'implementarà més endavant</string>
 
-    <string name="which_adventure">Quina aventura planejem avui?</string>
+    <string name="which_adventure">Quina aventura planegem avui?</string>
     <string name="quick_actions">Accions ràpides</string>
     <string name="create_new_trip">Crear nou viatge</string>
     <string name="create_new_trip_description">Planifica el teu viatge des de zero</string>
@@ -40,7 +40,7 @@
     <string name="destination">Destí</string>
     <string name="example_destination">Ex: Roma, Itàlia</string>
     <string name="description">Descripció</string>
-    <string name="description_example">Un viatge amb la familia</string>
+    <string name="description_example">Un viatge amb la família a %1$s</string>
     <string name="start_date">Data inici</string>
     <string name="final_date">Data final</string>
     <string name="dd_mm_aaaa">DD/MM/AAAA</string>
@@ -52,19 +52,19 @@
     <string name="budget">Pressupost</string>
     <string name="activities">Activitats</string>
     <string name="trip_options_title">Opcions del viatge</string>
-    <string name="no_plans">No tens cap plan</string>
-    <string name="album">Álbum</string>
+    <string name="no_plans">No tens cap pla</string>
+    <string name="album">Àlbum</string>
     <string name="no_photo">Sense foto</string>
     <string name="change_photo">Canviar foto</string>
     <string name="deleteTrip">Eliminar viatge</string>
     <string name="deleteImage">Eliminar imatge</string>
-    <string name="popUp_deleteTrip_text">Estas segur que vols eliminar el viatge?</string>
+    <string name="popUp_deleteTrip_text">Estàs segur que vols eliminar el viatge?</string>
     <string name="popUp_deleteImage_text">Estàs segur que vols eliminar la imatge?</string>
 
-    <string name="add_plan">Afegir plan</string>
-    <string name="add_new_plan">Afegir un nou</string>
-    <string name="delete_plan">Eliminar plan</string>
-    <string name="delete_plan_description">¿Estàs segur que vols eliminar aquest plan del teu itinerari?</string>
+    <string name="add_plan">Afegir pla</string>
+    <string name="add_new_plan">Afegir un de nou</string>
+    <string name="delete_plan">Eliminar pla</string>
+    <string name="delete_plan_description">Estàs segur que vols eliminar aquest pla del teu itinerari?</string>
     <string name="plan_flight">Vol</string>
     <string name="plan_boat">Vaixell</string>
     <string name="plan_train">Tren</string>
@@ -73,9 +73,9 @@
     <string name="plan_location">Lloc d\'interès</string>
     <string name="origin">Origen</string>
     <string name="company">Companyia</string>
-    <string name="data_de_entrada">Data de entrada</string>
+    <string name="data_de_entrada">Data d\'entrada</string>
     <string name="data_de_sortida">Data de sortida</string>
-    <string name="direccio">Direcció</string>
+    <string name="direccio">Adreça</string>
     <string name="price">Preu</string>
     <string name="hotel_name">Nom allotjament</string>
     <string name="restaurant_name">Nom del restaurant</string>
@@ -105,14 +105,14 @@
     <string name="preferences_language_button">Idioma</string>
     <string name="preferences_language_description">Canvia l\'idioma de la interfície</string>
     <string name="preferences_theme_button">Tema fosc</string>
-    <string name="preferences_theme_description">Colors de la interficie</string>
+    <string name="preferences_theme_description">Colors de la interfície</string>
     <string name="preferences_wide_button">Text gran</string>
     <string name="preferences_wide_description">Ajuda a l\'accessibilitat</string>
     <string name="preferences_notification_button">Notificacions</string>
     <string name="preferences_notifications_description">Rebre notificacions rellevants</string>
 
     <string name="preferences_aboutUs_button">Sobre nosaltres</string>
-    <string name="preferences_aboutUs_description">Conèix més informació sobre l\'app</string>
+    <string name="preferences_aboutUs_description">Coneix més informació sobre l\'app</string>
     <string name="preferences_termsAndConditions_button">Termes i Condicions</string>
     <string name="preferences_termsAndConditions_description">Els teus drets i deures</string>
 
@@ -159,8 +159,8 @@
     <string name="error_invalid_date_range">La data d\'inici ha de ser anterior a la data de fi.</string>
     <string name="error_date_range">La data de fi ha de ser posterior a la d\'inici.</string>
     <string name="date_before_error">La data de fi ha de ser posterior a la d\'inici.</string>
-    <string name="error_existing_email">Ja existèix un compte associat a aquest email</string>
-    <string name="error_existing_username">Ja existèix un compte associat a aquest usuari</string>
+    <string name="error_existing_email">Ja existeix un compte associat a aquest email</string>
+    <string name="error_existing_username">Ja existeix un compte associat a aquest usuari</string>
     <string name="error_password_length">La contrasenya ha de tenir almenys 8 caràcters</string>
     <string name="error_non_matching_passwords">Les contrasenyes no coincideixen</string>
     <string name="email_o_contrasenya_incorrecta">Email o contrasenya incorrecta</string>
@@ -180,11 +180,11 @@
     <string name="non_verified_email">Email no verificat</string>
     <string name="verify_email">Verifica el teu email</string>
     <string name="verification_sent">Se t\'ha enviat un correu de verificació al teu email. Verifica per continuar.</string>
-    <string name="firebase_error">N\'hi ha hagut algun error desconegut. Revisa la teva connexió a internet.</string>
+    <string name="firebase_error">S\'ha produït un error desconegut. Revisa la teva connexió a internet.</string>
     <string name="I_have_verified">Ja l\'he verificat</string>
     <string name="select_country">Selecciona un país</string>
     <string name="search">Cerca</string>
-    <string name="country">Pais</string>
+    <string name="country">País</string>
     <string name="recieve_emails_description">Vull rebre correus electrònics amb novetats i promocions.</string>
     <string name="recieve_emails">Rebre emails</string>
     <string name="book">Reservar</string>
@@ -192,5 +192,32 @@
     <string name="when_book">Quan hi vas?</string>
     <string name="upload_image">Pujar imatge</string>
     <string name="change_header_image">Cambiar imatge de portada</string>
-    <string name="hotel_list">Llista de hotels</string>
+    <string name="hotel_list">Llista d\'hotels</string>
+
+    <string name="my_reservations">Les meves reserves</string>
+    <string name="cancel_reservation">Cancel·lar reserva</string>
+    <string name="cancel_reservation_message">Vols eliminar aquesta reserva? S\'eliminarà el viatge associat.</string>
+    <string name="no_reservations">Sense reserves</string>
+    <string name="no_reservations_message">Les reserves confirmades apareixeran aquí</string>
+    <string name="hide_password">Amagar contrasenya</string>
+    <string name="show_password">Mostrar contrasenya</string>
+    <string name="select_cover_photo">Selecciona una foto de portada</string>
+    <string name="detail">Detall</string>
+    <string name="rooms">Habitacions</string>
+    <string name="available_rooms">Habitacions disponibles</string>
+    <string name="room_description_default">Aquesta habitació ofereix totes les comoditats necessàries per a una estada agradable, amb un disseny modern i funcional.</string>
+    <string name="booking_error">Error al confirmar la reserva. Intenta-ho de nou.</string>
+    <string name="booking_summary">Resum de la reserva</string>
+    <string name="room_label">Habitació: %1$s</string>
+    <string name="dates_range">Dates: %1$s a %2$s</string>
+    <string name="stay_nights">Estada: %1$d nits</string>
+    <string name="total_price">Preu Total</string>
+    <string name="confirm_booking">Confirmar Reserva</string>
+    <string name="hotel_default_name">Hotel</string>
+    <string name="room_default_type">Habitació</string>
+    <string name="id_label">ID: %1$s</string>
+    <string name="price_per_night">%1$.2f€ / nit</string>
+
+    <string name="address_example">Carrer...</string>
+    <string name="name_label">Nom</string>
 </resources>

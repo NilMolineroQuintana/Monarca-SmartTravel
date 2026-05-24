@@ -40,8 +40,8 @@ fun ReservationsScreen(navController: NavController) {
 
     PopUp(
         show = tripToDelete != null,
-        title = "Cancel·lar reserva",
-        text = "Vols eliminar aquesta reserva? S'eliminarà el viatge associat.",
+        title = stringResource(R.string.cancel_reservation),
+        text = stringResource(R.string.cancel_reservation_message),
         acceptText = stringResource(R.string.delete),
         onAccept = {
             tripToDelete?.let { viewModel.deleteTrip(it.id) }
@@ -51,7 +51,7 @@ fun ReservationsScreen(navController: NavController) {
     )
 
     Scaffold(
-        topBar = { MyTopBar("Les meves reserves", onBackClick = { navController.popBackStack() }) },
+        topBar = { MyTopBar(stringResource(R.string.my_reservations), onBackClick = { navController.popBackStack() }) },
         bottomBar = { MyBottomBar(navController) }
     ) { innerPadding ->
         if (reservations.isEmpty()) {
@@ -65,13 +65,13 @@ fun ReservationsScreen(navController: NavController) {
             ) {
                 Text("🏨", style = MaterialTheme.typography.displayMedium)
                 Text(
-                    text = "Sense reserves",
+                    text = stringResource(R.string.no_reservations),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(top = AppDimensions.PaddingMedium)
                 )
                 Text(
-                    text = "Les reserves confirmades apareixeran aquí",
+                    text = stringResource(R.string.no_reservations_message),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = AppDimensions.PaddingSmall)
@@ -152,7 +152,7 @@ fun ReservationCard(trip: Trip, onDelete: () -> Unit) {
                 )
                 trip.reservationId?.let {
                     Text(
-                        text = "ID: $it",
+                        text = stringResource(R.string.id_label, it),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

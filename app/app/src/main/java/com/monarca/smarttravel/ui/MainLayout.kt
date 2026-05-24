@@ -166,7 +166,7 @@ fun MyTopBar(
                 IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Enrere",
+                        contentDescription = stringResource(R.string.back),
                         modifier = Modifier.size(30.dp)
                     )
                 }
@@ -587,7 +587,7 @@ fun TripCard(
                                         if (it.isLowerCase()) it.titlecase(
                                             getDefault()
                                         ) else it.toString()
-                                    } ?: "Reserva hotel",
+                                    } ?: stringResource(R.string.room_default_type),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
@@ -776,7 +776,7 @@ fun AppTextField(
                 IconButton(onClick = { passwordVisible = !passwordVisible }, enabled = enabled) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = if (passwordVisible) "Amagar contrasenya" else "Mostrar contrasenya"
+                        contentDescription = stringResource(if (passwordVisible) R.string.hide_password else R.string.show_password)
                     )
                 }
             }
@@ -1224,6 +1224,7 @@ fun OptionsPopUp(
 @Composable
 fun getAppVersion(): String {
     val context = LocalContext.current
+    val unknown = stringResource(R.string.unknown)
     return try {
         val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
@@ -1231,9 +1232,9 @@ fun getAppVersion(): String {
             @Suppress("DEPRECATION")
             context.packageManager.getPackageInfo(context.packageName, 0)
         }
-        packageInfo.versionName ?: "Unknown version"
+        packageInfo.versionName ?: unknown
     } catch (e: Exception) {
-        stringResource(R.string.unknown)
+        unknown
     }
 }
 
@@ -1242,10 +1243,10 @@ fun getAppVersion(): String {
 fun OptionsPopUpPreview() {
     OptionsPopUp(
         show = true,
-        title = "Selecciona una opció",
+        title = stringResource(R.string.choose_option_title),
         options = listOf(
-            Icons.Default.Edit    to "Editar",
-            Icons.Default.Delete  to "Eliminar",
+            Icons.Default.Edit    to stringResource(R.string.edit),
+            Icons.Default.Delete  to stringResource(R.string.delete),
         ),
         onOptionSelected = { index ->
             when (index) {
@@ -1490,7 +1491,7 @@ fun ImagePickerDialog(
     if (show) {
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text("Selecciona una foto de portada") },
+            title = { Text(stringResource(R.string.select_cover_photo)) },
             text = {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
@@ -1569,19 +1570,19 @@ fun PreviewMyTopBarBackbutton() {
 @Preview
 @Composable
 fun PreviewWideOption() {
-    WideOption(Icons.Filled.Settings, "Configuració", onClick = {})
+    WideOption(Icons.Filled.Settings, stringResource(R.string.config), onClick = {})
 }
 
 @Preview
 @Composable
 fun PreviewWideOptionSecondary() {
-    WideOption(Icons.Filled.Settings, "Configuració", secondaryText = "Test", onClick = {})
+    WideOption(Icons.Filled.Settings, stringResource(R.string.config), secondaryText = "Test", onClick = {})
 }
 
 @Preview
 @Composable
 fun PreviewWideSquaredOption() {
-    WideOption(Icons.Filled.Settings, "Configuració", rounded = false, onClick = {})
+    WideOption(Icons.Filled.Settings, stringResource(R.string.config), rounded = false, onClick = {})
 }
 
 @Preview
@@ -1593,5 +1594,5 @@ fun PreviewLogOutPopUp() {
 @Preview
 @Composable
 fun PreviewWideOptionSquaredSecondary() {
-    WideOption(Icons.Filled.Settings, "Configuració", secondaryText = "Test", rounded = false, onClick = {})
+    WideOption(Icons.Filled.Settings, stringResource(R.string.config), secondaryText = "Test", rounded = false, onClick = {})
 }

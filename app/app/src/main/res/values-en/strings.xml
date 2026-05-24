@@ -40,10 +40,9 @@
     <string name="destination">Destination</string>
     <string name="example_destination">Ex: Rome, Italy</string>
     <string name="description">Description</string>
-    <string name="description_example">A family trip</string>
+    <string name="description_example">A family trip to %1$s</string>
     <string name="start_date">Start date</string>
     <string name="final_date">End date</string>
-    <string name="dd_mm_aaaa">DD/MM/YYYY</string>
     <string name="select_date">Select a date</string>
     <string name="select_time">Select time</string>
 
@@ -193,4 +192,31 @@
     <string name="upload_image">Upload image</string>
     <string name="change_header_image">Change header image</string>
     <string name="hotel_list">Hotel list</string>
+
+    <string name="my_reservations">My reservations</string>
+    <string name="cancel_reservation">Cancel reservation</string>
+    <string name="cancel_reservation_message">Do you want to delete this reservation? The associated trip will be deleted.</string>
+    <string name="no_reservations">No reservations</string>
+    <string name="no_reservations_message">Confirmed reservations will appear here</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="select_cover_photo">Select a cover photo</string>
+    <string name="detail">Detail</string>
+    <string name="rooms">Rooms</string>
+    <string name="available_rooms">Available rooms</string>
+    <string name="room_description_default">This room offers all the necessary amenities for a pleasant stay, with a modern and functional design.</string>
+    <string name="booking_error">Error confirming the booking. Please try again.</string>
+    <string name="booking_summary">Booking summary</string>
+    <string name="room_label">Room: %1$s</string>
+    <string name="dates_range">Dates: %1$s to %2$s</string>
+    <string name="stay_nights">Stay: %1$d nights</string>
+    <string name="total_price">Total Price</string>
+    <string name="confirm_booking">Confirm Booking</string>
+    <string name="hotel_default_name">Hotel</string>
+    <string name="room_default_type">Room</string>
+    <string name="id_label">ID: %1$s</string>
+    <string name="price_per_night">%1$.2f€ / night</string>
+
+    <string name="address_example">Street...</string>
+    <string name="name_label">Name</string>
 </resources>

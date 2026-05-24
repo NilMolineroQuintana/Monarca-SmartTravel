@@ -9,11 +9,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.monarca.smarttravel.R
 import com.monarca.smarttravel.ui.AppDimensions
 import com.monarca.smarttravel.ui.MyTopBar
 import com.monarca.smarttravel.ui.viewmodels.AuthViewModel
@@ -60,6 +62,10 @@ fun BookingConfirmationScreen(navController: NavController) {
 
     val totalPrice = (room?.price ?: 0.0) * nights
 
+    val errorBooking = stringResource(R.string.booking_error)
+    val defaultHotelName = stringResource(R.string.hotel_default_name)
+    val defaultRoomType = stringResource(R.string.room_default_type)
+
     LaunchedEffect(uiState) {
         when (uiState) {
             is BookingUiState.Success -> {
@@ -68,9 +74,9 @@ fun BookingConfirmationScreen(navController: NavController) {
                 val dateOut = runCatching { sdf.parse(endDate) }.getOrNull() ?: Date()
 
                 tripViewModel.addTripFromBooking(
-                    hotelName = hotel?.name ?: "Hotel",
+                    hotelName = hotel?.name ?: defaultHotelName,
                     hotelAddress = hotel?.address ?: "",
-                    roomType = room?.room_type ?: "Habitació",
+                    roomType = room?.room_type ?: defaultRoomType,
                     dateIn = dateIn,
                     dateOut = dateOut,
                     reservationId = lastBookingResponse?.reservation?.id ?: "",
@@ -84,7 +90,7 @@ fun BookingConfirmationScreen(navController: NavController) {
                 viewModel.resetState()
             }
             is BookingUiState.Error -> {
-                snackbarHostState.showSnackbar("Error al confirmar la reserva. Intenta-ho de nou.")
+                snackbarHostState.showSnackbar(errorBooking)
                 viewModel.resetState()
             }
             else -> {}
@@ -92,7 +98,7 @@ fun BookingConfirmationScreen(navController: NavController) {
     }
 
     Scaffold(
-        topBar = { MyTopBar(title = "Resum de la reserva", onBackClick = { navController.popBackStack() }) },
+        topBar = { MyTopBar(title = stringResource(R.string.booking_summary), onBackClick = { navController.popBackStack() }) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
         Column(
@@ -115,9 +121,9 @@ fun BookingConfirmationScreen(navController: NavController) {
                         thickness = DividerDefaults.Thickness,
                         color = DividerDefaults.color
                     )
-                    Text(text = "Habitació: ${room?.room_type ?: ""}", fontWeight = FontWeight.SemiBold)
-                    Text(text = "Dates: $startDate a $endDate")
-                    Text(text = "Estada: $nights nits")
+                    Text(text = stringResource(R.string.room_label, room?.room_type ?: ""), fontWeight = FontWeight.SemiBold)
+                    Text(text = stringResource(R.string.dates_range, startDate, endDate))
+                    Text(text = stringResource(R.string.stay_nights, nights))
                 }
             }
 
@@ -128,7 +134,7 @@ fun BookingConfirmationScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Preu Total", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.total_price), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Text(
                     text = "${String.format("%.2f", totalPrice)}€",
                     style = MaterialTheme.typography.headlineMedium,
@@ -153,7 +159,7 @@ fun BookingConfirmationScreen(navController: NavController) {
                 if (uiState is BookingUiState.Loading) {
                     CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                 } else {
-                    Text(text = "Confirmar Reserva", style = MaterialTheme.typography.titleMedium)
+                    Text(text = stringResource(R.string.confirm_booking), style = MaterialTheme.typography.titleMedium)
                 }
             }
         }
