@@ -471,7 +471,7 @@ fun TripCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 150.dp)
+                .height(180.dp)
         ) {
             if (trip.imageURL != null) {
                 AsyncImage(
@@ -1534,12 +1534,16 @@ fun fileValidation(
 
     LaunchedEffect(imagePath) {
         if (!imagePath.isNullOrBlank()) {
-            val exists = withContext(Dispatchers.IO) {
-                try {
-                    val file = File(imagePath)
-                    file.exists() && file.length() > 0
-                } catch (e: Exception) {
-                    false
+            val exists = if (imagePath.startsWith("android.resource://")) {
+                true
+            } else {
+                withContext(Dispatchers.IO) {
+                    try {
+                        val file = File(imagePath)
+                        file.exists() && file.length() > 0
+                    } catch (e: Exception) {
+                        false
+                    }
                 }
             }
 

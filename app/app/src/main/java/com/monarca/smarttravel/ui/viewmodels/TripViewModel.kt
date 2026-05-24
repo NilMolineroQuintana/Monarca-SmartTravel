@@ -1,5 +1,6 @@
 package com.monarca.smarttravel.ui.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +15,7 @@ import com.monarca.smarttravel.domain.model.ItineraryItem
 import com.monarca.smarttravel.domain.model.Trip
 import com.monarca.smarttravel.ui.screens.trip.PlanType
 import com.monarca.smarttravel.utils.AppError
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
+import kotlin.math.abs
 
 /**
  * ViewModel per a la pantalla de viatges.
@@ -35,6 +38,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class TripViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: TripRepository,
     private val authRepository: AuthRepository,
     private val bookingRepository: BookingRepository,
@@ -62,6 +66,7 @@ class TripViewModel @Inject constructor(
     val trips: StateFlow<List<Trip>> = _userId
         .filterNotNull()
         .flatMapLatest { userId -> repository.getTripsByUser(userId) }
+        .map { list -> list.sortedWith(compareBy<Trip> { abs(it.dateIn.time - Date().time) }.thenByDescending { it.id }) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -267,13 +272,22 @@ class TripViewModel @Inject constructor(
 
                 val tripTitle = if (cityName.isNotEmpty()) "Viaje a $cityName" else hotelName
 
+                val pkg = context.packageName
+                val cityImageUriRoute = "android.resource://$pkg/drawable/"
+                val cityImageUri = when (cityName) {
+                    "Paris" -> cityImageUriRoute + "paris"
+                    "Barcelona" -> cityImageUriRoute + "barcelona"
+                    "London" -> cityImageUriRoute + "london"
+                    else -> null
+                }
+
                 val trip = Trip(
                     id = 0,
                     title = tripTitle,
                     description = "Reserva: $roomType",
                     dateIn = dateIn,
                     dateOut = dateOut,
-                    imageURL = hotelImageUrl,
+                    imageURL = cityImageUri ?: hotelImageUrl,
                     userId = userId,
                     reservationId = reservationId,
                     hotelImageUrl = hotelImageUrl,
