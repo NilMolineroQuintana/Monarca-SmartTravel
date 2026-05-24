@@ -4,33 +4,33 @@
 
 ### Comparison with Sprint Goal:
 
-The sprint goal was fully achieved. Retrofit has been integrated and configured to connect the app with the external hotel REST API. Hotel search, room listing, booking confirmation, reservation management and cancellation are all implemented end-to-end. Reservation data is persisted locally in Room as a new trip, enriched with all hotel and room metadata. The image gallery feature per trip is fully functional, allowing users to attach photos from the camera or the device gallery, store them locally, and browse them in the album screen. Trip cards visually distinguish trips that originate from a hotel reservation. Unit tests cover the repository layer using Retrofit mocks.
+The sprint goal was fully achieved. Retrofit has been integrated and configured to connect the app with the external hotel REST API. Hotel search, room listing, booking confirmation, reservation management and cancellation are all implemented end-to-end. Reservation data is persisted locally in Room as a new trip, enriched with all hotel and room metadata. The image gallery feature per trip is fully functional, allowing users to attach photos from the camera or the device gallery, store them locally, and browse them in the album screen. Trip cards visually distinguish trips that originate from a hotel reservation. Unit tests cover the repository layer using Retrofit mocks. Additional improvements include trip sorting by date proximity, city drawables as trip covers, string externalization to Spanish and English, removal of unused domain models and locked portrait orientation.
 
 ---
 
 ## 2. Tasks completed
 
-|    ID     | Completed | Comments |
-|:---------:|:---------:|----------|
-|  **T1**   |           | **Retrofit Configuration** |
-|   T1.1    |    Yes    | Retrofit added as a dependency and configured in `AppModule` with `GsonConverterFactory`, `OkHttpClient` with a logging interceptor, and the hotel API base URL from `Constants`. |
-|   T1.2    |    Yes    | Remote data models (`Hotel`, `Room`, `HotelResponse`, `BookingData`, `BookingResponse`) created as plain data classes. `HotelAPIService` interface defines all required endpoints: `checkAvailability`, `bookRoom` and `cancelReservation`, following the MVVM structure. |
-|   T1.3    |    Yes    | `BookingRepository` interface and `BookingRepositoryImpl` created, abstracting all API calls behind the repository pattern and wired through Hilt in `AppModule`. |
-|   T1.4    |    Yes    | `BookingTest` written using Mockito to mock `HotelAPIService`. Covers the success path (list of hotels returned) and the failure path (HTTP 404 returns null). |
-|  **T2**   |           | **Search and Booking Screens** |
-|   T2.1    |    Yes    | `BookingScreen` implemented with a city selector (Paris, Barcelona, London) using visual `CityCard` components and two date pickers (`DateField`) with past-date blocking and range validation. The search triggers the `getAvailable` API call via `BookingViewModel`. |
-|   T2.2    |    Yes    | `HotelListScreen` displays the list of hotels returned by the API using animated `HotelComponent` cards with image, name, address and star rating. `HotelRoomScreen` shows the hotel cover image and the list of available rooms; selecting a room enters detail mode with a horizontal image pager (`HorizontalPager`) and a book button. |
-|   T2.3    |    Yes    | `BookingConfirmationScreen` shows a summary of the selected hotel, room, dates and total price. On confirmation, `TripViewModel.addTripFromBooking` creates a new `Trip` row in Room with all reservation metadata (`reservationId`, `hotelName`, `hotelImageUrl`, `roomType`) and an associated `ItineraryItem` of type `HOTEL` marked as `isFromReservation = true` to prevent manual editing. |
-|   T2.4    |    Yes    | Hotel cover images are loaded with Coil (`AsyncImage`) in `HotelListScreen` and `HotelRoomScreen`. Room images are displayed in a `HorizontalPager` both in the room list card and in the full detail view. |
-|  **T3**   |           | **Add Images / Gallery to Trip** |
-|   T3.1    |    Yes    | `AlbumScreen` integrates `ActivityResultContracts.PickMultipleVisualMedia` for gallery access and `ActivityResultContracts.TakePicture` for the camera, with runtime permission handling via `ActivityResultContracts.RequestPermission`. Both buttons are exposed as FABs. Multi-selection mode activated on long-press allows batch deletion. |
-|   T3.2    |    Yes    | Selected images are copied to the app's external files directory (`Environment.DIRECTORY_PICTURES`) via `saveImageToInternalStorage`. File paths are persisted in the `images` Room table through `ImageViewModel` and `ImageRepositoryImpl`. |
-|   T3.3    |    Yes    | The album screen displays the trip-specific gallery in a 3-column `LazyVerticalGrid`. Tapping an image opens a full-screen zoomable viewer (`Dialog` + `transformable` modifier with pinch-to-zoom and pan). |
-|  **T4**   |           | **List and Cancel Reservations** |
-|   T4.1    |    Yes    | `ReservationsScreen` lists all trips with a non-null `reservationId`, filtered reactively from the `reservations` `StateFlow` in `TripViewModel`. Each entry shows hotel image, name, room type, check-in date and reservation ID. |
-|   T4.2    |    Yes    | Deleting a reservation triggers `TripViewModel.deleteTrip`, which first calls `BookingRepository.cancelReservation` against the API endpoint and then removes the trip and all associated data from Room via cascade delete. A confirmation `PopUp` is shown before the action is executed. |
-|   T4.3    |    Yes    | `ReservationCard` loads the hotel image with Coil using the remote URL stored in `Trip.hotelImageUrl`. The room type is displayed with title-case formatting below the hotel name, following the reference style. |
-|   T4.4    |    Yes    | `TripCard` detects trips with a non-null `reservationId` and displays a pill badge with the hotel icon and room type. The card background and gradient adapt to the hotel image when available. |
+|   ID   | Completed | Comments                                                                                                                                                                                                                                                                                                                                                                                                       |
+|:------:|:---------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **T1** |           | **Retrofit Configuration**                                                                                                                                                                                                                                                                                                                                                                                     |
+|  T1.1  |    Yes    | Retrofit added as a dependency and configured in `AppModule` with `GsonConverterFactory`, `OkHttpClient` with a logging interceptor, and the hotel API base URL from `Constants`.                                                                                                                                                                                                                              |
+|  T1.2  |    Yes    | Remote data models (`Hotel`, `Room`, `HotelResponse`, `BookingData`, `BookingResponse`) created as plain data classes. `HotelAPIService` interface defines all required endpoints: `checkAvailability`, `bookRoom` and `cancelReservation`, following the MVVM structure.                                                                                                                                      |
+|  T1.3  |    Yes    | `BookingRepository` interface and `BookingRepositoryImpl` created, abstracting all API calls behind the repository pattern and wired through Hilt in `AppModule`.                                                                                                                                                                                                                                              |
+|  T1.4  |    Yes    | `BookingTest` written using Mockito to mock `HotelAPIService`. Covers 7 scenarios: success and failure for `getAvailable`, `bookRoom`, and `cancelReservation`, plus exception handling for cancellation.                                                                                                                                                                                                      |
+| **T2** |           | **Search and Booking Screens**                                                                                                                                                                                                                                                                                                                                                                                 |
+|  T2.1  |    Yes    | `BookingScreen` implemented with a city selector (Paris, Barcelona, London) using visual `CityCard` components and two `DateField` date pickers with past-date blocking and range validation. The search triggers the `getAvailable` API call via `BookingViewModel`.                                                                                                                                          |
+|  T2.2  |    Yes    | `HotelListScreen` displays the list of hotels returned by the API using animated `HotelComponent` cards with image, name, address and star rating. `HotelRoomScreen` shows the hotel cover image and the list of available rooms; selecting a room enters detail mode with a `HorizontalPager` image gallery and a book button. A "How to get there" button opens Google Maps with the hotel address.          |
+|  T2.3  |    Yes    | `BookingConfirmationScreen` shows a summary of the selected hotel, room, dates and total price. On confirmation, `TripViewModel.addTripFromBooking` creates a new `Trip` row in Room with all reservation metadata (`reservationId`, `hotelName`, `hotelImageUrl`, `roomType`, `totalPrice`) and an associated `ItineraryItem` of type `HOTEL` marked as `isFromReservation = true` to prevent manual editing. |
+|  T2.4  |    Yes    | Hotel cover images are loaded with Coil (`AsyncImage`) in `HotelListScreen` and `HotelRoomScreen`. Room images are displayed in a `HorizontalPager` both in the room list card and in the full detail view.                                                                                                                                                                                                    |
+| **T3** |           | **Add Images / Gallery to Trip**                                                                                                                                                                                                                                                                                                                                                                               |
+|  T3.1  |    Yes    | `AlbumScreen` integrates `ActivityResultContracts.PickMultipleVisualMedia` for gallery access and `ActivityResultContracts.TakePicture` for the camera, with runtime permission handling via `ActivityResultContracts.RequestPermission`. Both capture buttons are exposed as FABs. Multi-selection mode activated on long-press allows batch deletion.                                                        |
+|  T3.2  |    Yes    | Selected images are copied to the app's external files directory (`Environment.DIRECTORY_PICTURES`) via `saveImageToInternalStorage`. File paths are persisted in the `images` Room table through `ImageViewModel` and `ImageRepositoryImpl`.                                                                                                                                                                  |
+|  T3.3  |    Yes    | The album screen displays the trip-specific gallery in a 3-column `LazyVerticalGrid`. Tapping an image opens a full-screen zoomable viewer (`Dialog` + `transformable` modifier with pinch-to-zoom and pan).                                                                                                                                                                                                   |
+| **T4** |           | **List and Cancel Reservations**                                                                                                                                                                                                                                                                                                                                                                               |
+|  T4.1  |    Yes    | `ReservationsScreen` lists all trips with a non-null `reservationId`, filtered reactively from the `reservations` `StateFlow` in `TripViewModel`. Each entry shows hotel image, name, room type, check-in date and reservation ID, linking back to the associated trip.                                                                                                                                        |
+|  T4.2  |    Yes    | Deleting a reservation triggers `TripViewModel.deleteTrip`, which first calls `BookingRepository.cancelReservation` against the API endpoint and then removes the trip and all associated data (itinerary items, images) from Room via cascade delete. A confirmation `PopUp` is shown before the action is executed.                                                                                          |
+|  T4.3  |    Yes    | `ReservationCard` loads the hotel image with Coil using the remote URL stored in `Trip.hotelImageUrl`. The room type is displayed with title-case formatting below the hotel name, following the reference style.                                                                                                                                                                                              |
+|  T4.4  |    Yes    | `TripCard` detects trips with a non-null `reservationId` and displays a pill badge with the hotel icon and room type below the trip title. The card background and gradient adapt to the hotel image when available, clearly indicating which trips include a hotel reservation.                                                                                                                               |
 
 ---
 
@@ -52,6 +52,8 @@ City-specific cover images for trips created from reservations (Paris, Barcelona
 - The `isFromReservation` flag on `ItineraryItem` proved effective for distinguishing API-generated items from user-created ones, preventing the edit/delete menu from appearing on hotel reservation items without any additional state management.
 - Coil handled remote image loading with placeholder and error fallback correctly in all screens, including the `HorizontalPager` room gallery.
 - The existing `saveImageToInternalStorage` utility and `ImageViewModel` / `ImageRepositoryImpl` pair from the gallery tasks were straightforward to reuse and required no structural changes to the Room schema.
+- Unit testing with Mockito allowed comprehensive coverage of the repository, ViewModel, and DAO layers (31 tests total across 4 test classes).
+- The image picker integration (`PickMultipleVisualMedia` + `TakePicture`) with proper permission handling worked reliably across different Android versions.
 
 ### What didn't work
 - The hotel API occasionally returns an empty room list for certain city/date combinations, which required adding an explicit empty-state handling in `HotelRoomScreen` to avoid showing a blank screen without feedback.
@@ -60,6 +62,7 @@ City-specific cover images for trips created from reservations (Paris, Barcelona
 ### What we will improve in the next sprint
 - Add offline caching for hotel search results so the app remains usable when the API is temporarily unavailable.
 - Improve error messaging when the booking API call fails mid-flow, distinguishing network errors from server-side rejections.
+- Introduce more granular UI states (Loading, Empty, Error, Success) in the BookingViewModel to give the user clearer feedback.
 
 ---
 
@@ -67,7 +70,7 @@ City-specific cover images for trips created from reservations (Paris, Barcelona
 
 **Score:** 10
 
-**Justification:** All planned tasks for the remote persistence and image gallery sprint were fully implemented. Retrofit is correctly integrated following the MVVM and repository patterns, the booking flow persists data in Room and calls the API as required, the image gallery is functional with camera and gallery support, and the reservation management screen covers listing, visual display and cancellation. Unit tests cover the repository layer with mocked responses.
+**Justification:** All planned tasks for the remote persistence and image gallery sprint were fully implemented. Retrofit is correctly integrated following the MVVM and repository patterns, the booking flow persists data in Room and calls the API as required, the image gallery is functional with camera and gallery support, and the reservation management screen covers listing, visual display and cancellation. Unit tests cover the repository, ViewModel and DAO layers with mocked responses.
 
 ---
 
@@ -75,19 +78,54 @@ City-specific cover images for trips created from reservations (Paris, Barcelona
 
 ### BookingTest
 
-| Test | Result |
-|------|--------|
+| Test                                          | Result |
+|-----------------------------------------------|--------|
 | `getAvailable success returns list of hotels` | ✅ Pass |
-| `getAvailable failure returns null` | ✅ Pass |
+| `getAvailable failure returns null`           | ✅ Pass |
+| `bookRoom success returns BookingResponse`    | ✅ Pass |
+| `bookRoom failure returns null`               | ✅ Pass |
+| `cancelReservation success returns true`      | ✅ Pass |
+| `cancelReservation failure returns false`     | ✅ Pass |
+| `cancelReservation exception returns false`   | ✅ Pass |
+
+### BookingViewModelTest
+
+| Test                                                       | Result |
+|------------------------------------------------------------|--------|
+| `getAvailable success updates hotels and uiState`          | ✅ Pass |
+| `getAvailable failure sets uiState to Error`               | ✅ Pass |
+| `getAvailable exception sets uiState to Error`             | ✅ Pass |
+| `bookRoom success updates lastBookingResponse and uiState` | ✅ Pass |
+| `bookRoom failure sets uiState to Error`                   | ✅ Pass |
+| `selectHotel updates selectedHotel`                        | ✅ Pass |
+| `selectRoom updates selectedRoom`                          | ✅ Pass |
+| `resetState resets uiState to Idle`                        | ✅ Pass |
+
+### TripViewModelTest
+
+| Test                                                                 | Result |
+|----------------------------------------------------------------------|--------|
+| `trips sorted by date proximity ascending`                           | ✅ Pass |
+| `trips with same proximity sorted by id descending`                  | ✅ Pass |
+| `reservations returns only trips with non-null reservationId`        | ✅ Pass |
+| `reservations is empty when no trips have reservationId`             | ✅ Pass |
+| `addTripFromBooking stores all reservation fields`                   | ✅ Pass |
+| `addTripFromBooking uses city drawable URI for Barcelona`            | ✅ Pass |
+| `addTripFromBooking uses Paris drawable when city is Paris`          | ✅ Pass |
+| `addTripFromBooking uses London drawable when city is London`        | ✅ Pass |
+| `addTripFromBooking creates HOTEL itinerary item`                    | ✅ Pass |
+| `deleteTrip with reservationId cancels via API then deletes locally` | ✅ Pass |
+| `deleteTrip without reservationId skips API call`                    | ✅ Pass |
+| `nextTrip returns closest future trip`                               | ✅ Pass |
 
 ### ImageDaoTest
 
-| Test | Result |
-|------|--------|
-| `insertImage should add image to trip` | ✅ Pass |
+| Test                                                    | Result |
+|---------------------------------------------------------|--------|
+| `insertImage should add image to trip`                  | ✅ Pass |
 | `getImagesByTrip should return only that trip's images` | ✅ Pass |
-| `deleteImage should remove specific image` | ✅ Pass |
-| `deleteTrip should cascade delete its images` | ✅ Pass |
+| `deleteImage should remove specific image`              | ✅ Pass |
+| `deleteTrip should cascade delete its images`           | ✅ Pass |
 
 ### Fixes applied during testing
 
